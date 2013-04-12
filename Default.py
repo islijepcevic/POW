@@ -26,7 +26,7 @@ import os, sys
 from PSO.module import BasicParameters, AbstractFitness, AbstractSpace, \
         arrayToList
 
-class Parser: # this is imported in the file
+class Parser(BaseParameters): # this is imported in the file
     parameters={}
 
     def add_standard(self):

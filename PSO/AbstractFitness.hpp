@@ -35,7 +35,7 @@ public:
      * @param particle - a particle whose position is about to get evaluated
      * @return         - the value of the particle for this fitness function
      */
-    virtual double call_evaluation(const Particle& particle) = 0;
+    virtual double evaluation(const Particle& particle) = 0;
 };
 
 }

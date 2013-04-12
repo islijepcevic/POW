@@ -1,23 +1,30 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2012 EPFL (Ecole Polytechnique federale de Lausanne)
-# Laboratory for Biomolecular Modeling, School of Life Sciences
-#
-# POW is free software ;
-# you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation ;
-# either version 2 of the License, or (at your option) any later version.
-# POW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY ;
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along with POW ;
-# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-#
-# Author : Matteo Degiacomi, matteothomas.degiacomi@epfl.ch
-# Web site : http://lbm.epfl.ch
+'''
+-*- coding: utf-8 -*-
+Copyright (c) 2012 EPFL (Ecole Polytechnique federale de Lausanne)
+Laboratory for Biomolecular Modeling, School of Life Sciences
+
+POW is free software ;
+you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation ;
+either version 2 of the License, or (at your option) any later version.
+POW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY ;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with POW ;
+if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+
+Author : Matteo Degiacomi, matteothomas.degiacomi@epfl.ch
+Modified by : Ivan Slijepcevic, ivan.slijepcevic@epfl.ch
+Web site : http://lbm.epfl.ch
+'''
 
 
 import numpy as np
 from copy import deepcopy
 import os, sys
+
+# integration with c++ code
+from PSO.module import BasicParameters, AbstractFitness, AbstractSpace, \
+        arrayToList
 
 class Parser: # this is imported in the file
     parameters={}
@@ -225,6 +232,58 @@ class Space:
 
         return p,v
 
+
+class BaseFitness(AbstractFitness):
+    '''
+    A class that serves as a bridge between AbstractFitness in c++ and the
+    true Fitness implementation by the module programmer.
+
+    It inherits from AbstractFitness, and needs to be inherited in the Fitness
+    class.
+    '''
+    
+    def __init__(self):
+        '''
+        The constructor.
+
+        NOTE TO THE MODULE PROGRAMMER:
+        Please, make the call similar to this while implementing the derived
+        function. This is needed because of the integration with c++. Sample
+        code would be like this:
+
+        class Fitness(BaseFitness):
+            def __init__(self, other_params):
+                BaseFitness.__init__(self)
+
+                #your_code
+        '''
+        AbstractFitness.__init__(self)
+
+    def evaluation(self, particle):
+        '''
+        method that is called from PSO in c++ for evaluating the particle
+
+        NOTE TO THE MODULE PROGRAMMER: instead of using evaluate() method, 
+        it might be better to override and use this method and use the
+        particle object instead. It should give much more freedom.
+
+        @param particle - object of Particle class that contains all the
+                        necessary information
+        @return - value at the position of the particle, float
+        '''
+        positionList = arrayToList(particle.getPosition(), posSize)
+        return self.evaluate(particle.getIndex(), pos_list)
+
+    def evaluate(self, num, pos):
+        '''
+        method that should be implemented by the module programmer, which
+        performs the actual evaluation of the particle
+
+        @param num - the index of the particle, integer
+        @param pos - the position of the particle,
+                     list of coordinates, of length d
+        '''
+        raise NotImplementedError("call of not implemented evaluate()")
 
 
 class Postprocess:

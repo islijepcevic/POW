@@ -135,11 +135,18 @@ class PSO:
                 list_cv=[]
                 if self.params.repel:
                     list_repel=[]
+
+                # increment p for size; 
                 while p < self.params.n_particles :
-                    # initialising particle
+                    # creating and initialising particle
                     part=particle(p,self.fitness,self.space,self.params,swarm)
+
+                    # running the particle, (and evaluation)
+                    # getting position, velocity, max position (of this particle), max value, fitness, repellers
                     [part_pp,part_pv,part_pmp,part_pmv,part_cv, part_repel]=part.run()
+
                     #print "RANK %s of %s: %s -> %s"%(rank,size,p,part_cv)
+
                     list_pp.append(part_pp)
                     list_pv.append(part_pv)
                     list_pmp.append(part_pmp)
@@ -262,11 +269,11 @@ class Swarm:
 
 class particle :
     def __init__(self,n,fitness,space,params,swarm) :
-        self.n=n
-        self.fitness=fitness
-        self.space=space
-        self.params=params
-        self.swarm=swarm
+        self.n=n                 # index of a particle
+        self.fitness=fitness     # fitness class
+        self.space=space         # space class
+        self.params=params       # parameters
+        self.swarm=swarm         # the swarm
 
     def run(self) :
 
@@ -295,13 +302,17 @@ class particle :
 
         elif self.params.neigh_type=="geographic":
             #geographic neighborhood
+
             #particles distance from current particle (difference only, to gain time)
             self.dist=np.sum((self.swarm.part_pos-self.row_pos)**2,axis=1)
+
             #sort particles in order of distance
             #(current particle distance will always be zero, so we should exclude it)
             self.dist_sort=np.argsort(self.dist)
+
             #extract best fitness of neighbors (included particle's own fitness)
             self.best_id=self.swarm.part_max_val[self.dist_sort[0:self.params.neigh_size+1]].argmin()
+
             #extract best pos of particle having lowest best fitness within neighbors
             self.best_pos=self.swarm.part_pos[self.dist_sort[self.best_id]].copy()
 
@@ -312,6 +323,7 @@ class particle :
 
         #influence of personal max
         self.local=self.swarm.part_max_pos[self.n]-self.row_pos
+
         #application perioding boundary conditions (for periodic dimensions)
         self.test=np.logical_and(abs(self.local)>abs(self.swarm.part_max_pos[self.n]+self.space.cell_size-self.row_pos),self.space.boundary_type==0)
         self.local[self.test]=self.swarm.part_max_pos[self.n][self.test]+self.space.cell_size[self.test]-self.row_pos[self.test]
@@ -321,6 +333,7 @@ class particle :
 
         #influence of global max
         self.glob=self.best_pos-self.row_pos
+
         #application of periodic boundary conditions (for periodic dimensions)
         self.test=np.logical_and(abs(self.glob)>abs(self.best_pos+self.space.cell_size-self.row_pos),self.space.boundary_type==0)
         self.glob[self.test]=self.best_pos[self.test]+self.space.cell_size[self.test]-self.row_pos[self.test]
@@ -341,6 +354,7 @@ class particle :
         if self.velocity > self.params.kar :
             self.row_pos_new_tmp=self.row_pos+self.row_vel_new_tmp
             [self.row_pos_new,self.row_vel_new]=self.space.check_boundaries(self.row_pos_new_tmp,self.row_vel_new_tmp)
+
         #if velocity is too low, launch the kick and reseed procedure
         else :
             #if repellers are used, indicate that a flag should be placed
@@ -386,6 +400,7 @@ class particle :
             [self.row_pos_new,self.row_vel_new]=self.space.check_boundaries(self.row_pos_new_tmp,self.row_vel_new_tmp)
             #print "p%s: done particle %s"%(rank,self.n)
 
+        ### FITNESS EVALUATION ###
         self.f=self.fitness.evaluate(self.n,self.row_pos_new)
 
         #check whether a new max has been found and store all the max and max_pos in temporary buffers

@@ -25,6 +25,41 @@ private:
     std::map<std::string, std::vector<double>& > parametersArrayDouble;
     std::map<std::string, std::vector<std::string>& > parametersArrayString;
 
+protected:
+    
+    /*
+     * setter for int parameter
+     */
+    void setIntParam(const std::string& key, const int value);
+
+     /*
+     * setter for double parameter
+     */
+    void setDoubleParam(const std::string& key, const double value);
+     
+    /*
+     * setter for string parameter
+     */
+    void setStringParam(const std::string& key, const std::string value);
+
+     /*
+     * setter for int array parameter
+     */
+    void setIntArrayParam(const std::string& key,
+                        const std::vector<int>& value);
+     
+    /*
+     * setter for double array parameter
+     */
+    void setDoubleArrayParam(const std::string& key,
+                            const std::vector<double>& value);
+
+    /*
+     * setter for string array parameter
+     */
+    void setStringArrayParam(const std::string& key,
+                            const std::vector<std::string>& value);
+
 public:
 
     /*
@@ -43,19 +78,9 @@ public:
     int getIntParam(const std::string& key) const;
 
     /*
-     * setter for int parameter
-     */
-    void setIntParam(const std::string& key, const int value);
-
-    /*
      * getter for double parameter
      */
     double getDoubleParam(const std::string& key) const;
-
-    /*
-     * setter for double parameter
-     */
-    void setDoubleParam(const std::string& key, const double value);
 
     /*
      * getter for string parameter
@@ -63,42 +88,20 @@ public:
     std::string getStringParam(const std::string& key) const;
 
     /*
-     * setter for string parameter
-     */
-    void setStringParam(const std::string& key, const std::string value);
-
-    /*
      * getter for int array parameter
      */
     std::vector<int>& getIntArrayParam(const std::string& key) const;
-
-    /*
-     * setter for int array parameter
-     */
-    void setIntArrayParam(const std::string& key,
-                        const std::vector<int>& value);
-
+    
     /*
      * getter for double array parameter
      */
     std::vector<double>& getDoubleArrayParam(const std::string& key) const;
 
     /*
-     * setter for double array parameter
-     */
-    void setDoubleArrayParam(const std::string& key,
-                            const std::vector<double>& value);
-
-    /*
      * getter for string array parameter
      */
     std::vector<std::string>& getStringArrayParam(const std::string& key) const;
 
-    /*
-     * setter for string array parameter
-     */
-    void setStringArrayParam(const std::string& key,
-                            const std::vector<std::string>& value);
 };
 
 }

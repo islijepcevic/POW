@@ -113,6 +113,7 @@ if rank == 0:
     else:
         print ">>> importing user defined fitness function"
         try:
+            user_fit = None
             exec 'import %s as user_fit'%(params.fit.split('.')[0])
         except ImportError, e:
             print "ERROR: load of user defined fitness function failed!"

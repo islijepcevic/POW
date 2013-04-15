@@ -188,7 +188,7 @@ class Parser(BaseParameters): # this is imported in the file
             sys.exit(1)
 
 
-class Space:
+class Space(AbstractSpace):
     low=[]
     high=[]
     boundary_type=[]

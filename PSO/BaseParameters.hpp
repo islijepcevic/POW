@@ -104,6 +104,6 @@ public:
 
 };
 
-}
+} // namespace PSO
 
 #endif // __BASE_PARAMETERS__

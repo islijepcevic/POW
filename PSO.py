@@ -15,7 +15,7 @@
 # Web site : http://lbm.epfl.ch
 
 import cPickle
-import shutil, os
+import shutil, os, sys
 import numpy as np
 
 from mpi4py import MPI
@@ -32,7 +32,7 @@ class PSO:
         self.fitness=fitness
 
         self.space.cell_size=self.space.high-self.space.low
-        self.params.dimensions=len(self.space.cell_size)
+        self.params.dimensions = len(self.space.cell_size)
 
 
     def launch(self):
@@ -96,7 +96,7 @@ class PSO:
 
         #prepare repellers scaling factor, Xx the repeller should push according to the size of the cel right?
         if self.params.repel:
-            self.params.scale_repeller=self.space.cell_size*self.params.repel_factor
+            self.params.scale_repeller = self.space.cell_size*self.params.repel_factor
 
 
         #################
@@ -117,7 +117,9 @@ class PSO:
             for ts in xrange(start_ts,self.params.max_steps,1):
 
                 #rescaling of inertia factor
-                self.params.inertia=self.params.inertia_max-float(ts)/float(self.params.max_steps)*(self.params.inertia_max-self.params.inertia_min)
+                self.params.inertia = self.params.inertia_max - float(ts) / \
+                            float(self.params.max_steps) * \
+                            (self.params.inertia_max - self.params.inertia_min)
 
                 #root spreads the data to everybody (itself included)
                 comm.Barrier()

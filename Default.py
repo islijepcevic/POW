@@ -23,7 +23,7 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.module import BasicParameters, AbstractFitness, AbstractSpace, \
+from PSO.module import BaseParameters, AbstractFitness, AbstractSpace, \
         arrayToList
 
 class Parser(BaseParameters): # this is imported in the file

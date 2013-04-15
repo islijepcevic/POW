@@ -57,15 +57,40 @@ class Parser(BaseParameters): # this is imported in the file
         self.add('restart_freq','restart_freq','int',0)
 
 
-    #insert a new keyword entry in parameters dictionary Xx enter all the tuples above in the self.parameter xX
     def add(self,key,variable,vartype,default):
+        '''
+        insert a new keyword entry in parameters dictionary Xx enter all
+        the tuples above in the self.parameter xX
+
+        also fill in the maps in c++
+        '''
         self.parameters[key]=[variable,vartype,default]
 
+        # fill maps in c++ superclass
+        if vartype == 'int':
+            self.setIntParam(variable, default)
+        elif vartype == 'float':
+            self.setDoubleParam(variable, default)
+        elif vartype == 'str':
+            self.setStringParam(variable, default)
+        elif vartype == 'aray int':
+            self.setIntArrayParam(variable, default)
+        elif vartype == 'array float':
+            self.setDoubleArrayParam(variable, default)
+        elif vartype == 'array str':
+            self.setStringArrayParam(variable, default)
+        else:
+            print >> sys.stderr, "added parameter of non-default type"
 
-    #set default values for all defined keywords Xx Parsing the self paramater and creating a self of all the values xX
+
     def set_default_values(self):
+        '''
+        set default values for all defined keywords Xx Parsing the self
+        paramater and creating a self of all the values xX
+        '''
         for k,v in self.parameters.iteritems():
-            exec 'self.%s=v[2]'%v[0] # -> this is where the self.style comes from
+            # this is where the self.style comes from
+            exec 'self.%s=v[2]'%v[0] 
 
 
     #parse input file and replace default values

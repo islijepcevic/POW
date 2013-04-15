@@ -54,7 +54,8 @@ if rank == 0 and os.path.isfile(infile)!=1 :
     sys.exit(1)
 # -----
 
-#get program installation location and declare an environment variable (needed by some modules)
+#get program installation location and declare an environment variable
+#   (needed by some modules)
 h=os.path.dirname(sys.argv[0])
 home_dir=os.path.abspath(str(h))
 os.environ['POW']=home_dir
@@ -78,26 +79,43 @@ if rank == 0:
 
     #parse input file
     print '>> parsing input file...'
-    params=mode.Parser() #read user defined variables # Xx Params is class Parser of DockSymmCircle file xX
-    params.add_standard() #add default variables _> in default as well <-> self.add_standard of Parser Class
-    params.set_default_values() #set default values to all defined variables _> in default
-    params.parse(infile) #parse input file _> in default
-    params.check_standard_variables() #check consistency of standard variables _> in default
-    params.check_variables() #check consistency of user defined variables _> in DockSymmCircle
 
-    # ------------------------------------------------------------- TEST AREA -------------------------------------------------------------
+    # read user defined variables # Xx Params is class Parser of
+    # DockSymmCircle file xX
+    params=mode.Parser() 
 
+    #add default variables _> in default as well <-> self.add_standard
+    # of Parser Class
+    params.add_standard() 
 
+    # set default values to all defined variables _> in default
+    params.set_default_values() 
 
-    # -------------------------------------------------------------------------------------------------------------------------------------
+    # parse input file _> in default
+    params.parse(infile) 
+
+    # check consistency of standard variables _> in default
+    params.check_standard_variables() 
+    
+    # check consistency of user defined variables _> in DockSymmCircle
+    params.check_variables() 
+
+    # ------------ TEST AREA -------------------------------------------------
+
+    # ------------------------------------------------------------------------
 
 
     #load requested data structures
     print '>> importing data...'
-    data=mode.Data(params) # Xx data is the class data of docksym with argument params from above,
-    # -Xx so loaded into data all the parameters self.blabla of Parser class, in the class itself these are loaded in the
+
+    # Xx data is the class data of docksym with argument params from above,
+    data=mode.Data(params) 
+
+    # -Xx so loaded into data all the parameters self.blabla of Parser
+    #      class, in the class itself these are loaded in the
     # -Xx def __init__ (self, params)function
-    # -Xx the Data class will then do appropriate modications, such checking whether there is conformational change etc
+    # -Xx the Data class will then do appropriate modications, such
+    #      checking whether there is conformational change etc
 
     #build search space
     print ">> generating search space..."
@@ -121,7 +139,8 @@ if rank == 0:
         try:
             user_fit.Fitness
         except NameError:
-            print 'ERROR: user defined fitness function file should contain a class Fitness with a function evaluate(id,values_array) '
+            print 'ERROR: user defined fitness function file should contain' \
+                'a class Fitness with a function evaluate(id,values_array) '
         fitness=user_fit.Fitness(data,params)
 
 else:

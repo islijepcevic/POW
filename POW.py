@@ -143,6 +143,12 @@ if rank == 0:
                 'a class Fitness with a function evaluate(id,values_array) '
         fitness=user_fit.Fitness(data,params)
 
+    if params.dimensions != space.cell_size:
+        print >> sys.stderr, "params.dimensions and space.cell_size DIFFER;", \
+                            "updating params.dimensions accordingly"
+
+        params.dimensions = space.cell_size
+
 else:
     params=None
     data=None

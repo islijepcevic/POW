@@ -32,6 +32,8 @@ class PSO:
         self.fitness=fitness
 
         self.space.cell_size=self.space.high-self.space.low
+
+        # done in POW.py (by Ivan)
         self.params.dimensions = len(self.space.cell_size)
 
 

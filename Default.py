@@ -288,16 +288,21 @@ class BaseFitness(AbstractFitness):
         '''
         method that is called from PSO in c++ for evaluating the particle
 
-        NOTE TO THE MODULE PROGRAMMER: instead of using evaluate() method, 
-        it might be better to override and use this method and use the
-        particle object instead. It should give much more freedom.
+        NOTE TO THE MODULE PROGRAMMER:
+        instead of using evaluate() method, it might be better to override
+        and use this method and use the particle object instead. It should
+        give much more freedom.
 
         @param particle - object of Particle class that contains all the
                         necessary information
         @return - value at the position of the particle, float
         '''
-        positionList = arrayToList(particle.getPosition(), posSize)
-        return self.evaluate(particle.getIndex(), pos_list)
+
+        # pseudocode:
+        #positionList = arrayToList(particle.getPosition(), posSize)
+        #return self.evaluate(particle.getIndex(), pos_list)
+
+        raise NotImplementedError("TODO BY IVAN")  # TODO
 
     def evaluate(self, num, pos):
         '''

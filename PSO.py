@@ -329,14 +329,24 @@ class particle :
         self.local=self.swarm.part_max_pos[self.n]-self.row_pos
 
         #application perioding boundary conditions (for periodic dimensions)
-        self.test=np.logical_and(abs(self.local)>abs(self.swarm.part_max_pos[self.n]+self.space.cell_size-self.row_pos),self.space.boundary_type==0)
-        self.local[self.test]=self.swarm.part_max_pos[self.n][self.test]+self.space.cell_size[self.test]-self.row_pos[self.test]
-        self.test=np.logical_and(abs(self.local)>abs(self.swarm.part_max_pos[self.n]-self.space.cell_size-self.row_pos),self.space.boundary_type==0)
-        self.local[self.test]=self.swarm.part_max_pos[self.n][self.test]-self.space.cell_size[self.test]-self.row_pos[self.test]
-        self.local_max=self.params.cn*np.random.rand(len(self.space.low))*(self.local)
+        self.test = np.logical_and(
+                abs(self.local) >
+                    abs(self.swarm.part_max_pos[self.n] +
+                        self.space.cell_size-self.row_pos),
+                self.space.boundary_type==0)
+
+        self.local[self.test] = self.swarm.part_max_pos[self.n][self.test] + \
+                                self.space.cell_size[self.test] - \
+                                self.row_pos[self.test]
+
+        self.test = np.logical_and(abs(self.local)>abs(self.swarm.part_max_pos[self.n]-self.space.cell_size-self.row_pos),self.space.boundary_type==0)
+
+        self.local[self.test] = self.swarm.part_max_pos[self.n][self.test]-self.space.cell_size[self.test]-self.row_pos[self.test]
+
+        self.local_max = self.params.cn*np.random.rand(len(self.space.low))*(self.local)
 
         #influence of global max
-        self.glob=self.best_pos-self.row_pos
+        self.glob = self.best_pos-self.row_pos
 
         #application of periodic boundary conditions (for periodic dimensions)
         self.test=np.logical_and(abs(self.glob)>abs(self.best_pos+self.space.cell_size-self.row_pos),self.space.boundary_type==0)

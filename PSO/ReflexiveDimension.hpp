@@ -1,13 +1,13 @@
 /*
- * PeriodicDimension.hpp
+ * ReflexiveDimension.hpp
  *
- * Subclass of Dimension with periodic boundary condition
+ * Subclass of Dimension with reflexive boundary condition
  *
  * author: Ivan Slijepcevic
  * e-mail: ivan.slijepcevic@epfl.ch
  */
-#ifndef __PERIODIC_DIMENSION__
-#define __PERIODIC_DIMENSION__
+#ifndef __REFLEXIVE_DIMENSION__
+#define __REFLEXIVE_DIMENSION__
 
 #include <utility>
 #include <stdexcept>
@@ -16,18 +16,18 @@
 
 namespace PSO {
 
-class PeriodicDimension : public Dimension {
+class ReflexiveDimension : public Dimension {
 public:
 
     /*
      * constructor
      */
-    PeriodicDimension(const double _lower, const double _higher);
+    ReflexiveDimension(const double _lower, const double _higher);
 
     /*
      * destructor
      */
-    virtual ~PeriodicDimension() {}
+    virtual ~ReflexiveDimension() {}
 
     // Override
     virtual std::pair<double, double>
@@ -36,4 +36,4 @@ public:
 
 } // namespace PSO
 
-#endif // __PERIODIC_DIMENSION__
+#endif // __REFLEXIVE_DIMENSION__

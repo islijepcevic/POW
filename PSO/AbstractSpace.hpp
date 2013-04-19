@@ -10,26 +10,37 @@
 #define __ABSTRACT_SPACE__
 
 #include <vector>
+#include "Dimension.h"
 
 namespace PSO {
 
 class AbstractSpace {
+private:
+
+    // this is for the description of dimensions
+    const std::vector<Dimension*>& dimensions;
+
 public:
 
     /*
      * constructor
      * empty implementation provided
      */
-    AbstractSpace() {}
+    AbstractSpace(const std::vector<Dimension*>& _dimensions);
 
     /*
      * destructor
      * empty imelpmentation provided
      */
-    virtual ~AbstractSpace() {}
+    virtual ~AbstractSpace();
+
+    /*
+     *
+     */
+    virtual void checkBoundaries(Particle& particle) const;
 
 };
 
-}
+} // namespace PSO
 
 #endif // __ABSTRACT_SPACE__

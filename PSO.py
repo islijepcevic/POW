@@ -365,7 +365,7 @@ class particle :
 
             # particles distance from current particle (difference only, to
             # gain time)
-            self.dist = np.sum((self.swarm.part_pos-self.row_pos)**2, axis=1)
+            self.dist = np.sum((self.swarm.part_pos - self.row_pos)**2, axis=1)
 
             # sort particles in order of distance
             # (current particle distance will always be zero, so we should
@@ -388,7 +388,7 @@ class particle :
         self.previous = self.params.inertia*self.row_vel
 
         #influence of personal max
-        self.local = self.swarm.part_max_pos[self.n]-self.row_pos
+        self.local = self.swarm.part_max_pos[self.n] - self.row_pos
 
         #application perioding boundary conditions (for periodic dimensions)
         self.test = np.logical_and(
@@ -510,6 +510,7 @@ class particle :
                 self.row_pos_new = rand_set(self.space.low, self.space.high)
                 self.swarm.part_max_val[self.n] = 10000
                 self.swarm.part_max_pos[self.n] = self.row_pos_new.copy()
+        # END KAR part
 
         # influence of repulsion field
         if self.params.repel :
@@ -545,6 +546,7 @@ class particle :
                     self.row_vel_new_tmp
                 )
             #print "p%s: done particle %s"%(rank,self.n)
+        # END REPULSION PART
 
         ### FITNESS EVALUATION ###
         self.f = self.fitness.evaluate(self.n, self.row_pos_new)

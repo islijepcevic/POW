@@ -27,7 +27,7 @@ public:
     /*
      * destructor
      */
-    virtual ~PeriodicDimension() {}
+    virtual ~PeriodicDimension();
 
     // Override
     virtual std::pair<double, double>

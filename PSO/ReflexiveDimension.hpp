@@ -27,7 +27,7 @@ public:
     /*
      * destructor
      */
-    virtual ~ReflexiveDimension() {}
+    virtual ~ReflexiveDimension();
 
     // Override
     virtual std::pair<double, double>

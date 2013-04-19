@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+namespace PSO {
+
 ReflexiveDimension::ReflexiveDimension(const double _lower,
                                     const double _higher) :
     Dimension(_lower, _higher) {
@@ -37,3 +39,4 @@ std::pair<double, double> ReflexiveDimension::checkBoundaries(double position,
     return std::make_pair(position, velocity);
 }
 
+} // namespace PSO

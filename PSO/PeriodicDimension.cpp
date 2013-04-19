@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+namespace PSO {
+
 PeriodicDimension::PeriodicDimension(const double _lower,
                                     const double _higher) :
     Dimension(_lower, _higher) {
@@ -24,3 +26,5 @@ std::pair<double, double> PeriodicDimension::checkBoundaries(double position,
 
     return std::make_pair(position, velocity);
 }
+
+} // namespace PSO

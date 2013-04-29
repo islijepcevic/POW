@@ -12,8 +12,6 @@
 #include <ctime>
 #include "randomUtils.hpp"
 
-#define VERY_LARGE_VALUE 100000000
-
 namespace PSO {
 
 Swarm::Swarm(int noParticles, AbstractSpace& _space) :

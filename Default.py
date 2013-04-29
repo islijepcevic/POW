@@ -41,8 +41,10 @@ class Parser(BaseParameters): # this is imported in the file
         self.add('filter_threshold','accept','float',0)
         self.add('inertiaMax','inertia_max','float',0.9)
         self.add('inertiaMin','inertia_min','float',0.4)
+        # how much the velocity is influenced by global/neighborhood best
         self.add('cp','cp','float',2.0)
-        self.add('cn','cn','float',2.0)
+        # how much the velocity is influenced by personal best
+        self.add('cn','cn','float',2.0) 
         self.add('output','output_file','str',"log.txt")
         self.add('dimensions','dimensions','int',-1)
         self.add('fitnessFile','fit','str',"NA")

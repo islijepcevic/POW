@@ -47,4 +47,9 @@ std::pair<double, double> ReflexiveDimension::checkBoundaries(double position,
     return std::make_pair(position, velocity);
 }
 
+double ReflexiveDimension::calculateShortestDistance(double pos1, double pos2)
+                                                                        const {
+    this->calculateDistance(pos1, pos2);
+}
+
 } // namespace PSO

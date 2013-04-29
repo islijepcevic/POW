@@ -32,6 +32,9 @@ public:
     // Override
     virtual std::pair<double, double>
         checkBoundaries(double position, double velocity) const;
+
+    // Override
+    virtual double calculateShortestDistance(double pos1, double pos2) const;
 };
 
 } // namespace PSO

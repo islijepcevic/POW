@@ -33,19 +33,30 @@ public:
     /*
      * constructor
      */
-    Dimension(const double _lower, const double _higher) :
-        lowerBound(_lower), _higher(higherBound),
-        size(higherBound - lowerBound) {
-
-        if size < 0 {
-            throw std::invalid_argument("dimension size is negative");
-        }
-    }
+    Dimension(const double _lower, const double _higher);
 
     /*
      * destructor
      */
-    virtual ~Dimension() {}
+    virtual ~Dimension();
+
+    /*
+     * getter for lower bound
+     * @return - lower bound
+     */
+    double getLowerBound();
+
+    /*
+     * getter for higher bound
+     * @return - higher bound
+     */
+    double getHigherBound();
+
+    /*
+     * getter for dimension size
+     * @return - size of this dimension
+     */
+    double getSize();
 
     /*
      * method that checks boundaries for a specific boundary conditions
@@ -55,6 +66,25 @@ public:
      */
     virtual std::pair<double, double>
         checkBoundaries(double position, double velocity) const = 0;
+
+    /*
+     * calculates distance between two points in this dimension
+     * assumes that both positions are within the dimension size
+     * @param pos1 - first position
+     * @param pos2 - second position
+     * @return - distance
+     */
+    virtual double calculateDistance(double pos1, double pos2) const;
+
+    /*
+     * calculates shortest distance between two points in this dimension
+     * assumes that both positions are within the dimension size
+     * @param pos1 - first position
+     * @param pos2 - second position
+     * @return - shortest distance
+     */
+    virtual double calculateShortestDistance(double pos1, double pos2)
+                                                                const = 0;
 };
 
 } // namspace PSO

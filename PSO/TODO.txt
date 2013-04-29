@@ -1,0 +1,69 @@
+PSO (c++):
+-> take care to make params.inertia part of PSO (or swarm) (instead of params)
+-> implement PSO
+
+Particle:
+-> check what needs to be implemented next. (maybe nothing)
+
+Swarm
+-> implement it
+
+Neighbourhood and derived classes
+-> get rid of all TODOs within these classes after Swarm is implemented
+
+Make a new class for representing a dimension. It will have lower and higher
+boundaries (doubles), cell size (double). There will exist subclases of
+dimension which will implement different type of bound, for boundary value
+checking.
+-> AbstractSpace - implement checkBoundaries (first needs to have idea of what
+should be the input parameter - Particle or vector, but for that, I need to
+know how PSO and Particle will work)
+
+SWIG module.i:
+-> update polymorphism for every class
+-> add mpi support
+-> add interface for every needed C++/Python data structure (vector, string)
+
+AbstractFitness/BaseFitness:
+-> BaseFitness implements virtual call_evaluate from c++ to connect it with
+evaluate (need Particle)
+-> Fitness is then implemented by the user. (check if this is true)
+-> in BaseFitness check the consistency of the called methods for array/list
+conversion and particle methods after they are implemented
+
+MPI: after testing regular code, add MPI support
+-> use boost's serialization library
+-> add MPI
+-> Master/slave architecture
+
+TEST:
+-> BaseParameters with Parameters integration (do they fill correctly)
+-> BaseParameters has std::string, test if it works that way. Maybe there is
+need of char*. Otherwise, in Parser.add() I can call some converter from
+python string to c++ string, which I implement in swig's module.i
+-> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
+
+
+##############################################################################
+# DONE:                                                                      #
+##############################################################################
+
+Particle
+-> implemented basic version
+
+Connect BaseParameters with Parameters:
+(12.7.)+> think of methods to fill in the c++ map from Python when
+initializing
+(12.7.)+> think of how to update when something is set in both directions
+
+Space / Dimension
+(15.4.)+> Dimension.checkBoundaries() updates the particle. check if it needs
+to return a new particle, or some vectors
+(19.4.)+>AbstractSpace / Space will then have a list of references to
+dimensions, instead the list of high/low/cell_size/...
+
+SWIG:
+(15.4.)+> do basic one
+
+AbstractFitness / BaseFitness:
++> connect to Python: AbstractFitness <- BaseFitness <- Fitness

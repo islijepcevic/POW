@@ -35,9 +35,48 @@ public:
     virtual ~AbstractSpace();
 
     /*
+     * getter for number of dimensions
+     * @return - number of dimensions
+     */
+    int getNoDimensions() const;
+
+    /*
+     * getter for lower bound of wanted dimension
+     * @param dimensionIndex - index of the wanted dimension
+     * @return - lower bound for given dimension
+     */
+    double getLowerBound(int dimensionIndex);
+
+    /*
+     * getter for higher bound of wanted dimension
+     * @param dimensionIndex - index of the wanted dimension
+     * @return - higher bound for given dimension
+     */
+    double getHigherBound(int dimensionIndex);
+
+    /*
+     * getter for lower bound of dimension d
+     * @param dimensionIndex - index of the wanted dimension
+     * @return - lower bound for given dimension
+     */
+    double getSize(int dimensionIndex);
+
+    /*
      *
      */
-    virtual void checkBoundaries(Particle& particle) const;
+    void checkBoundaries(Particle& particle) const;
+
+    /*
+     * do not return void
+     */
+    void calculateDistanceVector(const Particle& particle1,
+                            const Particle& particle2) const;
+
+    /*
+     * do not return void
+     */
+    void calculateShortestDistanceVector(const Particle& particle1,
+                            const Particle& particle2) const;
 
 };
 

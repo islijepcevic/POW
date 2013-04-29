@@ -394,7 +394,7 @@ class particle :
         self.test = np.logical_and(
             abs(self.local) > abs(
                 self.swarm.part_max_pos[self.n]
-                + self.space.cell_size-self.row_pos
+                + self.space.cell_size - self.row_pos
             ),
             self.space.boundary_type == 0
         )

@@ -1,20 +1,17 @@
 PSO (c++):
+-> implement this class
 -> take care to make params.inertia part of PSO (or swarm) (instead of params)
--> implement PSO
 
 Particle:
 -> check what needs to be implemented next. (maybe nothing)
 
 Swarm
--> implement it
+-> check what next (maybe nothing)
 
 Neighbourhood and derived classes
 -> get rid of all TODOs within these classes after Swarm is implemented
 
-Make a new class for representing a dimension. It will have lower and higher
-boundaries (doubles), cell size (double). There will exist subclases of
-dimension which will implement different type of bound, for boundary value
-checking.
+Space / Dimension
 -> AbstractSpace - implement checkBoundaries (first needs to have idea of what
 should be the input parameter - Particle or vector, but for that, I need to
 know how PSO and Particle will work)
@@ -49,12 +46,18 @@ python string to c++ string, which I implement in swig's module.i
 ##############################################################################
 
 Particle
--> implemented basic version
+(29.4.)+> implemented basic version
+
+Swarm
+(29.4.)+> implemented basic version
+
+Neighbourhood and derived:
+(29.4.)+> implemented basic versions
 
 Connect BaseParameters with Parameters:
-(12.7.)+> think of methods to fill in the c++ map from Python when
+(12.4.)+> think of methods to fill in the c++ map from Python when
 initializing
-(12.7.)+> think of how to update when something is set in both directions
+(12.4.)+> think of how to update when something is set in both directions
 
 Space / Dimension
 (15.4.)+> Dimension.checkBoundaries() updates the particle. check if it needs

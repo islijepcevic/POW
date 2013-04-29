@@ -1,3 +1,11 @@
+/*
+ * AbstractSpace.cpp
+ *
+ * Abstract space for the use in c++ part of PSO
+ *
+ * author: Ivan Slijepcevic
+ * e-mail: ivan.slijepcevic@epfl.ch
+ */
 #include "AbstractSpace.hpp"
 
 namespace PSO {

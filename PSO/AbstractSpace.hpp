@@ -10,7 +10,7 @@
 #define __ABSTRACT_SPACE__
 
 #include <vector>
-#include "Dimension.h"
+#include "Dimension.hpp"
 
 namespace PSO {
 

@@ -1,3 +1,11 @@
+/*
+ * PeriodicDimension.cpp
+ *
+ * Subclass of Dimension with periodic boundary condition
+ *
+ * author: Ivan Slijepcevic
+ * e-mail: ivan.slijepcevic@epfl.ch
+ */
 #include "PeriodicDimension.hpp"
 
 #include <cmath>

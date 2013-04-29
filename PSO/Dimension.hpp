@@ -17,7 +17,7 @@
 namespace PSO {
 
 class Dimension {
-private:
+protected:
     
     // lower bound of the dimension
     double lowerBound;

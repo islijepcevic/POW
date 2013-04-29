@@ -1,3 +1,11 @@
+/*
+ * ReflexiveDimension.cpp
+ *
+ * Subclass of Dimension with reflexive boundary condition
+ *
+ * author: Ivan Slijepcevic
+ * e-mail: ivan.slijepcevic@epfl.ch
+ */
 #include "ReflexiveDimension.hpp"
 
 #include <cmath>

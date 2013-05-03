@@ -38,6 +38,7 @@ TEST:
 -> BaseParameters has std::string, test if it works that way. Maybe there is
 need of char*. Otherwise, in Parser.add() I can call some converter from
 python string to c++ string, which I implement in swig's module.i
+-> BaseParameters has references to std::vector, test how it works
 -> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
 
 

@@ -38,6 +38,6 @@ public:
     virtual double evaluation(const Particle& particle) = 0;
 };
 
-}
+} // namespace PSO
 
 #endif // __ABSTRACT_FITNESS__

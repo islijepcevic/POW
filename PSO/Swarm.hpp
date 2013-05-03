@@ -16,7 +16,7 @@
 namespace PSO {
 
 class Swarm {
-private:
+protected:
 
     // array of all particles
     std::vector<Particle> particles;

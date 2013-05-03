@@ -8,7 +8,7 @@
  */
 #include "Particle.hpp"
 
-#define VERY_LARGE_VALUE 100000000.0
+#include "constants.hpp"
 
 namespace PSO {
 

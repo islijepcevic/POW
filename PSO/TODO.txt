@@ -1,17 +1,5 @@
-last done:
-skeleton of PSO. continue to check constructor of PSO, write constructor of
-Swarm, and then Particle
-if all seems legit, continue with writing PSO algorithm
-
 PSO (c++):
--> implement the rest of this class
--> take care to make params.inertia part of PSO (or swarm) (instead of params)
-
-Particle:
--> check what needs to be implemented next. (maybe nothing)
-
-Swarm
--> check what next (maybe nothing)
+-> continue implementing according to comments in the methods
 
 Neighbourhood and derived classes
 -> get rid of all TODOs within these classes after Swarm is implemented
@@ -34,7 +22,8 @@ evaluate (need Particle)
 conversion and particle methods after they are implemented
 
 MPI: after testing regular code, add MPI support
--> use boost's serialization library
+-> find out a way to send serialized objects (considering that MPI was
+initialized in Python)
 -> add MPI
 -> Master/slave architecture
 
@@ -46,6 +35,10 @@ python string to c++ string, which I implement in swig's module.i
 -> BaseParameters has references to std::vector, test how it works
 -> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
 
+IF THERE IS TIME:
+-> kick and reset
+-> repellers
+-> save/load to enable restart from file
 
 ##############################################################################
 # DONE:                                                                      #
@@ -53,6 +46,7 @@ python string to c++ string, which I implement in swig's module.i
 
 PSO:
 (3.5.)+> skeleton created
+(3.5.)+> make params.inertia part of PSO (or swarm) (instead of params)
 
 Particle
 (29.4.)+> implemented basic version

@@ -1,3 +1,9 @@
+next:
+test connecting mpi4py and boost::mpi through SWIG. (see comments in "DONE")
+think of how to proceed communicating the data in the PSO
+serialize the particle
+serialize the neighbourhood(s)
+
 PSO (c++):
 -> continue implementing according to comments in the methods
 
@@ -22,8 +28,7 @@ evaluate (need Particle)
 conversion and particle methods after they are implemented
 
 MPI: after testing regular code, add MPI support
--> find out a way to send serialized objects (considering that MPI was
-initialized in Python)
+-> test sending MPI_Comm to boost::mpi::communicator through SWIG
 -> add MPI
 -> Master/slave architecture
 
@@ -68,8 +73,29 @@ to return a new particle, or some vectors
 (19.4.)+>AbstractSpace / Space will then have a list of references to
 dimensions, instead the list of high/low/cell_size/...
 
-SWIG:
-(15.4.)+> do basic one
-
 AbstractFitness / BaseFitness:
 +> connect to Python: AbstractFitness <- BaseFitness <- Fitness
+
+MPI
+(6.5.)+> find out a way to send serialized objects (considering that MPI was
+initialized in Python):
+"""
+Boost.MPI is benefitial because it provides a way of passing serialized
+objects. In "native" MPI, one needs to define special typemaps in order to
+pass user-defined datatypes, which seems very painful and nonupgradeable.
+
+The problem with Boost.MPI seemed to be that it is difficult to connect to
+Python via SWIG, because Boost has its own library for mapping C++ to Python
+(Boost.Python). Nevertheless, it seems that there is a way of connecting the
+two.
+
+Boost.MPI is initailized with two classes: boost::mpi::environment and
+boost::mpi::communicator (when it's the only one used in a separate c++ main).
+The good thing is that boost::mpi::communicator can be initialized with
+existing MPI_Comm, and in this case boost::mpi::environment is not needed. In
+this case, I hope that MPI_Comm that is initialized in Python and is sent
+through SWIG can be used to initialize boost::mpi::communicator.
+"""
+
+SWIG:
+(15.4.)+> do basic one

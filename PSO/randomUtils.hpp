@@ -15,3 +15,8 @@
  * @return - a random double
  */
 double randDouble(double lo, double hi);
+
+/*
+ * method that initializes random seed
+ */
+void initRandomSeed();

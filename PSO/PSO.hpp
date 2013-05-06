@@ -13,17 +13,16 @@
 #include "AbstractSpace.hpp"
 #include "AbstractFitness.hpp"
 #include "Swarm.hpp"
+#include "Neighbourhood.hpp"
 
 #include <mpi.h>
 #include <string>
+#include <cstdio>
 
 namespace PSO {
 
 class PSO {
 private:
-
-    // MPI comm world
-    MPI_Comm comm_world;
 
     // all the parameters
     BaseParameters& params;
@@ -37,17 +36,34 @@ private:
     // swarm of particles
     Swarm swarm;
 
+    // neighbourhood
+    Neighbourhood* neighbourhood;
+
     // number of iterations or steps in one run of the PSO
-    int maxSteps;
+    int totalSteps;
 
     // number of repetitions of whole PSO algorithm
-    int nAlgRepetitions;
+    int totalRepetitions;
 
-    // inertia at current step
-    double inertia;
+    // inertia parameters of the algorithm
+    // (but current inertia is member variable of Swarm)
+    double inertiaMax;
+    double inertiaMin;
 
     // output file name
-    std::string outFileName;
+    std::string logFileName;
+
+    // lof file
+    FILE* logFile;
+
+    // MPI comm world
+    MPI_Comm commWorld;
+
+    // rank of MPI process
+    int mpiRank;
+
+    // number of MPI processes
+    int mpiSize;
 
     // TODO make methods for master and parallel slaves
 
@@ -60,8 +76,8 @@ public:
      * @param _space - space for the particles
      * @param _fitness - class for the fitness function
      */
-    PSO(MPI_Comm _comm, BaseParameters& _params, AbstractSpace& _space,
-            AbstractFitness& _fitness);
+    PSO(BaseParameters& _params, AbstractSpace& _space,
+            AbstractFitness& _fitness, MPI_Comm _comm);
 
     /*
      * destructor

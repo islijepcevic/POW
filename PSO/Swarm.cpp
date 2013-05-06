@@ -16,9 +16,11 @@ namespace PSO {
 
 Swarm::Swarm(int noParticles, AbstractSpace& _space) :
     particles( noParticles, Particle(_space.getNoDimensions()) ),
-    space(_space) {
+    space(_space),
+    inertia(0.0) {
 
-    srand(time(NULL));
+    // initialize random seed
+    initRandomSeed();
 }
 
 Swarm::~Swarm() {

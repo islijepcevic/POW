@@ -9,6 +9,7 @@
 #include "Particle.hpp"
 
 #include "constants.hpp"
+#include "randomUtils.hpp"
 
 namespace PSO {
 

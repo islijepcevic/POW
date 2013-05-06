@@ -1,5 +1,10 @@
+last done:
+skeleton of PSO. continue to check constructor of PSO, write constructor of
+Swarm, and then Particle
+if all seems legit, continue with writing PSO algorithm
+
 PSO (c++):
--> implement this class
+-> implement the rest of this class
 -> take care to make params.inertia part of PSO (or swarm) (instead of params)
 
 Particle:
@@ -45,6 +50,9 @@ python string to c++ string, which I implement in swig's module.i
 ##############################################################################
 # DONE:                                                                      #
 ##############################################################################
+
+PSO:
+(3.5.)+> skeleton created
 
 Particle
 (29.4.)+> implemented basic version

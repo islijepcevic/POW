@@ -43,6 +43,9 @@ private:
     // number of repetitions of whole PSO algorithm
     int nAlgRepetitions;
 
+    // inertia at current step
+    double inertia;
+
     // output file name
     std::string outFileName;
 

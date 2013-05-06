@@ -15,7 +15,8 @@ PSO::PSO(MPI_Comm _comm, BaseParameters& _params, AbstractSpace& _space,
     comm_world(_comm), params(_params), space(_space), fitness(_fitness),
     Swarm(params.getIntParam("n_particles", space),
     maxSteps(params.getIntParam("max_steps")),
-    nAlgRepetitions(params.getIntParams("repeat")) {
+    nAlgRepetitions(params.getIntParams("repeat")),
+    inertia(0.0), outFileName(params.getStringParams("output_file")) {
 }
 
 virtual ~PSO::PSO() {

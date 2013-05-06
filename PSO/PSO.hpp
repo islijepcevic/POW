@@ -65,7 +65,20 @@ private:
     // number of MPI processes
     int mpiSize;
 
-    // TODO make methods for master and parallel slaves
+    /*
+     * method that runs on master process and manages all the work
+     */
+    void manager();
+
+    /*
+     * method that performs an iteration of one PSO launch
+     */
+    void performNextIteration(int step);
+
+    /*
+     * method that runs on all other processes (slaves)
+     */
+    void worker();
 
 public:
 

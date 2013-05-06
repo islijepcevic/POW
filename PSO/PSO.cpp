@@ -40,10 +40,80 @@ virtual ~PSO::PSO() {
     free(neighbourhood);
 }
 
+/*
+ * main launch
+ */
 void PSO::launch() {
-    //TODO
+
+    if (mpiRank == 0) {
+        manager();
+    } else {
+        worker();
+    }
 }
 
-// TODO methods for master/slave
+/*
+ * main code for rank 0
+ */
+void PSO::manager() {
+
+    // open log file
+    logFile = fopen(logFileName.c_str(), "w");
+    if (logFile == NULL) {
+        throw std::bad_alloc("could not open log file");
+    }
+
+    // synchronize (barrier, broadcast), maybe NOT; TODO
+
+    // loop that repeats executing PSO algorithm
+    for (int repeatNo = 0; repeatNo < totalRepetitions; repeatNo++) {
+        printf("\n> REPETITION %d\n", repeatNo + 1);
+
+        // seed all the particles in the swarm
+    // init local variables
+    double inertiaMax = params.getDoubleParam("inertia_max");
+    double inertiaMin = params.getDoubleParam("inertia_min");
+
+        swarm.seedParticles();
+
+        // main loop for one PSO launch
+        for (int step = 0; step < totalSteps; step++) {
+            // do the work
+            performNextIteration(step);
+        }
+    }
+
+    // close log file
+    fclose(logFile);
+}
+
+/*
+ * this is still the work of root node (rank 0)
+ */
+void PSO::performNextIteration(int step) {
+
+    // rescale inertia factor
+    swarm.inertia = inertiaMax
+        - (double)step / totalSteps * (inertiaMax - inertiaMin);
+
+    // update neighbourhood
+    neighbourhood.scanNeighbours();
+
+    // for every particle, send data to worker()
+    for (int indexParticle = 0; indexParticle = swarm.getNoParticles();
+            indexParticle++) {
+        //...
+    }
+
+    // gather all data
+
+    // write all to the log
+}
+
+/*
+ * main code for every other node
+ */
+void PSO::worker() {
+}
 
 } // namespace PSO

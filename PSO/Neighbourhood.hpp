@@ -17,7 +17,7 @@ class Neighbourhood {
 protected:
 
     Swarm& swarm;
-    
+
 public:
 
     Neighbourhood(const Swarm& _swarm) : swarm(_swarm) {}
@@ -35,7 +35,7 @@ public:
      * @param particleIndex - index of a given particle in the swarm
      * @return - reference to the best evaluated particle
      */
-    virtual Particle& findBestNeighbour(int particleIndex) const = 0; 
+    virtual Particle& findBestNeighbour(int particleIndex) const = 0;
 };
 
 } // namespace PSO

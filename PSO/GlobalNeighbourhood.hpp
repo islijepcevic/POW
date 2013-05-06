@@ -17,7 +17,7 @@ class GlobalNeighbourhood : public Neighbourhood {
 private:
 
     Particle& bestParticle;
-    
+
 public:
 
     GlobalNeighbourhood(const Swarm& _swarm);
@@ -28,7 +28,7 @@ public:
     virtual void scanNeighbours();
 
     // Override
-    virtual Particle& findBestNeighbour(int particleIndex) const; 
+    virtual Particle& findBestNeighbour(int particleIndex) const;
 };
 
 } // namespace PSO

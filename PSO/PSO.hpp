@@ -18,6 +18,7 @@
 #include <mpi.h>
 #include <string>
 #include <cstdio>
+#include <boost/mpi.hpp>
 
 namespace PSO {
 
@@ -32,6 +33,9 @@ private:
 
     // fitness function
     AbstractFitness& fitness;
+
+    // MPI comm world
+    boost::mpi::communicator mpiWorld;
 
     // swarm of particles
     Swarm swarm;
@@ -55,15 +59,6 @@ private:
 
     // lof file
     FILE* logFile;
-
-    // MPI comm world
-    MPI_Comm commWorld;
-
-    // rank of MPI process
-    int mpiRank;
-
-    // number of MPI processes
-    int mpiSize;
 
     /*
      * method that runs on master process and manages all the work

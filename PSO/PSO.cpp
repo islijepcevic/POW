@@ -46,7 +46,7 @@ virtual ~PSO::PSO() {
  */
 void PSO::launch() {
 
-    if (mpiRank == 0) {
+    if (mpiWorld.rank() == 0) {
         manager();
     } else {
         worker();
@@ -70,7 +70,7 @@ void PSO::manager() {
     for (int repeatNo = 0; repeatNo < totalRepetitions; repeatNo++) {
         printf("\n> REPETITION %d\n", repeatNo + 1);
 
-        // seed all the particles in the swarm
+    // seed all the particles in the swarm
     // init local variables
     double inertiaMax = params.getDoubleParam("inertia_max");
     double inertiaMin = params.getDoubleParam("inertia_min");

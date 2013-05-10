@@ -51,7 +51,18 @@ public:
 // methods
 
     /*
-     * constructor
+     * basic constructor. This is meant to be used only for the purpose of
+     * skeleton-content pattern of Boost.MPI. Master process creates the
+     * skeleton of the particle using different constructor, and sends it to
+     * all the other processes.  Then, only the content of the particles is
+     * passed, to reduce the number of copying the data while communicating
+     * via MPI.
+     */
+    Particle();
+
+    /*
+     * constructor. This constructor is to be used by Master node when the
+     * first particle is created.
      * @param noDimensions - number of dimensions
      */
     Particle(int noDimensions);

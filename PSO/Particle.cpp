@@ -13,6 +13,9 @@
 
 namespace PSO {
 
+Particle::Particle() {
+}
+
 Particle::Particle(int noDimensions) :
         currentPosition(noDimensions),
         currentVelocity(noDimensions),

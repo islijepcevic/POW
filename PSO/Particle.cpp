@@ -16,7 +16,8 @@ namespace PSO {
 Particle::Particle() {
 }
 
-Particle::Particle(int noDimensions) :
+Particle::Particle(const int _index, const int noDimensions) :
+        INDEX(_index),
         currentPosition(noDimensions),
         currentVelocity(noDimensions),
         currentValue(VERY_LARGE_VALUE),

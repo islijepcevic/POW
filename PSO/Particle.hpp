@@ -30,6 +30,7 @@ private:
      */
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version) {
+        ar & const_cast<int&>(INDEX);
         ar & currentPosition;
         ar & currentVelocity;
         ar & currentValue;
@@ -38,6 +39,9 @@ private:
     }
 
 public:
+
+    // index of the particle
+    const int INDEX;
 
     // variables associated to current solution
     std::vector<double> currentPosition;
@@ -65,7 +69,7 @@ public:
      * first particle is created.
      * @param noDimensions - number of dimensions
      */
-    Particle(int noDimensions);
+    Particle(const int _index, const int noDimensions);
 
     /*
      * destructor

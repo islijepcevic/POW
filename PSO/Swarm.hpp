@@ -30,7 +30,13 @@ public:
     double inertia;
 
     /*
+     * default constructor of the Swarm
+     */
+    Swarm();
+
+    /*
      * constructor of the Swarm
+     * (meant to be used in master process)
      */
     Swarm(int noParticles, AbstractSpace& _space);
 

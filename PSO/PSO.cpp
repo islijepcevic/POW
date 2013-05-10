@@ -17,23 +17,24 @@ PSO::PSO(BaseParameters& _params, AbstractSpace& _space,
     params(_params),
     space(_space),
     fitness(_fitness),
-    swarm(params.getIntParam("n_particles", space),
+    mpiWorld(_comm, boost::mpi::comm_attach),
+    swarm(),
     neighbourhood(NULL),
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParams("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max"),
     inertiaMin(params.getDoubleParam("inertia_min"),
     logFileName(params.getStringParams("output_file")),
-    logFile(NULL),
-    commWorld(_comm), {
+    logFile(NULL) {
 
-    MPI_Comm_size(commWorld, &mpiSize);
-    MPI_Comm_rank(commWorld, &mpiRank);
+    if (mpiWorld.rank() == 0) {
+        swarm = Swarm(params.getIntParam("n_particles"), space);
 
-    neighbourhood = createNeighbourhood(
-        params.getStringParams("neigh_type"),
-        swarm
-    );
+        neighbourhood = createNeighbourhood(
+            params.getStringParams("neigh_type"),
+            swarm
+        );
+    }
 }
 
 virtual ~PSO::PSO() {

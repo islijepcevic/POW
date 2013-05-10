@@ -14,6 +14,9 @@
 
 namespace PSO {
 
+Swarm::Swarm() {
+}
+
 Swarm::Swarm(int noParticles, AbstractSpace& _space) :
     particles( noParticles, Particle(_space.getNoDimensions()) ),
     space(_space),

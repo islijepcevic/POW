@@ -1,5 +1,4 @@
 next:
-test connecting mpi4py and boost::mpi through SWIG. (see comments in "DONE")
 think of how to proceed communicating the data in the PSO
 serialize the particle
 serialize the neighbourhood(s)
@@ -95,6 +94,16 @@ The good thing is that boost::mpi::communicator can be initialized with
 existing MPI_Comm, and in this case boost::mpi::environment is not needed. In
 this case, I hope that MPI_Comm that is initialized in Python and is sent
 through SWIG can be used to initialize boost::mpi::communicator.
+"""
+(9.5.)+> done test for passing MPI.comm from python, through SWIG, to c++, and
+finally initialized with boost::mpi
+"""
+This is very important because of two reasons:
+1) There is a constructor for boost::mpi::communicator that accepts MPI_Comm.
+However, it was very unclear if it will be possible to initialize
+boost::mpi::communicator with mpi4py's MPI_comm sent from Python.
+2) After this test was programmed, I had extreme doubts if it will be possible
+to compile everything through SWIG. Luckily, there is a way to do so.
 """
 
 SWIG:

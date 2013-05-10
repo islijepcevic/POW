@@ -26,9 +26,9 @@ evaluate (need Particle)
 conversion and particle methods after they are implemented
 
 MPI: after testing regular code, add MPI support
--> test sending MPI_Comm to boost::mpi::communicator through SWIG
 -> add MPI
 -> Master/slave architecture
+-> implement skeleton/content
 
 TEST:
 -> BaseParameters with Parameters integration (do they fill correctly)

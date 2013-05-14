@@ -6,6 +6,8 @@ PSO (c++):
 -> continue implementing according to comments in the methods
 
 Neighbourhood and derived classes
+-> remove Swarm as property of N'hood, put Swarm to be parameter for methods
+-> serialize N'hoods
 -> get rid of all TODOs within these classes after Swarm is implemented
 
 Space / Dimension
@@ -108,3 +110,6 @@ to compile everything through SWIG. Luckily, there is a way to do so.
 
 SWIG:
 (15.4.)+> do basic one
+
+REPORT:
+(14.5.)+> first class diagram in violet

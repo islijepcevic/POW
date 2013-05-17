@@ -1,24 +1,28 @@
 /*
- * PSO.hpp
+ * PSO_real.hpp
  *
- * class that implements Particle Swarm Optimization algorithm
+ * this is the PSO class skeleton with most of the things added and the
+ * implementation started.
+ *
+ * new PSO class has been created and things will be added iteratively
+ * (from here)
  *
  * author: Ivan Slijepcevic
  * e-mail: ivan.slijepcevic@epfl.ch
  */
-#ifndef __PSO__
-#define __PSO__
+#ifndef __PSOR__
+#define __PSOR__
 
 #include "BaseParameters.hpp"
 #include "AbstractSpace.hpp"
 #include "AbstractFitness.hpp"
-//#include "Swarm.hpp"
-//#include "Neighbourhood.hpp"
+#include "Swarm.hpp"
+#include "Neighbourhood.hpp"
 
 #include <mpi.h>
-//#include <string>
+#include <string>
 #include <cstdio>
-//#include <boost/mpi.hpp>
+#include <boost/mpi.hpp>
 
 namespace PSO {
 
@@ -34,14 +38,14 @@ private:
     // fitness function
     AbstractFitness& fitness;
 
-//    // MPI comm world
-//    boost::mpi::communicator mpiWorld;
-//
-//    // swarm of particles
-//    Swarm swarm;
-//
-//    // neighbourhood
-//    Neighbourhood* neighbourhood;
+    // MPI comm world
+    boost::mpi::communicator mpiWorld;
+
+    // swarm of particles
+    Swarm swarm;
+
+    // neighbourhood
+    Neighbourhood* neighbourhood;
 
     // number of iterations or steps in one run of the PSO
     int totalSteps;
@@ -63,17 +67,17 @@ private:
     /*
      * method that runs on master process and manages all the work
      */
-//    void manager();
+    void manager();
 
     /*
      * method that performs an iteration of one PSO launch
      */
-//    void performNextIteration(int step);
+    void performNextIteration(int step);
 
     /*
      * method that runs on all other processes (slaves)
      */
-//    void worker();
+    void worker();
 
 public:
 
@@ -102,4 +106,4 @@ public:
 
 } // namespace PSO
 
-#endif // __PSO__
+#endif // __PSOR__

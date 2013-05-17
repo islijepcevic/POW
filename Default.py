@@ -24,10 +24,13 @@ import os, sys
 
 # integration with c++ code
 from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace \
-        swigCppVectorToPyList
+        swigPyToCppString, VectorAdaptor
 
 class Parser(BaseParameters): # this is imported in the file
     parameters={}
+
+    def __init__(self):
+        BaseParameters.__init__(self)
 
     def add_standard(self):
 
@@ -63,26 +66,32 @@ class Parser(BaseParameters): # this is imported in the file
         '''
         insert a new keyword entry in parameters dictionary Xx enter all
         the tuples above in the self.parameter xX
-
-        also fill in the maps in c++
         '''
         self.parameters[key]=[variable,vartype,default]
 
-        # fill maps in c++ superclass
+
+    def addToBaseParams(self, variable, value, vartype):
+        '''
+        '''
+
+        varkey = swigPyToCppString(variable)
+
         if vartype == 'int':
-            self.setIntParam(variable, default)
+            self.setIntParam(varkey, value)
         elif vartype == 'float':
-            self.setDoubleParam(variable, default)
+            self.setDoubleParam(varkey, value)
         elif vartype == 'str':
-            self.setStringParam(variable, default)
-        elif vartype == 'aray int':
-            self.setIntArrayParam(variable, default)
-        elif vartype == 'array float':
-            self.setDoubleArrayParam(variable, default)
-        elif vartype == 'array str':
-            self.setStringArrayParam(variable, default)
+            self.setStringParam(varkey, value)
         else:
-            print >> sys.stderr, "added parameter of non-default type"
+            vectorValue = swigPyListToCppVector(value, vartype)
+            if vartype == 'aray int':
+                self.setIntArrayParam(varkey, vectorValue)
+            elif vartype == 'array float':
+                self.setDoubleArrayParam(varkey, vectorValue)
+            elif vartype == 'array str':
+                self.setStringArrayParam(varkey, vectorValue)
+            else:
+                print >> sys.stderr, "added parameter of non-supported type"
 
 
     def set_default_values(self):
@@ -95,8 +104,10 @@ class Parser(BaseParameters): # this is imported in the file
             exec 'self.%s=v[2]'%v[0] 
 
 
-    #parse input file and replace default values
     def parse(self,infile):
+        '''
+        parse input file and replace default values
+        '''
 
         f = open(infile, 'r+')
         line = f.readline()
@@ -117,12 +128,12 @@ class Parser(BaseParameters): # this is imported in the file
                 #if type is string
                 if val[1].split()[0]=='str': # _> val[1] = 'str' or 'int'
                     # Xx here you are replacing the default by input paramater
-                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1]) 
+                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1]) # TODO IVAN
                     # Xx exec -> self.restart_load = str("NA")
                     # xX the "NA" is from the input file
                 #if type is int or float
                 elif val[1].split()[0]=='int' or val[1].split()[0]=='float':
-                    exec 'self.%s=%s(%s)'%(val[0],val[1],w[1])
+                    exec 'self.%s=%s(%s)'%(val[0],val[1],w[1]) # TODO IVAN
 
                 # GIORGIO_CODE in case the variable_name is a monomer or
                 # trajectory having multiple files
@@ -138,16 +149,16 @@ class Parser(BaseParameters): # this is imported in the file
                     ) :
 
                     test = "NA"
-                    exec "test = self.%s" % (val[0])
+                    exec "test = self.%s" % (val[0]) # TODO IVAN
                     if (test == "NA") :
-                        exec "self.%s = []" % (val[0])
+                        exec "self.%s = []" % (val[0]) # TODO IVAN
                         exec 'self.%s += [np.array(%s).astype(%s)]' \
                                 % (val[0],w[1:len(w)],val[1].split()[1])
-
+                                 # TODO IVAN
                     else:
                         exec 'self.%s += [np.array(%s).astype(%s)]' \
                                 % (val[0],w[1:len(w)],val[1].split()[1])
-
+                                 # TODO IVAN
 
                 #if type is an array of int, float, or str
                 elif val[1].split()[0]=='array' \
@@ -157,7 +168,7 @@ class Parser(BaseParameters): # this is imported in the file
                     ):
                     exec 'self.%s=np.array(%s).astype(%s)' \
                             %(val[0],w[1:len(w)],val[1].split()[1])
-
+                              # TODO IVAN
                 else:
                     print "unrecognised type for keyword %s: %s"%(w[0],val[1])
                     sys.exit(1)
@@ -167,9 +178,11 @@ class Parser(BaseParameters): # this is imported in the file
         f.close()
 
 
-    #verify whether values are alright and alerting user, giving the correct
-    # values to the self.paramters to be transfered to Data
     def check_standard_variables(self):
+        '''
+        verify whether values are alright and alerting user, giving the correct
+        values to the self.paramters to be transfered to Data
+        '''
 
         #if needed, init repellers
         if self.repel == 'on' :
@@ -251,10 +264,20 @@ class Parser(BaseParameters): # this is imported in the file
 
 
 class Space(AbstractSpace):
-    low=[]
-    high=[]
-    boundary_type=[]
-    cell_size=[]
+
+    def __init__(self):
+        '''
+        the constructor
+        it is mandatory to call the super constructor, because the super class
+        is implemented in c++, so this is the only way of constructing the
+        object properly
+        '''
+        AbstractSpace.__init__(self)
+
+        self.low=[]
+        self.high=[]
+        self.boundary_type=[]
+        self.cell_size=[]
 
     def check_boundaries(self,p,v):
     ####PERIODIC###
@@ -335,12 +358,8 @@ class BaseFitness(AbstractFitness):
         @return - value at the position of the particle, float
         '''
 
-        print "TEST PRINT FROM BaseFitness.evaluation() ",
-            "to check if cpp vector works:",
-        print particle.currentPositions[0]
-
-        positionList = swigCppVectorToPyList(particle.currentPositions)
-        return self.evaluate(particle.getIndex(), positionList)
+        vectorAdaptor = VectorAdaptor(particle.currentPositions)
+        return self.evaluate(particle.INDEX, VectorAdaptor)
 
     def evaluate(self, num, pos):
         '''

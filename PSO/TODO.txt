@@ -1,9 +1,24 @@
 next:
+test swigPyListToCppVector (in test/polymorphism) - it doesn't work
+    (if it really won't work, just make 3 distinct functions instead using
+    the template)
+change Parser class - because input file with parameters is called too late
+    in every place of "#TODO IVAN" call self.addToBaseParams()
+FIRST RUN
+add/recover and finish Dimension 
+recover everything in AbstractSpace
+recover Neighbourhood
 think of how to proceed communicating the data in the PSO
+recover serialization in Particle
 serialize the neighbourhood(s)
+recover everything in PSO
 
 PSO (c++):
 -> continue implementing according to comments in the methods
+-> recover all the commented stuff
+
+Particle:
+-> recover commented stuff
 
 Neighbourhood and derived classes
 -> remove Swarm as property of N'hood, put Swarm to be parameter for methods
@@ -14,18 +29,14 @@ Space / Dimension
 -> AbstractSpace - implement checkBoundaries (first needs to have idea of what
 should be the input parameter - Particle or vector, but for that, I need to
 know how PSO and Particle will work)
+-> add method that converts high/low/... to Dimension classes (think if this
+will be in c++ or python)
+-> add a boolean that checks if this method is called by a module programmer
+-> in pow, check if this boolean is still false, and if yes, throw Error
 
 SWIG module.i:
--> update polymorphism for every class
 -> add mpi support
--> add interface for every needed C++/Python data structure (vector, string)
-
-AbstractFitness/BaseFitness:
--> BaseFitness implements virtual call_evaluate from c++ to connect it with
-evaluate (need Particle)
--> Fitness is then implemented by the user. (check if this is true)
--> in BaseFitness check the consistency of the called methods for array/list
-conversion and particle methods after they are implemented
+-> if needed, add interface from c++ to python string
 
 MPI: after testing regular code, add MPI support
 -> add MPI
@@ -75,7 +86,12 @@ to return a new particle, or some vectors
 dimensions, instead the list of high/low/cell_size/...
 
 AbstractFitness / BaseFitness:
-+> connect to Python: AbstractFitness <- BaseFitness <- Fitness
+(old)+> connect to Python: AbstractFitness <- BaseFitness <- Fitness
+(17.5.)+> BaseFitness implements virtual call_evaluate from c++ to connect it
+with evaluate (need Particle)
+(17.5.)-> Fitness is then implemented by the user. Added Simple.py to test
+(17.5.)-> in BaseFitness check the consistency of the called methods for
+array/list conversion and particle methods after they are implemented
 
 MPI
 (6.5.)+> find out a way to send serialized objects (considering that MPI was
@@ -110,6 +126,9 @@ to compile everything through SWIG. Luckily, there is a way to do so.
 
 SWIG:
 (15.4.)+> do basic one
+(17.5.)+> list-to-vector adaptor implemented
+(17.5.)+> update polymorphism for every class
+(17.5.)+> added pyString to cppString functionality
 
 REPORT:
 (14.5.)+> first class diagram in violet

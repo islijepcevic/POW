@@ -19,6 +19,7 @@ class Fitness(BF):
 
 class Space(S):
     def __int__(self, params, data):
+        S.__init__(self)
 
         # assign low boundaries
         if params.low_input!="NA" :
@@ -47,7 +48,7 @@ class Space(S):
 
 class Parser(P):
     def __init__(self):
-        pass
+        P.__init__(self)
     def check_variables(self):
         pass
 

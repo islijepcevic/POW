@@ -9,6 +9,8 @@
 #ifndef __ABSTRACT_FITNESS__
 #define __ABSTRACT_FITNESS__
 
+#include "Particle.hpp"
+
 namespace PSO {
 
 class AbstractFitness {

@@ -1,3 +1,7 @@
+
+# run with:
+# mpiexec -n <N> Simple.py input_simple
+
 from Default import Parser as P
 from Default import Space as S
 from Default import Postprocess as PP

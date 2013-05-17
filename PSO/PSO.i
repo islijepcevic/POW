@@ -8,22 +8,36 @@
 %module(directors="1") PSO
 
 %{
+// this is like include in C/C++ code
+// put here what you need to compile everything
+// not everything from here will be accessible in python code
 #define SWIG_FILE_WITH_INIT
 #include "PSO.hpp"
+#include "AbstractFitness.hpp"
+#include "AbstractSpace.hpp"
+#include "BaseParameters.hpp"
+#include "Particle.hpp"
+#include <vector>
+#include <string>
 %}
+
 
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
 %feature("director") AbstractFitness;
 %feature("director") BaseParameters;
 
+
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
 // this is instead of rewriting all the code here
+// this will be accessible in python code
 %include "BaseParameters.hpp"
 %include "AbstractSpace.hpp"
+%include "AbstractFitness.hpp"
 %include "PSO.hpp"
 
-// THE FOLLOWING CODE SERVES AS INTERFACE BETWEEN C++ AND PYTHON DATA STRUCTURES
+// #############################################################################
 
+// THE FOLLOWING CODE SERVES AS INTERFACE BETWEEN C++ AND PYTHON DATA STRUCTURES
 // these functions are to be used for C/C++ structures
 %inline %{
 
@@ -58,6 +72,8 @@ double swigCArrayGet(double* a, int index) {
 void swigCArraySet(double*, int index, double value) {
     a[index] = value;
 }
+
+
 %}
 
 %rename(delete_array) free(void*);
@@ -86,4 +102,48 @@ def swigCArrayToPyList(cArray, arraySize):
     for i in xrange(arraySize):
         pyList[i] = swigCArrayGet(cArray, i)
     return pyList
+
+def swigCppVectorToPyList(cppVector)
+    '''
+    '''
+    pyList = [1] * cppVector.size()
+    for i in xrange(arraySize):
+        pyList[i] = cppVector[i]
+    return pyList
+
+class ListAdaptorToCppVector(list):
+    '''
+    this class is adaptor that inherits from python list, and has an adaptee
+    c++ std::vector
+    '''
+
+class AdaptorToVector(list):
+    '''
+    this class is adaptor that inherits from python list, and has an adaptee
+    c++ std::vector
+    '''
+    def __init__(self, vector):
+        '''
+        initializes the adaptor to accept the adaptee - the c++ vector
+        @param vector - c++ vector
+        '''
+        list.__init__(self)
+        self.vector = vector
+
+    def __getitem__(self, key):
+        '''
+        method that is called when getting items with [] operator in python
+        @param key - the index
+        @return - the value from the c++ vector on the index key
+        '''
+        return vector[key]
+
+    def __setitem__(self, key, item):
+        '''
+        method that is called when setting items with [] operator in python
+        @param key - the index
+        @param item - the value
+        '''
+        vector[key] = item 
+    
 %}

@@ -10,9 +10,9 @@
 #define __PARTICLE__
 
 #include <vector>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/vector.hpp>
+//#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+//#include <boost/serialization/vector.hpp>
 
 #define VERY_LARGE_VALUE 100000000
 
@@ -20,23 +20,23 @@ namespace PSO {
 
 class Particle {
 private:
-    // BOOST SERIALIZATION
-    friend class boost::serialization::access;
-
-    /*
-     * method that for serializing and deserializing objects of this class
-     * @param ar - archive stream
-     * @param version - don't know, not used
-     */
-    template<class Archive>
-    void serialize(Archive& ar, const unsigned int version) {
-        ar & const_cast<int&>(INDEX);
-        ar & currentPosition;
-        ar & currentVelocity;
-        ar & currentValue;
-        ar & bestPosition;
-        ar & bestValue;
-    }
+//    // BOOST SERIALIZATION
+//    friend class boost::serialization::access;
+//
+//    /*
+//     * method that for serializing and deserializing objects of this class
+//     * @param ar - archive stream
+//     * @param version - don't know, not used
+//     */
+//    template<class Archive>
+//    void serialize(Archive& ar, const unsigned int version) {
+//        ar & const_cast<int&>(INDEX);
+//        ar & currentPosition;
+//        ar & currentVelocity;
+//        ar & currentValue;
+//        ar & bestPosition;
+//        ar & bestValue;
+//    }
 
 public:
 

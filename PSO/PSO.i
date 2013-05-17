@@ -19,12 +19,14 @@
 #include "Particle.hpp"
 #include <vector>
 #include <string>
+// add all the other stuff - boost serializations, boost mpi, ...
 %}
 
 
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
 %feature("director") AbstractFitness;
 %feature("director") BaseParameters;
+%feature("director") AbstractSpace;
 
 
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
@@ -73,8 +75,32 @@ void swigCArraySet(double*, int index, double value) {
     a[index] = value;
 }
 
+/*
+ * creates and returns a new c++ string of length n and filled with characters
+ * 'a'
+ * @param n - length of new string
+ * @return - the string
+ */
+std::string swigNewCppString(unsigned int n) {
+    std::string s(n, 'a');
+    return s;
+}
+
+/*
+ * creates a new c++ vector of arbitrary type
+ * @return - an empty vector
+ */
+template<type T>
+std::vector<T> swigNewCppVector() {
+    std::vector<T> vec;
+    return vec;
+}
 
 %}
+
+%template(swigNewIntVector) swigNewCppVector<int>;
+%template(swigNewDblVector) swigNewCppVector<double>;
+%template(swigNewStrVector) swigNewCppVector<std::string>;
 
 %rename(delete_array) free(void*);
 
@@ -103,24 +129,53 @@ def swigCArrayToPyList(cArray, arraySize):
         pyList[i] = swigCArrayGet(cArray, i)
     return pyList
 
-def swigCppVectorToPyList(cppVector)
-    '''
-    '''
-    pyList = [1] * cppVector.size()
-    for i in xrange(arraySize):
-        pyList[i] = cppVector[i]
-    return pyList
 
-class ListAdaptorToCppVector(list):
+def swigPyToCppString(pyStr):
+    '''
+    converts python string into the c++ string
+    @param pyStr - python string
+    @param - c++ string
+    '''
+    cppStr = swigNewCppString(len(pyStr))
+    for i in xrange(len(pyStr)):
+        cppStr[i] = pyStr[i]
+    return cppStr
+
+def swigPyListToCppVector(pyList, vartype):
+    '''
+    this method converts python list to c++ vector
+    it is used to put data from python list into the c++ class
+    @param pyList - python list
+    @param vartype - type of the data in pyList;
+            supported types: int, float, str
+    @return - c++ vector with same data
+    '''
+
+    vector = None
+
+    if vartype == 'int':
+        vector = swigNewIntVector()
+    elif vartype == 'float':
+        vector = swigNewDblVector()
+    elif vartype == 'str':
+        vector = swigNewStrVector()
+    else:
+        raise ValueError("wrong vartype supported to swigPyListToCppVector")
+
+    vector.reserve( len(pyList) )
+
+    for elem in pyList:
+        vector.push_back(elem)
+
+    return vector
+
+
+class VectorAdaptor(list):
     '''
     this class is adaptor that inherits from python list, and has an adaptee
     c++ std::vector
-    '''
 
-class AdaptorToVector(list):
-    '''
-    this class is adaptor that inherits from python list, and has an adaptee
-    c++ std::vector
+    it is used in python where the c++ vector is in the background
     '''
     def __init__(self, vector):
         '''

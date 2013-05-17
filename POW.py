@@ -75,7 +75,9 @@ if rank == 0:
     print '\n> PREPROCESSING %s\n'%sys.argv[1].split('.')[0]
 
     mode = None
-    exec 'import %s as mode'%(sys.argv[1].split('.')[0]) # Xx mode is DockSymmCircle file! xX
+
+    # Xx mode is DockSymmCircle file! xX
+    exec 'import %s as mode'%(sys.argv[1].split('.')[0]) 
 
     #parse input file
     print '>> parsing input file...'

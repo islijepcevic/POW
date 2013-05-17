@@ -23,8 +23,7 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.module import BaseParameters, AbstractFitness, AbstractSpace, \
-        arrayToList
+from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace
 
 class Parser(BaseParameters): # this is imported in the file
     parameters={}
@@ -105,36 +104,58 @@ class Parser(BaseParameters): # this is imported in the file
 
             if len(w) > 0 and str(w[0][0])!='#':
 
-            #val=[variable_name,variable_type,default_value] Xx same as the one above xX
+            #val=[variable_name,variable_type,default_value]
+            #Xx same as the one above xX
                 try:
-                    val=self.parameters[w[0]] # -> get the default parameter of the value?
+                    # -> get the default parameter of the value?
+                    val=self.parameters[w[0]] 
                 except KeyError:
                     print "unrecognised keyword %s"%w[0]
                     sys.exit(1)
 
                 #if type is string
                 if val[1].split()[0]=='str': # _> val[1] = 'str' or 'int'
-                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1]) # Xx here you are replacing the default by input paramater
-                    # Xx exec -> self.restart_load = str("NA") xX the "NA" is from the input file
+                    # Xx here you are replacing the default by input paramater
+                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1]) 
+                    # Xx exec -> self.restart_load = str("NA")
+                    # xX the "NA" is from the input file
                 #if type is int or float
                 elif val[1].split()[0]=='int' or val[1].split()[0]=='float':
                     exec 'self.%s=%s(%s)'%(val[0],val[1],w[1])
 
-                # GIORGIO_CODE in case the variable_name is a monomer or trajectory having multiple files (case of Hetero-multimer assembly)
-                elif val[1].split()[0]=='array' and (val[1].split()[1]=='int' or val[1].split()[1]=='float' or val[1].split()[1]=='str') and (val[0] == "monomer_file_name"\
-                or val[0] == "topology" or val[0] == "trajectory") :
+                # GIORGIO_CODE in case the variable_name is a monomer or
+                # trajectory having multiple files
+                # (case of Hetero-multimer assembly)
+                elif val[1].split()[0]=='array' \
+                    and (val[1].split()[1]=='int' \
+                        or val[1].split()[1]=='float' \
+                        or val[1].split()[1]=='str' \
+                    ) \
+                    and (val[0] == "monomer_file_name" \
+                        or val[0] == "topology" \
+                        or val[0] == "trajectory"
+                    ) :
+
+                    test = "NA"
                     exec "test = self.%s" % (val[0])
                     if (test == "NA") :
                         exec "self.%s = []" % (val[0])
-                        exec 'self.%s += [np.array(%s).astype(%s)]' % (val[0],w[1:len(w)],val[1].split()[1])
+                        exec 'self.%s += [np.array(%s).astype(%s)]' \
+                                % (val[0],w[1:len(w)],val[1].split()[1])
 
                     else:
-                        exec 'self.%s += [np.array(%s).astype(%s)]' % (val[0],w[1:len(w)],val[1].split()[1])
+                        exec 'self.%s += [np.array(%s).astype(%s)]' \
+                                % (val[0],w[1:len(w)],val[1].split()[1])
 
 
                 #if type is an array of int, float, or str
-                elif val[1].split()[0]=='array' and (val[1].split()[1]=='int' or val[1].split()[1]=='float' or val[1].split()[1]=='str'):
-                    exec 'self.%s=np.array(%s).astype(%s)'%(val[0],w[1:len(w)],val[1].split()[1])
+                elif val[1].split()[0]=='array' \
+                    and (val[1].split()[1]=='int'
+                        or val[1].split()[1]=='float' \
+                        or val[1].split()[1]=='str' \
+                    ):
+                    exec 'self.%s=np.array(%s).astype(%s)' \
+                            %(val[0],w[1:len(w)],val[1].split()[1])
 
                 else:
                     print "unrecognised type for keyword %s: %s"%(w[0],val[1])
@@ -145,7 +166,8 @@ class Parser(BaseParameters): # this is imported in the file
         f.close()
 
 
-    #verify whether values are alright and alerting user, giving the correct values to the self.paramters to be transfered to Data
+    #verify whether values are alright and alerting user, giving the correct
+    # values to the self.paramters to be transfered to Data
     def check_standard_variables(self):
 
         #if needed, init repellers
@@ -162,11 +184,13 @@ class Parser(BaseParameters): # this is imported in the file
 
         #check restart frequency
         if self.restart_freq>self.max_steps:
-            print "ERROR: restart frequency should be smaller than total number of steps!"
+            print "ERROR: restart frequency should be smaller than " \
+                + "total number of steps!"
             sys.exit(1)
         if self.restart_freq==0:
             self.restart_freq=int(float(self.max_steps)/10.0)
-            #print ">>> a restart file will be created every %s steps"%self.restart_freq
+            #print ">>> a restart file will be created every %s steps"\
+                    #%self.restart_freq
 
         #check restart file existence
         if self.restart_load!="NA" and os.path.isfile(self.restart_load)!=1:
@@ -181,37 +205,47 @@ class Parser(BaseParameters): # this is imported in the file
             print 'ERROR: minimal inertia should be greater than 0!'
             sys.exit(1)
         if self.inertia_max<self.inertia_min :
-            print 'ERROR: maximal inertia is lower than minimal inertia (or one of these values are undefined)!'
+            print 'ERROR: maximal inertia is lower than minimal inertia ' \
+                + '(or one of these values are undefined)!'
             sys.exit(1)
 
         #check neighborhood conditions
         if self.neigh_type!="geographic" and self.neigh_type!="indexed":
-            print "ERROR: neighborType should be either geographic either indexed"
+            print "ERROR: neighborType should be either geographic either " \
+                + "indexed"
             sys.exit(1)
 
         #check kick and reseed threshold value
         if self.kar<0:
-            print "ERROR: kick and reseed (kar) threshold should be greater than 0!"
+            print "ERROR: kick and reseed (kar) threshold should be greater " \
+                + "than 0!"
             sys.exit(1)
 
         #check boundaries consistency
         if len(self.high_input)!=len(self.low_input):
-            print "ERROR: boundaryMin and boundaryMax should have the same length!"
+            print "ERROR: boundaryMin and boundaryMax should have the same " \
+                + "length!"
             sys.exit(1)
 
-        if len(self.high_input)!=len(self.boundary_type) and self.boundary_type[0]!="NA":
-            print "ERROR: boundaryType length inconsistent with low and high boundary length!"
-            print 'ERROR: %s dimensions given, but %s needed!'%(len(self.boundary_type),len(self.low_input))
+        if len(self.high_input)!=len(self.boundary_type) \
+            and self.boundary_type[0]!="NA":
+
+            print "ERROR: boundaryType length inconsistent with low and high " \
+                + "boundary length!"
+            print 'ERROR: %s dimensions given, but %s needed!' \
+                    %(len(self.boundary_type),len(self.low_input))
             sys.exit(1)
 
         if self.high_input!="NA" and (self.low_input>self.high_input).any():
-            print 'ERROR: a lower boundary condition is greated than a higher one'
+            print 'ERROR: a lower boundary condition is greated than a higher' \
+                + ' one'
             print self.low_input
             print self.high_input
             sys.exit(1)
 
         if self.dimensions>-1 and self.high_input!="NA":
-            print "ERROR: either dimensions or boundaryMin and boundaryMax variables should be used to defind space size!"
+            print "ERROR: either dimensions or boundaryMin and boundaryMax " \
+                + "variables should be used to defind space size!"
             sys.exit(1)
 
 
@@ -321,7 +355,8 @@ class BaseFitness(AbstractFitness):
 class Postprocess:
 
 
-        #extract from log file just the solution with lowest fitness (below a defined threshold)
+        #extract from log file just the solution with lowest fitness
+        # (below a defined threshold)
     def select_solutions(self,params):
 
             #loading logfile
@@ -338,7 +373,9 @@ class Postprocess:
 #           print all_log
 
 
-        filt=all_log[all_log[:,-1]<params.accept,2:len(all_log)] # first is selecting lines and second is column, boolean indexing, slicing
+        # first is selecting lines and second is column, boolean indexing,
+        # slicing
+        filt=all_log[all_log[:,-1]<params.accept,2:len(all_log)] 
 #           print "len(all_log)"
 #           print len(all_log)
 #           print "filt"
@@ -346,9 +383,15 @@ class Postprocess:
 
         #if no solution matching filtering criteria is found, return 10 best
         if len(filt)==0:
-            print "WARNING: No solution below desired threshold ("+str(params.accept)+"), returning best 10 solution instead"
-            pos=np.argsort(all_log[:,-1]) # sort the array for the lowest fitness values, this arrays is just an index order, make a[pos] to get the right one
-            self.filter_log=all_log[pos[0:10],2:len(all_log)] # takes the top 10 lowest fitness values
+            print "WARNING: No solution below desired threshold (" \
+                + str(params.accept)+"), returning best 10 solution instead"
+
+            # sort the array for the lowest fitness values, this arrays is just
+            # an index order, make a[pos] to get the right one
+            pos=np.argsort(all_log[:,-1]) 
+
+            # takes the top 10 lowest fitness values
+            self.filter_log=all_log[pos[0:10],2:len(all_log)] 
 
         else:
             pos=np.argsort(filt[:,-1])
@@ -356,7 +399,9 @@ class Postprocess:
 
         #write complexes selected by filtering
         f_log=open("filtered_log.dat","w")
-        for line in self.filter_log: # iterate over all the elements of the log array
+
+        # iterate over all the elements of the log array
+        for line in self.filter_log: 
             for item in line: #
                 f_log.write("%s "%item)
             f_log.write("\n")
@@ -387,18 +432,23 @@ class Postprocess:
         f_log.close()
 
         if len(self.filter_log)==0:
-            print "WARNING: No solution below desired threshold, returning best 10 solution instead"
+            print "WARNING: No solution below desired threshold, returning " \
+                + "best 10 solution instead"
             pos=np.argsort(all_log[:,-1])
-            self.filter_log=all_log[pos[0:10],2:len(all_log)] # modified to 20 from 10
+
+            # modified to 20 from 10
+            self.filter_log=all_log[pos[0:10],2:len(all_log)]
 
         return self.filter_log
 
 
-    def distance_clustering(self,params) : # done on the self.filter_log obtained from select_solutions() above
+    def distance_clustering(self,params) : 
+    # done on the self.filter_log obtained from select_solutions() above
 
         clusters_file=open("dist_clusters.dat","w")
 
-        print ">> clustering best solutions according to search space distance..."
+        print ">> clustering best solutions according to search space " \
+            + "distance..."
         P=self.filter_log[:,0:len(self.filter_log[0,:])] #points list
         print "P"
         print P
@@ -471,10 +521,12 @@ class Postprocess:
         #m1 -= COM1
         #m2 -= COM2
 
-        E0 = np.sum( np.sum(m1*m1,axis=0),axis=0) + np.sum( np.sum(m2*m2,axis=0),axis=0)
+        E0 = np.sum( np.sum(m1*m1,axis=0),axis=0) \
+            + np.sum( np.sum(m2*m2,axis=0),axis=0)
 
         #This beautiful step provides the answer. V and Wt are the orthonormal
-        # bases that when multiplied by each other give us the rotation matrix, U.
+        # bases that when multiplied by each other give us the rotation matrix,
+        # U.
         # S, (Sigma, from SVD) provides us with the error!  Isn't SVD great!
         V, S, Wt = np.linalg.svd( np.dot( np.transpose(m2), m1))
 

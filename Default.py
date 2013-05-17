@@ -23,7 +23,8 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace
+from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace \
+        swigCppVectorToPyList
 
 class Parser(BaseParameters): # this is imported in the file
     parameters={}
@@ -334,11 +335,12 @@ class BaseFitness(AbstractFitness):
         @return - value at the position of the particle, float
         '''
 
-        # pseudocode:
-        #positionList = arrayToList(particle.getPosition(), posSize)
-        #return self.evaluate(particle.getIndex(), pos_list)
+        print "TEST PRINT FROM BaseFitness.evaluation() ",
+            "to check if cpp vector works:",
+        print particle.currentPositions[0]
 
-        raise NotImplementedError("TODO BY IVAN")  # TODO
+        positionList = swigCppVectorToPyList(particle.currentPositions)
+        return self.evaluate(particle.getIndex(), positionList)
 
     def evaluate(self, num, pos):
         '''

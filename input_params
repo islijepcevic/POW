@@ -1,0 +1,82 @@
+#######################
+
+# Calculation Protocol#
+
+#######################
+
+
+steps 200
+
+particles 80
+
+repeat 3
+
+repulsion off
+
+kar_threshold 0.01
+
+
+#######################
+
+# Neighborhood       #
+
+#######################
+
+
+neighborSize 1
+
+neighborType indexed
+
+
+#######################
+
+# PSO behaviour       #
+
+#######################
+
+
+inertiaMax 0.9
+
+inertiaMin 0.4
+
+cp 1.2
+
+cn 1.4
+
+
+#######################
+
+# Boundary conditions  #
+
+#######################
+
+
+boundaryMin -5.12 -5.12
+
+boundaryMax 5.12 5.12
+
+
+##################
+
+# Postprocessing #
+
+##################
+
+
+#filter_threshold 2
+
+#cluster_threshold 1
+
+
+####################
+
+# Other keywords #
+
+####################
+
+
+restart_freq 10
+
+output log_simple.txt
+
+fitnessFile Simple.py

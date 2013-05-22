@@ -8,28 +8,197 @@ from scipy.cluster.vq import *
 import copy
 import string
 
-import Multimer as M
-import AssemblyHeteroMultimer as AH # _CHANGED_
-from Protein import Protein
-#import flexibility_new as F # _CHANGED_
-
 import os, sys
+from copy import deepcopy
+
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+class Matrix_creator:
+    
+    def __init__ (self, params, data, post):
+    #create output directory for generated data
+        self.params = params
+        self.data = data
+        self.post = post
+        
+    def computeMatrix(self):
+        if rank == 0:
+            
+            #use superclass method to filter acceptable solutions
+            self.log=self.post.select_solutions(self.params) # -> the result is in fact the self.filter_log already
+            print ">> %s solutions filtered"%len(self.log[:,1])
+            if len(self.log[:,1])==0:
+                return
+    
+            self.coordinateArray = deepcopy(self.log) #[:, 0:len(self.log[0,:])].astype(float)
+            self.dummyMatrix = np.empty(len(self.coordinateArray)**2)
+            self.dummyMatrix.fill(100)
+            self.distanceMatrix = self.dummyMatrix.reshape(len(self.coordinateArray),len(self.coordinateArray))
+            self.dummyMatrix = []
+    
+    
+    
+            total_size = (len(self.coordinateArray)**2)/2
+            binNo = size
+            indexes_per_bin = total_size / binNo
+    
+            soustractor = 1
+            indexBinHash = {}
+            accumulator = 0
+    
+            rankIterator = 0
+            lowBoundary = 0
+    
+    
+            # getting the sliced indexes
+            for i in xrange(0, len(self.distanceMatrix),1):
+                array_len = len(self.distanceMatrix[i]) -  soustractor
+                accumulator += array_len
+    
+                if accumulator > indexes_per_bin:
+                    indexBinHash[rankIterator] = [lowBoundary, i]
+    
+                    # change the parameters
+                    rankIterator += 1
+                    lowBoundary = i
+                    # empty the accumulator
+                    accumulator = 0
+    
+    
+                soustractor += 1
+    
+            if lowBoundary < i:
+                indexBinHash[binNo-1] = [lowBoundary, i]
+    
+    
+            print ">> Starting distance matrix creation:\n"
+            print ">> clustering best solutions..."
+        else:
+            self.distanceMatrix = None
+            self.coordinateArray = None
+            indexBinHash = None
+    
+    
+        #synchronize all processors
+        comm.Barrier()
+        self.distanceMatrix=comm.bcast(self.distanceMatrix,root=0)
+        self.coordinateArray=comm.bcast(self.coordinateArray,root=0)
+        indexBinHash=comm.bcast(indexBinHash,root=0)
+        comm.Barrier()
+    
+        #exec 'import %s as constraint'%(self.post.constraint)
+        
+        # ---------------------------- Depending on the number of solutions, use all the processors or just one of them
+    
+        if len(self.coordinateArray) > (size *3):
+    
+            ## creating variables to check for status of clustering of process 0
+            if rank == 0:
+                repetitions = indexBinHash[rank][1] - indexBinHash[rank][0]
+                totalIterations = len(self.coordinateArray) * repetitions
+                counter = 0
+                printresent = 1 # those are used not to repeat the state of the clustering
+                printPast = 0
+    
+            counter = 0
+    
+            pieceOfCoordinateArray = np.array([])
+    
+            if rank in indexBinHash.keys():
+    
+                #Starting the creation with 2 loops
+                for n in xrange(indexBinHash[rank][0],len(self.coordinateArray),1):
+                    #print ">> computing distances for solution no: "+str(n+1)
+                    if n == indexBinHash[rank][1]:
+                        break
+                    for m in xrange (n,len(self.coordinateArray),1):
+                        # make sure you are not using the same structures against themselves
+                        if n == m:
+                            pass
+    
+                        else:
+                            
+                            self.distanceMatrix[n][m] = self.post.computeDistance(self.coordinateArray[n],self.coordinateArray[m])
+    
+                            if rank == 0:
+                                counter += 1.0
+                                printPresent = int((counter / totalIterations) * 100)
+                                if (printPresent%10) == 0 and printPresent != printPast:
+                                    print "> ~"+str( printPresent )+" % structures clustered "
+                                    printPast = printPresent
+    
+                pieceOfCoordinateArray = self.distanceMatrix[indexBinHash[rank][0]:indexBinHash[rank][1],:]
+                #print "process "+str(rank)+" finished"
+    
+            comm.Barrier()
+            pieces = comm.gather(pieceOfCoordinateArray,root=0)
+            comm.Barrier()
+    
+            if rank == 0:
+                if int( (counter / totalIterations) * 100.00) != 100:
+                    print "> ~100 % structures clustered "
+    
+                self.distanceMatrix = []
+                for elem in pieces:
+                    if len(elem) < 2:
+                        pass
+                    else:
+                        for arrays in elem:
+                            self.distanceMatrix.append(arrays)
+    
+                lastRow = np.empty(len(self.coordinateArray))
+                lastRow.fill(100)
+    
+                self.distanceMatrix.append(lastRow)
+                self.distanceMatrix = np.array(self.distanceMatrix)
+                np.transpose(self.distanceMatrix)
+    #                np.savetxt('coordinateArray.txt', self.coordinateArray) # coordinateArray[0:50,0:50]
+    #                np.savetxt('np_matrix.txt', self.distanceMatrix) # distanceMatrix[0:50]
+    
+                
+    
+        else:
+            if rank == 0:
+                print ">> less than "+str(size*3)+" solutions, proceeding ..."
+    
+                for n in xrange(0,len(self.coordinateArray),1):
+                    #print ">> computing distances for solution no: "+str(n+1)
+                    #if n == indexBinHash[rank][1]:
+                        #break
+                    for m in xrange (n,len(self.coordinateArray),1):
+                        # make sure you are not using the same structures against themselves
+                        if n == m:
+                            pass
+    
+                        else:
+    
+                            # create the first multimer
+    
+                            self.distanceMatrix[n][m] = self.post.computeDistance(self.coordinateArray[n],self.coordinateArray[m])
+    
+    
+        if rank == 0:
+            np.savetxt('coordinateArray.txt', self.coordinateArray)
+            np.savetxt('np_matrix.txt', self.distanceMatrix)
 
 
 class App(wx.App):
 
     def OnInit(self):
-        self.frame = MainFrame(None, "RMSD Viewer")
+        self.frame = MainFrame(None, "distance Viewer")
         self.frame.Show()
         self.SetTopWindow(self.frame)
         return True
 
 class MainFrame (wx.Frame):
-    def __init__(self, parent, title, post, params, data): # _CHANGED_
+    def __init__(self, parent, title, outputDir, params, data, post): # _CHANGED_
         wx.Frame.__init__(self, parent, title=title, size=(1000,600))
 
-
-        self.post = post # _CHANGED_
+        self.post = post
+        self.outputDir = outputDir # _CHANGED_
         self.params = params # _CHANGED_
         self.data = data # _CHANGED_
 
@@ -39,11 +208,11 @@ class MainFrame (wx.Frame):
 
         # inserting the panels:
         self.treePanel = treeDisplay(self)
-        self.RMSDPanel = MakeWork(self)
+        self.distancePanel = MakeWork(self)
 
         # adding the panels to the main frame
         box = wx.BoxSizer(wx.VERTICAL)
-        box.Add(self.RMSDPanel, 0, wx.EXPAND | wx.ALL, 3 )
+        box.Add(self.distancePanel, 0, wx.EXPAND | wx.ALL, 3 )
         box.Add(self.treePanel, 0, wx.EXPAND | wx.ALL, 3 ) # the 3 is the padding compared to the frame!
         self.SetSizer(box)
         self.Centre()
@@ -59,50 +228,47 @@ class MakeWork (wx.Panel):
         self.title.SetFont(font1)
 
         # ---------- INPUT FIELDS AND BUTTONS
-        self.lblRMSD=wx.StaticText(self, label="RMSD threshold:")
-        self.fieldRMSD=wx.TextCtrl(self, value="")
+        self.lbldistance=wx.StaticText(self, label="distance threshold:")
+        self.fielddistance=wx.TextCtrl(self, value="")
         self.buttonDrawTree=wx.Button(self, label="Draw Tree")
-        self.buttonShowRMSD=wx.Button(self, label="Select RMSD")
-        self.buttonExportFile=wx.Button(self, label="Export PDB")
+        self.buttonShowdistance=wx.Button(self, label="Select distance")
+        self.buttonExportFile=wx.Button(self, label="Dump Output")
         self.buttonSavePicture=wx.Button(self, label="Save as Png")
-        self.Bind(wx.EVT_BUTTON, self.selectRMSD, self.buttonShowRMSD)
-        self.Bind(wx.EVT_BUTTON, self.clickToConvertPDB, self.buttonExportFile)
-        self.Bind(wx.EVT_BUTTON, self.DrawRMSDTree, self.buttonDrawTree)
+        self.Bind(wx.EVT_BUTTON, self.selectdistance, self.buttonShowdistance)
+        self.Bind(wx.EVT_BUTTON, self.clickToConvert, self.buttonExportFile)
+        self.Bind(wx.EVT_BUTTON, self.DrawdistanceTree, self.buttonDrawTree)
         self.Bind(wx.EVT_BUTTON, self.saveSnapshot, self.buttonSavePicture)
 
         # ---------- MATRIX CONTAINER
-        RMSDContainer = wx.FlexGridSizer(1, 6, 3, 3) # flexGridSzer (self, rows, cols, vgap, hgap) info at http://wxpython.org/docs/api/wx.FlexGridSizer-class.html
-        RMSDContainer.SetFlexibleDirection(wx.HORIZONTAL) # specifies that rows are resized dynamically
-        RMSDContainer.AddGrowableCol(4,1) # specifies that the column 1(starting from 0) can be regrown, ids specified below!
-        RMSDContainer.AddMany([ # here insert them in order plaase
+        distanceContainer = wx.FlexGridSizer(1, 6, 3, 3) # flexGridSzer (self, rows, cols, vgap, hgap) info at http://wxpython.org/docs/api/wx.FlexGridSizer-class.html
+        distanceContainer.SetFlexibleDirection(wx.HORIZONTAL) # specifies that rows are resized dynamically
+        distanceContainer.AddGrowableCol(4,1) # specifies that the column 1(starting from 0) can be regrown, ids specified below!
+        distanceContainer.AddMany([ # here insert them in order plaase
                     (self.buttonDrawTree, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
                     (self.buttonSavePicture, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
                     (self.buttonExportFile, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
-                    (self.lblRMSD, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT,3),
-                    (self.fieldRMSD, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
-                    (self.buttonShowRMSD, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
+                    (self.lbldistance, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT,3),
+                    (self.fielddistance, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
+                    (self.buttonShowdistance, 0,wx.ALIGN_LEFT | wx.EXPAND, 3),
 
 
                     ])
 
         # ----------- BOX CONTAINER
-        BigRMSDContainer = wx.BoxSizer(wx.VERTICAL) # more info about box sizing at http://zetcode.com/wxpython/layout/
-        BigRMSDContainer.Add(self.title, 0, wx.EXPAND | wx.ALL, 3 )
-        BigRMSDContainer.Add(RMSDContainer, 1, wx.EXPAND | wx.ALL, 3 )
-        self.SetSizer(BigRMSDContainer)
+        BigdistanceContainer = wx.BoxSizer(wx.VERTICAL) # more info about box sizing at http://zetcode.com/wxpython/layout/
+        BigdistanceContainer.Add(self.title, 0, wx.EXPAND | wx.ALL, 3 )
+        BigdistanceContainer.Add(distanceContainer, 1, wx.EXPAND | wx.ALL, 3 )
+        self.SetSizer(BigdistanceContainer)
         self.Centre()
 
-    def DrawRMSDTree (self, event):
+    def DrawdistanceTree (self, event):
         self.Parent.treePanel.plotFigure(self.arrayReadyforDrawing)
 
-    #def DrawFromPOW(self):
-        #self.Parent.treePanel.plotFigure(self.arrayReadyforDrawing)
-        #print "dendogram drawn"
 
-    def selectRMSD (self, event):
+    def selectdistance (self, event):
 
-        self.selectedRMSD = self.fieldRMSD.GetValue()
-        self.Parent.treePanel.plotRMSDLine(self.selectedRMSD)
+        self.selecteddistance = self.fielddistance.GetValue()
+        self.Parent.treePanel.plotdistanceLine(self.selecteddistance)
 
     def saveSnapshot(self, event):
         # based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
@@ -137,205 +303,56 @@ class MakeWork (wx.Panel):
         memDC.SelectObject(wx.NullBitmap)
 
         img = bmp.ConvertToImage()
-        img.SaveFile("%s/tree.png"%(self.Parent.post.OUTPUT_DIRECTORY), wx.BITMAP_TYPE_PNG)
-        print ">> saved snapshot of dendogram tree"
+        img.SaveFile("%s/tree.png"%(self.Parent.outputDir), wx.BITMAP_TYPE_PNG)
+        print ">> saved snapshot of dendrogram tree"
 
-    def clickToConvertPDB(self, event):
-        self.convertCoordsAndExportPDB(self.selectedRMSD)
+    def clickToConvert(self, event):
+        self.convertCoordsAndExport(self.selecteddistance)
 
-    def convertCoordsAndExportPDB (self, selectedRMSD):
-        print ">> converting Coordinates of selected Centroids into PDB files"
+    def convertCoordsAndExport (self, selecteddistance):
+        print ">> Exporting coordinates of selected centroids"
 
         centroidArray = [] # this array will hold the indexes of the centroids
-        average_RMSD_ARRAY = [] # this one will hold the average RMSD values of clusters in the same order as the centroidArray
+        average_distance_ARRAY = [] # this one will hold the average distance values of clusters in the same order as the centroidArray
+        clusteredIndexArray = []
+        
+        sorteddistanceArray =  copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash.keys())# this contains the sorted distances of the distance threshold hash containing the RMDS and the corresponding centroid
+        sorteddistanceArray.sort()
 
-        sortedRMSDArray =  copy.deepcopy(self.Parent.RMSDPanel.RMSDThresholdHash.keys())# this contains the sorted RMSDs of the RMSD threshold hash containing the RMDS and the corresponding centroid
-        sortedRMSDArray.sort()
-        #print coordinateArray[1]
 
-        iterant = 0 # this iterant is used (in a bad way :( ) to select the right average RMSD value when iterating over the centroids
-
-        # parse the sorted array and return an array of the centroids and within RMSD values with RMSDs below threshold
-        for e in range(len(sortedRMSDArray)):
-            if float(selectedRMSD) < float(sortedRMSDArray[e]):
-
-                centroidArray = copy.deepcopy(self.Parent.RMSDPanel.RMSDThresholdHash[sortedRMSDArray[e-1]][0])
-                average_RMSD_ARRAY = copy.deepcopy(self.Parent.RMSDPanel.RMSDThresholdHash[sortedRMSDArray[e-1]][1])
+        # parse the sorted array and return an array of the centroids and within distance values with distances below threshold
+        for e in range(len(sorteddistanceArray)):
+            
+            if float(selecteddistance) < float(sorteddistanceArray[e]):
+                centroidArray = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[e-1]][0])
+                average_distance_ARRAY = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[e-1]][1])
+                clusteredIndexArray = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[e-1]][2])
                 break
 
-        # in case the RMSD value is higher than the RMSDs in the sorted arrays of RMSDs:
+        # in case the distance value is higher than the distances in the sorted arrays of distances:
         if len(centroidArray) == 0:
-            centroidArray = copy.deepcopy(self.Parent.RMSDPanel.RMSDThresholdHash[sortedRMSDArray[-1]][0])
-            average_RMSD_ARRAY = copy.deepcopy(self.Parent.RMSDPanel.RMSDThresholdHash[sortedRMSDArray[-1]][1])
+            centroidArray = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[-1]][0])
+            average_distance_ARRAY = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[-1]][1])
+            clusteredIndexArray = copy.deepcopy(self.Parent.distancePanel.distanceThresholdHash[sorteddistanceArray[-1]][2])
+        
+        ####################UPDATED PART############################
+        
+        for i in xrange(0,len(self.coordinateArray),1):
+            if not i in centroidArray and not i in clusteredIndexArray:
+                centroidArray.append(i)
+                average_distance_ARRAY.append(0) #add zeros to RMSD array in a quantity equal to the elements added to centridArray
 
-        # writing the solution.dat file:
-        clusters_file=open("%s/solutions.dat"%self.Parent.post.OUTPUT_DIRECTORY,"w")
-
-        # writing the tcl file:
-        tcl_file = open("%s/assembly.vmd"%self.Parent.post.OUTPUT_DIRECTORY,"w")
-
-        # import the constraint file:
-        self.constraint = self.Parent.params.constraint.split('.')[0]
-
-        #test if constraint file exists, and function constaint_check is available
-        try:
-            exec 'import %s as constraint'%(self.constraint)
-        except ImportError, e:
-            print "ERROR: load of user defined constraint function failed!"
-            sys.exit(1)
-
-        try: constraint.constraint_check
-        except NameError:
-            print 'ERROR: constraint_check function not found'
-
-        # DOCKSYMMCIRCLE or DOCKDIMER Assembly
-        if len(self.Parent.RMSDPanel.coordinateArray[0]) < 12:
-
-            self.structure = Protein()
-            self.structure.import_pdb(self.Parent.params.pdb_file_name)
-            coords=self.structure.get_xyz()
-
-            for n in centroidArray:
-                print "creating PDB for centroid: "+str(n)
-                self.structure.set_xyz(coords) # what is coords?
-                multimer1 = M.Multimer(self.structure)
-                multimer1.create_multimer(self.Parent.params.degree,self.Parent.RMSDPanel.coordinateArray[n][3],np.array([self.Parent.RMSDPanel.coordinateArray[n][0],self.Parent.RMSDPanel.coordinateArray[n][1],self.Parent.RMSDPanel.coordinateArray[n][2]]))
-
-                # print the pdb file
-                multimer1.write_PDB("%s/assembly%s.pdb"%(self.Parent.post.OUTPUT_DIRECTORY,iterant))
-
-                # create the constraint:
-                measure = constraint.constraint_check(multimer1)
-
-                # ----------------------------- WRITING SOLUTION.DAT
-                l = []
-                f = []
-
-                # insert coordinates in the solution.dat file
-                f.append("assembly "+str(iterant)+" |")
-                for item in self.Parent.RMSDPanel.coordinateArray[n][: len(self.Parent.RMSDPanel.coordinateArray[n])-1]:
-                    l.append(item)
-                    f.append("%8.3f ")
-                    #write constraint values
-                f.append("| ")
-                for item in measure:
-                    l.append(item)
-                    f.append("%8.3f ")
-                #write fitness
-                f.append("| %8.3f")
-                l.append(self.Parent.RMSDPanel.coordinateArray[n][-1])
-                # write average RMSD OF CLUSTER:
-                f.append("| %8.3f\n")
-                l.append(average_RMSD_ARRAY[iterant])
-
-                formatting=''.join(f)
-
-                clusters_file.write(formatting%tuple(l))
-
-                # --------------------------- WRITING TCL FILE
-                if iterant == 0:
-                    tcl_file.write("mol new assembly"+str(iterant)+".pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all \n")
-
-                else:
-                    tcl_file.write("mol addfile assembly"+str(iterant)+".pdb type pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all \n")
-
-                iterant += 1
-
-        # HETEROMULTIMER ASSEMBLY
-        else:
-            for n in centroidArray:
-
-                # --------------------------------- MODIFY THE FLEXIBLE STRUCTURES FOR THE 1ST ASSEMBLY
-                if self.Parent.params.assembly_style=="flexible":
-                    len_rigid_dim = 6*(len(self.Parent.data.structure_list)-1)
-                    i = 0
-
-                    for structure in self.Parent.data.structure_list:
-                        if structure.flexibility != "NA":
-
-                            deform_coeffs = self.Parent.RMSDPanel.coordinateArray[n][len_rigid_dim : len_rigid_dim + i + len(structure.flexibility.eigenspace_size) ]
-                            if self.Parent.params.mode=="seed":
-                                pos_eig=structure.flexibility.proj[:,structure.flexibility.centroid]+deform_coeffs
-                                code,min_dist=vq(structure.flexibility.proj.transpose(),np.array([pos_eig]))
-                                target_frame=min_dist.argmin()
-                                coords=structure.flexibility.all_coords[:,target_frame]
-                                coords_reshaped=coords.reshape(len(coords)/3,3)
-                                structure.monomer.set_xyz(coords_reshaped)
-                            else:
-                                coords=structure.monomer.get_xyz()
-                                coords_reshaped=coords.reshape(len(coords)*3)
-
-                                for n in xrange(0,len(deform_coeffs),1):
-                                    coords_reshaped+=deform_coeffs[n]*structure.flexibility.eigenvec[:,n]
-
-                                structure.monomer.set_xyz(coords_reshaped.reshape(len(coords_reshaped)/3,3))
-
-                            i += len(structure.flexibility.eigenspace_size)
-
-                # ------------------------------ CREATE ASSEMBLY
-                print "creating PDB for centroid: "+str(iterant)
-                multimer1 = AH.AssemblyHeteroMultimer(self.Parent.data.structure_list_and_name)
-                multimer1.place_all_mobile_structures(self.Parent.RMSDPanel.coordinateArray[n][:len(self.Parent.RMSDPanel.coordinateArray[n])-1])
-                # print the pdb file
-                multimer1.write_PDB("%s/assembly%s.pdb"%(self.Parent.post.OUTPUT_DIRECTORY,iterant))
-
-                # create the constraint:
-                measure = constraint.constraint_check(self.Parent.data, multimer1)
-
-                # ----------------------------- WRITING SOLUTION.DAT
-                l = []
-                f = []
-                # insert coordinates in the solution.dat file
-
-                f.append("assembly "+str(iterant)+" |")
-                for item in self.Parent.RMSDPanel.coordinateArray[n][: len(self.Parent.RMSDPanel.coordinateArray[n])-1]:
-                    l.append(item)
-                    f.append("%8.3f ")
-                    #write constraint values
-                f.append("| ")
-                for item in measure:
-                    l.append(item)
-                    f.append("%8.3f ")
-                #write fitness
-                f.append("| %8.3f")
-                l.append(self.Parent.RMSDPanel.coordinateArray[n][-1])
-                # write average RMSD OF CLUSTER:
-                f.append("| %8.3f\n")
-                l.append(average_RMSD_ARRAY[iterant])
-
-                formatting=''.join(f)
-
-                clusters_file.write(formatting%tuple(l))
-
-                # --------------------------- WRITING TCL FILE
-                if iterant == 0:
-                    tcl_file.write("mol new assembly"+str(iterant)+".pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all \n")
-
-                else:
-                    tcl_file.write("mol addfile assembly"+str(iterant)+".pdb type pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all \n")
-
-                iterant += 1
+        coordinates=self.coordinateArray[centroidArray,:] #SLICE HERE coordinateArray, to extract only data we're interested about
+       
+        self.Parent.post.make_output(coordinates, average_distance_ARRAY) #make_output just needs 2 parameters
+        
+        #self.Parent.post.make_output( centroidArray,average_distance_ARRAY, self.coordinateArray, clusteredIndexArray) #OLD CALL
+        
+    
+        
 
 
-
-        tcl_file.write("mol delrep 0 top \n\
-mol representation NewCartoon 0.300000 10.000000 4.100000 0 \n\
-mol color Chain \n\
-mol selection {all} \n\
-mol material Opaque \n\
-mol addrep top \n\
-mol selupdate 0 top 0 \n\
-mol colupdate 0 top 0 \n\
-mol scaleminmax top 0 0.000000 0.000000 \n\
-mol smoothrep top 0 0 \n\
-mol drawframes top 0 {now}")
-
-        clusters_file.close()
-        tcl_file.close()
-
-
-
-    def computeMatrix (self):
+    def computeCluster (self):
 
         #self.Parent.treePanel.Center()
 
@@ -353,7 +370,7 @@ mol drawframes top 0 {now}")
 #        self.distanceMatrixDummy = self.distanceMatrix[:,0:len(self.distanceMatrix[0,:])]
         self.distanceMatrixDummy = copy.deepcopy(self.distanceMatrix)
 
-        # create a hash to be sorted that will contain the RMSD values as well as the pairwise coodinates
+        # create a hash to be sorted that will contain the distance values as well as the pairwise coodinates
         self.unSortedHash = {}
         self.clusterHash = {} # the first value of the self.clusterHash will be the centroid of the cluster and the second will be the distanceMatrix index of structures
 
@@ -368,24 +385,24 @@ mol drawframes top 0 {now}")
         NewAddedIndex = '' # the index of the structure found when iterating over all the clusters
         clusterCount = 1
         nonCentroids = [] # this array will be used to remove the non centroid elements in the sorted hash
-        ArrayedRMSDIndexes = []
+        ArrayeddistanceIndexes = []
         valuesToBeRemoved = []
         self.centroidArray = [] # this will contain an array of indexes which are the centroids of all the clusters
         ClusterMergingSwitch = False
         centroidIndexForMerge = 0 # used to know which index is the centroid when one cluster merges with a smaller one
-        self.maximalRMSD = 0.00 # was used to stop clustering at the certain point but is now used to compute the graduation bar in the dendogram
+        self.maximaldistance = 0.00 # was used to stop clustering at the certain point but is now used to compute the graduation bar in the dendogram
 
         self.iterant = 0 #### THIS IS THE ITERANT VARIABLE USED TO DRAW THE DENDOGRAM ####
         self.DrawingArray = [] # this array will host all the small arrays to be drawn
         arraylist1copy = []
         arraylist2copy = [] # this is used to transfer the data between the first and second merged array when drawing
-        self.RMSDMutliplier = 0.00
-        topRMSDBeforeRemoval = 0 # this is to store the RMSD value before being removed and using it to make functions
+        self.distanceMutliplier = 0.00
+        topdistanceBeforeRemoval = 0 # this is to store the distance value before being removed and using it to make functions
         self.withinBetween = True # this value will help you to know whether the within distance is always smaller than the between distance
         indexAway = 0
 
-        # TAKING PDBs FROM RMSD THRESHOLD
-        self.RMSDThresholdHash = {} # this hash will contain the centroids corresponding to each passed RMSD threshold
+        # TAKING data FROM distance THRESHOLD
+        self.distanceThresholdHash = {} # this hash will contain the centroids corresponding to each passed distance threshold
 
         # Numpy matrix shortcut variables:
         self.minimumIndex = 0
@@ -393,9 +410,10 @@ mol drawframes top 0 {now}")
         self.secondMinimumIndex = 0
 
 
-        # as long as the self.sortedHashKeysKeys is no empty continue assigning clusters
-
+        # as long as the self.sortedHash.Keys is no empty continue assigning clusters
+        
         while self.distanceMatrixDummy.min() != 100:
+            
             self.updataMinimumValue()
 #            self.distanceMatrixDummy[np.where(self.distanceMatrixDummy == self.distanceMatrixDummy.min())])
             #for lolo in range(30):
@@ -439,7 +457,7 @@ mol drawframes top 0 {now}")
                     if ( ( (self.firstMinimumIndex in self.centroidArray) and (self.secondMinimumIndex in self.centroidArray) ) ):
 #                        print "Two Big Clusters found at proximity! proceeding to merge"
 
-                        topRMSDBeforeRemoval = self.distanceMatrixDummy.min()
+                        topdistanceBeforeRemoval = self.distanceMatrixDummy.min()
 
                         # getting the cluster numbers
                         for cluster1No in self.clusterHash.keys():
@@ -526,8 +544,8 @@ mol drawframes top 0 {now}")
                                     indexAway += 1
 
                                 # merge the two arrays
-#                                arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1],topRMSDBeforeRemoval )]
-                                arraylist1[1].append( [ "self.joinTwoArrays",[ indexAway, topRMSDBeforeRemoval ] ])
+#                                arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1],topdistanceBeforeRemoval )]
+                                arraylist1[1].append( [ "self.joinTwoArrays",[ indexAway, topdistanceBeforeRemoval ] ])
 
                                 # destroy the scond array permanently:
                                 self.DrawingArray.pop(self.DrawingArray.index(arraylist2))
@@ -539,8 +557,8 @@ mol drawframes top 0 {now}")
                                     arraylist2[1] += [elem]
                                     indexAway += 1
                                 # merge the two arrays
-#                                arraylist2[1] += [self.joinTwoArrays(arraylist2copy[-1] ,arraylist1copy[-1],topRMSDBeforeRemoval )]
-                                arraylist2[1].append( [ "self.joinTwoArrays",[ indexAway, topRMSDBeforeRemoval ] ])
+#                                arraylist2[1] += [self.joinTwoArrays(arraylist2copy[-1] ,arraylist1copy[-1],topdistanceBeforeRemoval )]
+                                arraylist2[1].append( [ "self.joinTwoArrays",[ indexAway, topdistanceBeforeRemoval ] ])
 
                                 # destroy the first array permanently:
                                 self.DrawingArray.pop(self.DrawingArray.index(arraylist1))
@@ -552,8 +570,8 @@ mol drawframes top 0 {now}")
                             #print "MERGED 2 BIG CLUSTERS AND DELETED ELEMENT "+str(cluster2No)
 #                            print self.DrawingArray
 
-                            # save the centroids of that RMSD
-                            self.SaveCentroidsAtRMSD(topRMSDBeforeRemoval)
+                            # save the centroids of that distance
+                            self.SaveCentroidsAtdistance(topdistanceBeforeRemoval)
 
                             self.updataMinimumValue()
 
@@ -571,13 +589,13 @@ mol drawframes top 0 {now}")
                         else:
                             centroidIndexForMerge = self.secondMinimumIndex
 
-                        topRMSDBeforeRemoval = self.distanceMatrixDummy.min()
+                        topdistanceBeforeRemoval = self.distanceMatrixDummy.min()
 
                         # getting all the indexes from one cluster to another
                         # locate the cluster having for centroid  centroidIndexForMerge
                         for clusterKey in self.clusterHash.keys():
                             if centroidIndexForMerge == self.clusterHash[clusterKey][0]:
-                                #self.checkWithinBetween(self.clusterHash[clusterKey], self.clusterHash[ki], topRMSDBeforeRemoval )
+                                #self.checkWithinBetween(self.clusterHash[clusterKey], self.clusterHash[ki], topdistanceBeforeRemoval )
                                 for ind in self.clusterHash[ki][1]:
                                     self.clusterHash[clusterKey][1] += [ind]
 
@@ -601,7 +619,7 @@ mol drawframes top 0 {now}")
 
                         # ---------------- REMOVING THE NON CENTROID ELEMENTS OF NEW CLUSTER FROM LIST
 
-                        #print ">> deleting elements "+str(nonCentroids)+" from the RMSD lists "
+                        #print ">> deleting elements "+str(nonCentroids)+" from the distance lists "
 
                         for indexValues in self.clusterHash[ki][1]:
 #                            print "index "+str(indexValues)+" in dummy matrix deleted (replaced by 100s)"
@@ -638,16 +656,16 @@ mol drawframes top 0 {now}")
                             indexAway += 1
 
                         # merge the two arrays
-#                        arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1],topRMSDBeforeRemoval )]
-                        arraylist1[1].append( ["self.joinTwoArrays", [indexAway, topRMSDBeforeRemoval ]] )
+#                        arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1],topdistanceBeforeRemoval )]
+                        arraylist1[1].append( ["self.joinTwoArrays", [indexAway, topdistanceBeforeRemoval ]] )
 
                         # destroy the scond array permanently:
                         self.DrawingArray.pop(self.DrawingArray.index(arraylist2))
                         #print "MERGED 1 SMALL AND 1 BIG CLUSTERS AND DELETED ELEMENT "
 #                        print self.DrawingArray
 
-                        # save the centroids of that RMSD
-                        self.SaveCentroidsAtRMSD(topRMSDBeforeRemoval)
+                        # save the centroids of that distance
+                        self.SaveCentroidsAtdistance(topdistanceBeforeRemoval)
                         self.updataMinimumValue()
 
                         break
@@ -658,7 +676,7 @@ mol drawframes top 0 {now}")
 
 #                        print "merging two small clusters !!"
 
-                        topRMSDBeforeRemoval = self.distanceMatrixDummy.min()
+                        topdistanceBeforeRemoval = self.distanceMatrixDummy.min()
 
                         #getting the cluster numbers
                         for cluster1No in self.clusterHash.keys():
@@ -684,7 +702,7 @@ mol drawframes top 0 {now}")
                         # get the non centroid elements:
                         nonCentroids = copy.deepcopy(self.clusterHash[cluster1No][1])
                         nonCentroids.pop(nonCentroids.index(self.clusterHash[cluster1No][0]))
-                        #print ">> deleting elements "+str(nonCentroids)+" from the RMSD lists, not get centroid function "
+                        #print ">> deleting elements "+str(nonCentroids)+" from the distance lists, not get centroid function "
 
                         for indexValues in nonCentroids:
 #                            print "index "+str(indexValues)+" in dummy matrix deleted (replaced by 100s)"
@@ -728,17 +746,17 @@ mol drawframes top 0 {now}")
                             arraylist1[1].append(elem)
                             indexAway += 1
                         # merge the two arrays
-#                        arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1], topRMSDBeforeRemoval )]
+#                        arraylist1[1] += [self.joinTwoArrays(arraylist1copy[-1] ,arraylist2copy[-1], topdistanceBeforeRemoval )]
 
-                        arraylist1[1] += [ ["self.joinTwoArrays", [ indexAway , topRMSDBeforeRemoval] ] ]
+                        arraylist1[1] += [ ["self.joinTwoArrays", [ indexAway , topdistanceBeforeRemoval] ] ]
 
                         # destroy the scond array permanently:
                         self.DrawingArray.pop(self.DrawingArray.index(arraylist2))
 #                        print "MERGED 2 SMALL CLUSTERS " #+str(cluster2No)
                         #print self.DrawingArray
 
-                        # save the centroids of that RMSD
-                        self.SaveCentroidsAtRMSD(topRMSDBeforeRemoval)
+                        # save the centroids of that distance
+                        self.SaveCentroidsAtdistance(topdistanceBeforeRemoval)
                         self.updataMinimumValue()
 
                         break
@@ -771,8 +789,8 @@ mol drawframes top 0 {now}")
                                 arraylist[1] += [ ["addSingleIndex", "x"+str(self.iterant) ,self.distanceMatrixDummy.min()] ]
                                 break
 
-                        # save the centroids of that RMSD
-                        self.SaveCentroidsAtRMSD(self.distanceMatrixDummy.min())
+                        # save the centroids of that distance
+                        self.SaveCentroidsAtdistance(self.distanceMatrixDummy.min())
 
                         # remove value in the Matrix
                         self.distanceMatrixDummy[self.minimumIndex] = 100
@@ -800,7 +818,7 @@ mol drawframes top 0 {now}")
                             # get the non centroid elements:
                             nonCentroids = copy.deepcopy(self.clusterHash[i][1])
                             nonCentroids.pop(nonCentroids.index(self.clusterHash[i][0]))
-                            #print ">> deleting elements "+str(nonCentroids)+" from the RMSD lists "
+                            #print ">> deleting elements "+str(nonCentroids)+" from the distance lists "
 
                             for indexValues in nonCentroids:
 #                                print "index "+str(indexValues)+" in dummy matrix deleted (replaced by 100s)"
@@ -812,7 +830,7 @@ mol drawframes top 0 {now}")
                             nonCentroids = copy.deepcopy(self.clusterHash[i][1])
                             nonCentroids.pop(nonCentroids.index(self.clusterHash[i][0]))
 
-                            #print ">> deleting element "+str(NewAddedIndex)+" from the RMSD lists "
+                            #print ">> deleting element "+str(NewAddedIndex)+" from the distance lists "
 
                             for indexValues in nonCentroids:
 #                                print "index "+str(indexValues)+" in dummy matrix deleted (replaced by 100s)"
@@ -851,9 +869,9 @@ mol drawframes top 0 {now}")
             self.withinBetween = True
             self.clusteredIndex.sort()
             #print "indexes assiged to clusters so far:"+ str(self.clusteredIndex)
-            print " > RMSDs remaining: "+str(len(self.distanceMatrixDummy[self.distanceMatrixDummy < 100]))+" | number of clusters: "+str(len(self.clusterHash.keys()))
+            print " > distances remaining: "+str(len(self.distanceMatrixDummy[self.distanceMatrixDummy < 100]))+" | number of clusters: "+str(len(self.clusterHash.keys()))
 
-
+            
             # restart the clusterSwitch
             ClusterMergingSwitch = False
 
@@ -868,7 +886,7 @@ mol drawframes top 0 {now}")
         print ">>> PREPARING TO DRAW NOW"
 #        print self.DrawingArray
 
-        #print ">>> RMSD mutliplier: "+str(self.RMSDMutliplier)
+        #print ">>> distance mutliplier: "+str(self.distanceMutliplier)
 
         # first need to extract the x data into a dictio to make the arrays real
         print ">>> initialising Drawing Array"
@@ -909,7 +927,7 @@ mol drawframes top 0 {now}")
 
 
         index = 0
-        rmsd = 0
+        distance = 0
         indexOfFirst = 0
         indexOfSecond= 0
         for bluePrints in self.unSeparatedArray:
@@ -920,13 +938,13 @@ mol drawframes top 0 {now}")
 #                print self.arrayReadyforDrawing
 
             if bluePrints[0] == "addSingleIndex" :
-                # getting the rmsd
+                # getting the distance
                 if self.unSeparatedArray[index - 1][0] == "ini" or self.unSeparatedArray[index - 1][0] == "self.joinTwoArrays":
-                    rmsd = self.unSeparatedArray[index - 1][-1][-1]
+                    distance = self.unSeparatedArray[index - 1][-1][-1]
                 else:
-                    rmsd = self.unSeparatedArray[index - 1][-1]
+                    distance = self.unSeparatedArray[index - 1][-1]
 
-                self.arrayReadyforDrawing += [self.addSingleIndex(bluePrints[1], bluePrints[2], xdictio, rmsd)]
+                self.arrayReadyforDrawing += [self.addSingleIndex(bluePrints[1], bluePrints[2], xdictio, distance)]
 
             if bluePrints[0] == "self.joinTwoArrays":
                 # get the unseparated array index of the 2nd array to join:
@@ -934,14 +952,14 @@ mol drawframes top 0 {now}")
                 indexOfSecond = indexOfFirst - bluePrints[1][0] - 1
 
 
-                # getting the rmsd
+                # getting the distance
                 if self.unSeparatedArray[index - 1][0] == "ini" or self.unSeparatedArray[index - 1][0] == "self.joinTwoArrays":
-                    rmsd = self.unSeparatedArray[index - 1][-1][-1]
+                    distance = self.unSeparatedArray[index - 1][-1][-1]
                 else:
-                    rmsd = self.unSeparatedArray[index - 1][-1]
+                    distance = self.unSeparatedArray[index - 1][-1]
 
 
-                self.arrayReadyforDrawing += [self.joinTwoArrays(indexOfSecond ,bluePrints[1][1],rmsd)]
+                self.arrayReadyforDrawing += [self.joinTwoArrays(indexOfSecond ,bluePrints[1][1],distance)]
 
             index += 1
             thirdCounter += 1.00
@@ -961,43 +979,43 @@ mol drawframes top 0 {now}")
             self.minimumIndex = np.where(self.distanceMatrixDummy == self.distanceMatrixDummy.min())
 #            print self.distanceMatrixDummy.min()
 #            print "error ?: "+str(self.minimumIndex[0])
-            self.firstMinimumIndex = int(self.minimumIndex[0])
-            self.secondMinimumIndex = int(self.minimumIndex[1])
+            self.firstMinimumIndex = int(self.minimumIndex[0][0])
+            self.secondMinimumIndex = int(self.minimumIndex[1][0])
 
-            # saving the last RMSD value so as to compute the dendogram tree according to that height
-            self.maximalRMSD = self.distanceMatrixDummy.min()
-            self.RMSDMutliplier = (self.Parent.treePanel.GetSize()[1] - 50)/(self.distanceMatrixDummy.min())
+            # saving the last distance value so as to compute the dendogram tree according to that height
+            self.maximaldistance = self.distanceMatrixDummy.min()
+            self.distanceMutliplier = (self.Parent.treePanel.GetSize()[1] - 50)/(self.distanceMatrixDummy.min())
 
 
     def getCentroid (self, array, oldCentroid):
-        RMSDHash = {} # contains the average RMSD as key and index as value
-        RMSDArray = [] # to hold the different RMSD to calculate mean value
+        distanceHash = {} # contains the average distance as key and index as value
+        distanceArray = [] # to hold the different distance to calculate mean value
         newCentroid = 0
 
-        # first you need to get all rmsds relative of one to another
+        # first you need to get all distances relative of one to another
         for i in array: # -> the array contains the indexes of the proteins: 0,1,3, ...
             for j in array:
                 if i == j:
-                    pass # as it does not make sense to look for the RMSD value for self.distanceMatrix[0][0]
+                    pass # as it does not make sense to look for the distance value for self.distanceMatrix[0][0]
 
                 elif self.distanceMatrix[i][j] == 100:
-                    #print "RMSDArray of distance: "+str(i)+" "+str(j)+" -> "+str(self.distanceMatrix[j][i])
-                    RMSDArray += [self.distanceMatrix[j][i]]
-                    #print RMSDArray
+                    #print "distanceArray of distance: "+str(i)+" "+str(j)+" -> "+str(self.distanceMatrix[j][i])
+                    distanceArray += [self.distanceMatrix[j][i]]
+                    #print distanceArray
 
                 else:
-                    #print "RMSDArray of distance: "+str(i)+" "+str(j)+" -> "+str(self.distanceMatrix[i][j])
-                    RMSDArray += [self.distanceMatrix[i][j]]
-                    #print RMSDArray
+                    #print "distanceArray of distance: "+str(i)+" "+str(j)+" -> "+str(self.distanceMatrix[i][j])
+                    distanceArray += [self.distanceMatrix[i][j]]
+                    #print distanceArray
 
-            # get the average value of the RMSDARRAY
-            RMSDHash[sum(RMSDArray)/len(RMSDArray)] = i
-#            print "RMSDHash: "
-#            print RMSDHash
+            # get the average value of the distanceARRAY
+            distanceHash[sum(distanceArray)/len(distanceArray)] = i
+#            print "distanceHash: "
+#            print distanceHash
             # empty array
-            RMSDArray = []
+            distanceArray = []
 
-        newCentroid = RMSDHash[np.array(RMSDHash.keys())[np.array(RMSDHash.keys())<101].min()]
+        newCentroid = distanceHash[np.array(distanceHash.keys())[np.array(distanceHash.keys())<101].min()]
 
 
         # ------------------------ DELETING OLD CENTROID --------------------------------------
@@ -1033,7 +1051,7 @@ mol drawframes top 0 {now}")
             self.distanceMatrixDummy[oldCentroid, :] = 100
             self.distanceMatrixDummy[:,oldCentroid] = 100
 
-#             !!! ---------------------- RE DELETE THE VERTICAL RMSDS OF INDEXES ONLY OF CLUSTERS CONTAINING CENTROIDS
+#             !!! ---------------------- RE DELETE THE VERTICAL distanceS OF INDEXES ONLY OF CLUSTERS CONTAINING CENTROIDS
             for array in self.clusterHash.values():
                 if array[0] != None:
                     for indes in array[1]:
@@ -1071,11 +1089,11 @@ mol drawframes top 0 {now}")
         print "---------------------------------------------------"
 
     def CheckIfClusterFull(self, clusterNumber, centroidIndex, clusterArray):
-        '''This is used to check whether a cluster has exceeded its within RMSD value, in this case it cannot grow any more'''
+        '''This is used to check whether a cluster has exceeded its within distance value, in this case it cannot grow any more'''
 
-        print "checking whether cluster has exceeded maximal RMSD value of cluster "+str(clusterNumber)+" centroid "+str(centroidIndex)+" "+str(clusterArray)
+        print "checking whether cluster has exceeded maximal distance value of cluster "+str(clusterNumber)+" centroid "+str(centroidIndex)+" "+str(clusterArray)
         distanceArray = [] # this will hold the distances between the centroids and the indexes
-        ArrayedRMSDIndexes = []
+        ArrayeddistanceIndexes = []
         valuesToBeRemoved = []
         indexArray = []
         indexArray = copy.deepcopy(clusterArray)
@@ -1089,19 +1107,19 @@ mol drawframes top 0 {now}")
             else:
                 distanceArray += [self.distanceMatrix[centroidIndex][indexArray[i]]]
 
-        # get the maximal element of the distance array and compare it with RMSD treshold
-        if max(distanceArray) >= self.maximalRMSD:
-            print "maximal RMSD in cluster "+str(clusterNumber)+" exceeded ("+ str(max(distanceArray)) +") proceeding to isolate cluster"
-            print "removing centroid "+ str(centroidIndex) +" from RMSD sorted list"
+        # get the maximal element of the distance array and compare it with distance treshold
+        if max(distanceArray) >= self.maximaldistance:
+            print "maximal distance in cluster "+str(clusterNumber)+" exceeded ("+ str(max(distanceArray)) +") proceeding to isolate cluster"
+            print "removing centroid "+ str(centroidIndex) +" from distance sorted list"
 
-            for RMSDval in self.sortedHashKeys:
+            for distanceval in self.sortedHashKeys:
 
-                #print self.unSortedHash[RMSDval]
-                ArrayedRMSDIndexes = self.unSortedHash[RMSDval]
+                #print self.unSortedHash[distanceval]
+                ArrayeddistanceIndexes = self.unSortedHash[distanceval]
 
-                if (centroidIndex in ArrayedRMSDIndexes):
-                    #print "found"+str(nonCentroids[0])+" "+str(nonCentroids[1])+" in "+str(ArrayedRMSDIndexes)
-                    valuesToBeRemoved += [RMSDval]
+                if (centroidIndex in ArrayeddistanceIndexes):
+                    #print "found"+str(nonCentroids[0])+" "+str(nonCentroids[1])+" in "+str(ArrayeddistanceIndexes)
+                    valuesToBeRemoved += [distanceval]
 
 
             for valu in valuesToBeRemoved:
@@ -1122,7 +1140,7 @@ mol drawframes top 0 {now}")
             indexArray1 = []
             indexArray2 = []
 
-            # get all the rmsd values between the centroid and the indexes in the clusters:
+            # get all the distance values between the centroid and the indexes in the clusters:
             for value1 in array1[1]:
                 if (self.distanceMatrix[centroid1][value1] == 100) and (value1 != centroid1):
                     indexArray1 += [self.distanceMatrix[value1][centroid1]]
@@ -1166,7 +1184,7 @@ mol drawframes top 0 {now}")
             indx1 = array2[1][0]
             indx2 = array2[1][1]
 
-            # get all the rmsd values between the centroid and the indexes in the clusters:
+            # get all the distance values between the centroid and the indexes in the clusters:
             for value1 in array1[1]:
                 if (self.distanceMatrix[centroid1][value1] == 100) and (value1 != centroid1):
                     indexArray1 += [self.distanceMatrix[value1][centroid1]]
@@ -1197,8 +1215,8 @@ mol drawframes top 0 {now}")
 
 
 
-    def getMaxRMSD(self):
-        return self.RMSDMutliplier
+    def getMaxdistance(self):
+        return self.distanceMutliplier
 
 
 
@@ -1208,7 +1226,7 @@ mol drawframes top 0 {now}")
     # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-    def makeSingleArray(self, RMSD):
+    def makeSingleArray(self, distance):
         self.iterant += 1
         x1 = "x"+str(self.iterant)
         first = [ x1, "0.0"]
@@ -1217,15 +1235,15 @@ mol drawframes top 0 {now}")
         x2 = "x"+str(self.iterant)
         second = [x2, "0.0"]
 
-        height = str(RMSD)+"* self.RMSDMutliplier"
+        height = str(distance)+"* self.distanceMutliplier"
 
         third = ["((( "+str(x2)+" - "+str(x1)+" )/2.0)+"+str(x1)+")", str(first[1])+"+"+height]
 
-        self.SaveCentroidsAtRMSD(RMSD)
+        self.SaveCentroidsAtdistance(distance)
 
-        return [first, second, height, third, RMSD]
+        return [first, second, height, third, distance]
 
-    def addSingleIndex (self, x, newRMSD, dictio, oldRMSD):
+    def addSingleIndex (self, x, newdistance, dictio, olddistance):
 #        for xs in dictio.keys():
 #            exec str(xs)+"="+str(dictio[x])
 
@@ -1236,14 +1254,14 @@ mol drawframes top 0 {now}")
         x2 = dictio[x]
         second = [x2, 0.0]
 
-        height = (newRMSD - oldRMSD) * self.RMSDMutliplier
+        height = (newdistance - olddistance) * self.distanceMutliplier
 
         third = [((x2-x1)/2.0)+x1, y1+height ]
 
 
         return [first, second, height, third]
 
-    def joinTwoArrays (self, index2 ,newRMSD, oldRMSD):
+    def joinTwoArrays (self, index2 ,newdistance, olddistance):
         x1 = self.arrayReadyforDrawing[-1][3][0]
         y1 = self.arrayReadyforDrawing[-1][3][1]
         first = [x1, y1]
@@ -1252,12 +1270,12 @@ mol drawframes top 0 {now}")
         y2 = self.arrayReadyforDrawing[index2][3][1]
         second = [x2, y2]
 
-        height = (newRMSD - oldRMSD) * self.RMSDMutliplier
+        height = (newdistance - olddistance) * self.distanceMutliplier
 
         third = [((x2-x1)/2.0)+x1, y1+height ]
 
-        # save the centroids of that RMSD
-#        self.SaveCentroidsAtRMSD(RMSD)
+        # save the centroids of that distance
+#        self.SaveCentroidsAtdistance(distance)
 
         return [first, second, height, third]
 
@@ -1266,7 +1284,7 @@ mol drawframes top 0 {now}")
         for x in dictio.keys():
             exec str(x)+"="+str(dictio[x])
 
-        exec "RMSDMutliplier = self.RMSDMutliplier"
+        exec "distanceMutliplier = self.distanceMutliplier"
 
         x1 = eval (array[0][0])
         y1 = eval(array[0][1])
@@ -1283,16 +1301,17 @@ mol drawframes top 0 {now}")
 
 
 
-    def SaveCentroidsAtRMSD (self, rmsd):
+    def SaveCentroidsAtdistance (self, distance):
         centroidArr = copy.deepcopy(self.centroidArray)
 
         # get the within cluster RSMD value, which is average value of centroid to all
-        RMSD_from_centroid = []
-        RMSDs_to_be_averaged = []
+        distance_from_centroid = []
+        distances_to_be_averaged = []
         array_of_indexes = []
-
+        cluster_indexes = copy.deepcopy(self.clusteredIndex)
+        
         for centroid in centroidArr:
-            RMSDs_to_be_averaged = []
+            distances_to_be_averaged = []
 
             # first get the array of indexes for each centroid:
             for value in self.clusterHash.values():
@@ -1304,16 +1323,15 @@ mol drawframes top 0 {now}")
                 if index == centroid:
                     pass
                 elif self.distanceMatrix[centroid][index] == 100:
-                    RMSDs_to_be_averaged.append(self.distanceMatrix[index][centroid])
+                    distances_to_be_averaged.append(self.distanceMatrix[index][centroid])
                 else:
-                    RMSDs_to_be_averaged.append(self.distanceMatrix[centroid][index])
+                    distances_to_be_averaged.append(self.distanceMatrix[centroid][index])
 
 
-            RMSD_from_centroid.append( sum(RMSDs_to_be_averaged) / len(RMSDs_to_be_averaged) )
+            distance_from_centroid.append( sum(distances_to_be_averaged) / len(distances_to_be_averaged) )
 
-
-        self.RMSDThresholdHash[rmsd] = [centroidArr, RMSD_from_centroid]
-
+        # save the array containing the centroids, the average distances from the centroid in the clusters and all the clustered indexes 
+        self.distanceThresholdHash[distance] = [centroidArr, distance_from_centroid, cluster_indexes]
 
 
 # --------------------------------------------------------------- TREE PANEL
@@ -1336,7 +1354,7 @@ class treeDisplay (wx.Panel):
 
         # creating the axis
         dc.DrawLine(-10, 0, -10, self.GetSize()[1]-50)
-        # divide the RMSD axis in lines of 20
+        # divide the distance axis in lines of 20
 
         height = self.GetSize()[1] - 50
 
@@ -1348,11 +1366,11 @@ class treeDisplay (wx.Panel):
         # draw the graduations:
         for i in range(len(graduationArray)):
             dc.DrawLine(-10, int(graduationArray[i]), -15, int(graduationArray[i]))
-            dc.DrawText("%.2f"%((self.Parent.RMSDPanel.maximalRMSD/steps)*i), -65, int(graduationArray[i])+10)
+            dc.DrawText("%.2f"%((self.Parent.distancePanel.maximaldistance/steps)*i), -65, int(graduationArray[i])+10)
 
         # draw the last maximal gradutation
         dc.DrawLine(-10, self.GetSize()[1]-50, -15, self.GetSize()[1]-50)
-        dc.DrawText("%.2f"%(self.Parent.RMSDPanel.maximalRMSD), -65, self.GetSize()[1]-40)
+        dc.DrawText("%.2f"%(self.Parent.distancePanel.maximaldistance), -65, self.GetSize()[1]-40)
 
         #drawing in steps for each cluster creation/merging
         for element in array:
@@ -1363,11 +1381,11 @@ class treeDisplay (wx.Panel):
             # then down
             dc.DrawLine (element[1][0], (element[0][1] + element[2]), element[1][0], element[1][1] )
 
-    def plotRMSDLine (self, RMSD):
-        '''Plots the red line and all the centroid of clusters located directly beneath the line should be export as pdb bfiles'''
+    def plotdistanceLine (self, distance):
+        '''Plots the red line and all the centroid of clusters located directly beneath the line should be exported'''
 
         # clear the screen and redraw everything:
-        self.plotFigure(self.Parent.RMSDPanel.arrayReadyforDrawing)
+        self.plotFigure(self.Parent.distancePanel.arrayReadyforDrawing)
 
         dc = wx.PaintDC(self)
         dc.SetPen(wx.Pen(wx.RED, 1))
@@ -1375,11 +1393,11 @@ class treeDisplay (wx.Panel):
         dc.SetAxisOrientation(True, True)
 
 
-        # transform the RMSD value into coordinates:
+        # transform the distance value into coordinates:
         widthScreen = self.GetSize()[0]
 
-        multiplier = self.Parent.RMSDPanel.getMaxRMSD()
-        #print str(multiplier*RMSD)
+        multiplier = self.Parent.distancePanel.getMaxdistance()
+        #print str(multiplier*distance)
         #(self.distanceMatrix[self.distanceMatrix<100].max()
 
-        dc.DrawLine(-9, int(multiplier*float(RMSD)), widthScreen -100,int(multiplier*float(RMSD)) )
+        dc.DrawLine(-9, int(multiplier*float(distance)), widthScreen -100,int(multiplier*float(distance)) )

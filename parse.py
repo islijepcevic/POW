@@ -19,16 +19,31 @@
 import os, sys
 import numpy as np
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+
+if rank == 0:
+    print '\n>        Parallel Optimization Workbench (POW)         <'
+    print   '> (c) 2012, Laboratory for Biomolecular Modeling, EPFL <'
+    print   '>                                                      <'
+    print   '>               -postprocess results -                 <\n'
+
+
 #check input params consistency
 if len(sys.argv)!=3 and len(sys.argv)!=4:
-    print "\nERROR: parameters are not what I expected!"
-    print "USAGE: ./parse.py module input_file [logfile]\n"
+    if rank == 0:
+        print "\nERROR: parameters are not what I expected!"
+        print "USAGE: ./parse.py module input_file [logfile]\n"
     sys.exit(1)
  
 #get input file
 infile=str(sys.argv[2])
 if os.path.isfile(infile)!=1 :
-    print "ERROR: input file not found!"
+    if rank == 0:
+        print "ERROR: input file not found!"
     sys.exit(1)
 
 #get program installation location and declare an environment variable (needed by some modules)
@@ -41,29 +56,51 @@ sys.path.append(home_dir)
 working_dir=os.getcwd()
 sys.path.append(working_dir)
 
-#load appropriate module
-exec 'import %s as mode'%(sys.argv[1].split('.')[0])
 
-print ">> parsing input file"
-#parse parameters
-params=mode.Parser()
-params.add_standard()
-params.set_default_values()
-params.parse(infile)
-params.check_standard_variables()
-params.check_variables()
+#add module path in path, in case it's not in POW home
+p,mod=os.path.split(sys.argv[1])
+if len(p)>0:
+    sys.path.append(p)
 
-#checking logfile existence
-if len(sys.argv)==4:
-    params.output_file=str(sys.argv[3])
-if os.path.isfile(params.output_file)!=1 :
-    print "ERROR: input file not found!"
-    sys.exit(1)
-#prepare datastructures
-print ">> loading data structures"
-data=mode.Data(params)
+#preprocessing performed only by master node
+if rank == 0:
 
-#run postprocessing
-print ">> postprocessing logfile %s"%params.output_file
-post=mode.Postprocess(data,params)
+    #load appropriate module
+    exec 'import %s as mode'%(mod.split('.')[0]) 
+    
+    print ">> parsing input file"
+    #parse parameters
+    params=mode.Parser()
+    params.add_standard()
+    params.set_default_values()
+    params.parse(infile)
+    params.check_standard_variables()
+    params.check_variables()
+    
+    #checking logfile existence
+    if len(sys.argv)==4:
+        params.output_file=str(sys.argv[3])
+    if os.path.isfile(params.output_file)!=1 :
+        print "ERROR: input file not found!"
+        sys.exit(1)
+    #prepare datastructures
+    print ">> loading data structures"
+    data=mode.Data(params)
+
+    #run postprocessing
+    print ">> postprocessing logfile %s"%params.output_file
+    post=mode.Postprocess(data,params)
+
+else:
+    params=None
+    data=None
+    post = None
+
+#propagate parameters, data, space and fitness function to slaves
+comm.Barrier()
+params=comm.bcast(params,root=0)
+data=comm.bcast(data,root=0)
+post=comm.bcast( post,root=0)
+comm.Barrier()
+
 post.run()

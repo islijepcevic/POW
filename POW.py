@@ -17,7 +17,7 @@
 # Web site : http://lbm.epfl.ch
 
 
-from PSO import PSO
+from PSO.PSO import PSO
 
 import wx
 import os, sys

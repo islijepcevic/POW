@@ -23,8 +23,8 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace \
-        swigPyToCppString, VectorAdaptor
+from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace, \
+        VectorAdaptor, swigPyListToCppVector#, swigPyToCppString 
 
 class Parser(BaseParameters): # this is imported in the file
     parameters={}
@@ -51,7 +51,7 @@ class Parser(BaseParameters): # this is imported in the file
         self.add('output','output_file','str',"log.txt")
         self.add('dimensions','dimensions','int',-1)
         self.add('fitnessFile','fit','str',"NA")
-        self.add('repulsion','repel','str',False)
+        self.add('repulsion','repel','str', "False")
         self.add('repulsion_factor','repel_factor', 'float', "NA")
         self.add('kar_threshold','kar','float',0.01)
         self.add('boundaryMin','low_input','array float',"NA")
@@ -70,26 +70,39 @@ class Parser(BaseParameters): # this is imported in the file
         self.parameters[key]=[variable,vartype,default]
 
 
-    def addToBaseParams(self, variable, value, vartype):
+    def addToBaseParams(self, varkey, value, vartype):
         '''
+        adds parameter to map in c++ superclass
+        by Ivan
+        @param varkey - the key to the map, also in self.variable
+        @param value - value to the map
+        @param vartype - string, one of the supported types
+                        (int, float, str, array int, array float, array str)
         '''
 
-        varkey = swigPyToCppString(variable)
+        if value == "NA" and vartype != "str":
+            return
 
         if vartype == 'int':
-            self.setIntParam(varkey, value)
+            value = int(value)
+            self._setIntParam(varkey, value)
         elif vartype == 'float':
-            self.setDoubleParam(varkey, value)
+            value = float(value)
+            self._setDoubleParam(varkey, value)
         elif vartype == 'str':
-            self.setStringParam(varkey, value)
+            self._setStringParam(varkey, value)
         else:
-            vectorValue = swigPyListToCppVector(value, vartype)
             if vartype == 'aray int':
-                self.setIntArrayParam(varkey, vectorValue)
+                value = map(lambda x: int(x), value)
+                vectorValue = swigPyListToCppVector(value, vartype)
+                self._setIntArrayParam(varkey, vectorValue)
             elif vartype == 'array float':
-                self.setDoubleArrayParam(varkey, vectorValue)
+                value = map(lambda x: float(x), value)
+                print value
+                vectorValue = swigPyListToCppVector(value, vartype)
+                self._setDoubleArrayParam(varkey, vectorValue)
             elif vartype == 'array str':
-                self.setStringArrayParam(varkey, vectorValue)
+                self._setStringArrayParam(varkey, vectorValue)
             else:
                 print >> sys.stderr, "added parameter of non-supported type"
 
@@ -102,6 +115,7 @@ class Parser(BaseParameters): # this is imported in the file
         for k,v in self.parameters.iteritems():
             # this is where the self.style comes from
             exec 'self.%s=v[2]'%v[0] 
+            self.addToBaseParams(v[0], v[2], v[1]) # by Ivan
 
 
     def parse(self,infile):
@@ -127,17 +141,26 @@ class Parser(BaseParameters): # this is imported in the file
 
                 #if type is string
                 if val[1].split()[0]=='str': # _> val[1] = 'str' or 'int'
+
                     # Xx here you are replacing the default by input paramater
-                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1]) # TODO IVAN
+                    exec 'self.%s=%s("%s")'%(val[0],val[1],w[1])
+
+                    self.addToBaseParams(val[0], w[1], val[1]) # by Ivan
+
                     # Xx exec -> self.restart_load = str("NA")
                     # xX the "NA" is from the input file
+
                 #if type is int or float
                 elif val[1].split()[0]=='int' or val[1].split()[0]=='float':
-                    exec 'self.%s=%s(%s)'%(val[0],val[1],w[1]) # TODO IVAN
+                    exec 'self.%s=%s(%s)'%(val[0],val[1],w[1])
+
+                    self.addToBaseParams(val[0], w[1], val[1]) # by Ivan
 
                 # GIORGIO_CODE in case the variable_name is a monomer or
                 # trajectory having multiple files
                 # (case of Hetero-multimer assembly)
+                # comment by Ivan: parameters in this 'if' branch are not used
+                # by PSO, and hence not added to c++ maps of parameters
                 elif val[1].split()[0]=='array' \
                     and (val[1].split()[1]=='int' \
                         or val[1].split()[1]=='float' \
@@ -149,16 +172,14 @@ class Parser(BaseParameters): # this is imported in the file
                     ) :
 
                     test = "NA"
-                    exec "test = self.%s" % (val[0]) # TODO IVAN
+                    exec "test = self.%s" % (val[0])
                     if (test == "NA") :
-                        exec "self.%s = []" % (val[0]) # TODO IVAN
+                        exec "self.%s = []" % (val[0])
                         exec 'self.%s += [np.array(%s).astype(%s)]' \
                                 % (val[0],w[1:len(w)],val[1].split()[1])
-                                 # TODO IVAN
                     else:
                         exec 'self.%s += [np.array(%s).astype(%s)]' \
                                 % (val[0],w[1:len(w)],val[1].split()[1])
-                                 # TODO IVAN
 
                 #if type is an array of int, float, or str
                 elif val[1].split()[0]=='array' \
@@ -168,7 +189,8 @@ class Parser(BaseParameters): # this is imported in the file
                     ):
                     exec 'self.%s=np.array(%s).astype(%s)' \
                             %(val[0],w[1:len(w)],val[1].split()[1])
-                              # TODO IVAN
+
+                    self.addToBaseParams(val[0], w[1:], val[1]) # by Ivan
                 else:
                     print "unrecognised type for keyword %s: %s"%(w[0],val[1])
                     sys.exit(1)

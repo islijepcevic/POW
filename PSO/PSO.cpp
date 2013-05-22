@@ -8,7 +8,7 @@
  */
 #include "PSO.hpp"
 
-#include "NeighbourhoodFactory.hpp"
+//#include "NeighbourhoodFactory.hpp"
 
 namespace PSO {
 
@@ -21,23 +21,22 @@ PSO::PSO(BaseParameters& _params, AbstractSpace& _space,
 //    swarm(),
 //    neighbourhood(NULL),
     totalSteps(params.getIntParam("max_steps")),
-    totalRepetitions(params.getIntParams("repeat")),
-    inertiaMax(params.getDoubleParam("inertia_max"),
-    inertiaMin(params.getDoubleParam("inertia_min"),
-    logFileName(params.getStringParams("output_file")),
-    logFile(NULL) {
+    totalRepetitions(params.getIntParam("repeat")),
+    inertiaMax(params.getDoubleParam("inertia_max")),
+    inertiaMin(params.getDoubleParam("inertia_min")),
+    logFileName(params.getStringParam("output_file")) {
 
 //    if (mpiWorld.rank() == 0) {
 //        swarm = Swarm(params.getIntParam("n_particles"), space);
 //
 //        neighbourhood = createNeighbourhood(
-//            params.getStringParams("neigh_type"),
+//            params.getStringParam("neigh_type"),
 //            swarm
 //        );
 //    }
 }
 
-virtual ~PSO::PSO() {
+PSO::~PSO() {
 //    free(neighbourhood);
 }
 

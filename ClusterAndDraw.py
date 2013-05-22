@@ -11,7 +11,7 @@ import string
 import Multimer as M
 import AssemblyHeteroMultimer as AH # _CHANGED_
 from Protein import Protein
-import flexibility_new as F # _CHANGED_
+#import flexibility_new as F # _CHANGED_
 
 import os, sys
 

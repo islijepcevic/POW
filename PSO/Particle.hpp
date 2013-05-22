@@ -14,7 +14,7 @@
 //#include <boost/archive/binary_iarchive.hpp>
 //#include <boost/serialization/vector.hpp>
 
-#define VERY_LARGE_VALUE 100000000
+#include "AbstractSpace.hpp"
 
 namespace PSO {
 
@@ -76,11 +76,11 @@ public:
      */
     ~Particle();
 
-    /*
-     * seeds a particle to the new random position
-     * @param space - a reference to space
-     */
-    void seed(const AbstractSpace& space);
+//    /*
+//     * seeds a particle to the new random position
+//     * @param space - a reference to space
+//     */
+//    void seed(const AbstractSpace& space);
 };
 
 } // namespace PSO 

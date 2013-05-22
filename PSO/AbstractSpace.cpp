@@ -51,5 +51,5 @@ AbstractSpace::~AbstractSpace() {
 //    //
 //    // for every dimension, get the shortest distance between two particles
 //}
-//
-//} // namespace PSO
+
+} // namespace PSO

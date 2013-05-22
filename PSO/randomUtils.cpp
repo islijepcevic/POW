@@ -1,6 +1,7 @@
 #include "randomUtils.hpp"
 
 #include <cstdlib>
+#include <ctime>
 
 double randDouble(double lo, double hi) {
 

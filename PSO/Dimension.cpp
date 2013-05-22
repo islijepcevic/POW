@@ -15,10 +15,10 @@
 namespace PSO {
 
 Dimension::Dimension(const double _lower, const double _higher) :
-    lowerBound(_lower), _higher(higherBound),
+    lowerBound(_lower), higherBound(_higher),
     size(higherBound - lowerBound) {
 
-    if size < 0 {
+    if (size < 0) {
         throw std::invalid_argument("dimension size is negative");
     }
 }
@@ -38,7 +38,7 @@ double Dimension::getSize() {
     return size;
 }
 
-double calculateDistance(double pos1, double pos2) const {
+double Dimension::calculateDistance(double pos1, double pos2) const {
     return fabs(pos1 - pos2);
 }
 

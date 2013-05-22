@@ -21,46 +21,46 @@ private:
     std::map<std::string, int> parametersInt;
     std::map<std::string, double> parametersDouble;
     std::map<std::string, std::string> parametersString;
-    std::map<std::string, std::vector<int>& > parametersArrayInt;
-    std::map<std::string, std::vector<double>& > parametersArrayDouble;
-    std::map<std::string, std::vector<std::string>& > parametersArrayString;
+    std::map<std::string, std::vector<int> > parametersArrayInt;
+    std::map<std::string, std::vector<double> > parametersArrayDouble;
+    std::map<std::string, std::vector<std::string> > parametersArrayString;
 
-protected:
+public: // this should be protected
     
     /*
      * setter for int parameter
      */
-    void setIntParam(const std::string& key, const int value);
+    void _setIntParam(const std::string& key, const int value);
 
      /*
      * setter for double parameter
      */
-    void setDoubleParam(const std::string& key, const double value);
+    void _setDoubleParam(const std::string& key, const double value);
      
     /*
      * setter for string parameter
      */
-    void setStringParam(const std::string& key, const std::string value);
+    void _setStringParam(const std::string& key, const std::string value);
 
      /*
      * setter for int array parameter
      */
-    void setIntArrayParam(const std::string& key,
+    void _setIntArrayParam(const std::string& key,
                         const std::vector<int>& value);
      
     /*
      * setter for double array parameter
      */
-    void setDoubleArrayParam(const std::string& key,
+    void _setDoubleArrayParam(const std::string& key,
                             const std::vector<double>& value);
 
     /*
      * setter for string array parameter
      */
-    void setStringArrayParam(const std::string& key,
+    void _setStringArrayParam(const std::string& key,
                             const std::vector<std::string>& value);
 
-public:
+// this is really public now
 
     /*
      * constructor
@@ -90,17 +90,17 @@ public:
     /*
      * getter for int array parameter
      */
-    std::vector<int>& getIntArrayParam(const std::string& key) const;
+    const std::vector<int>& getIntArrayParam(const std::string& key) const;
     
     /*
      * getter for double array parameter
      */
-    std::vector<double>& getDoubleArrayParam(const std::string& key) const;
+    const std::vector<double>& getDoubleArrayParam(const std::string& key) const;
 
     /*
      * getter for string array parameter
      */
-    std::vector<std::string>& getStringArrayParam(const std::string& key) const;
+    const std::vector<std::string>& getStringArrayParam(const std::string& key) const;
 
 };
 

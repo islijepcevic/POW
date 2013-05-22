@@ -13,7 +13,8 @@
 
 namespace PSO {
 
-Particle::Particle() {
+Particle::Particle() :
+   INDEX(0) {
 }
 
 Particle::Particle(const int _index, const int noDimensions) :
@@ -28,15 +29,15 @@ Particle::Particle(const int _index, const int noDimensions) :
 Particle::~Particle() {
 }
 
-void Particle::seed(const AbstractSpace& space) {
-    currentValue = bestValue = VERY_LARGE_VALUE;
-
-    for (int d = 0; d < currentPosition.size(); d++) {
-        currentPosition[d] = bestPosition[d] = randDouble(
-                space.getLowerBound(d), space.getHigherBound(d)
-        );
-        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
-    }
-}
+//void Particle::seed(const AbstractSpace& space) {
+//    currentValue = bestValue = VERY_LARGE_VALUE;
+//
+//    for (int d = 0; d < currentPosition.size(); d++) {
+//        currentPosition[d] = bestPosition[d] = randDouble(
+//                space.getLowerBound(d), space.getHigherBound(d)
+//        );
+//        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
+//    }
+//}
 
 } // namespace PSO 

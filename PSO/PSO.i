@@ -28,10 +28,15 @@
 %feature("director") BaseParameters;
 %feature("director") AbstractSpace;
 
-
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
+
+// this one also needs to be here so that std::vector can be mapped to python
+%include <std_vector.i>
+%include <std_string.i>
+
 // this is instead of rewriting all the code here
 // this will be accessible in python code
+%include "Particle.hpp"
 %include "BaseParameters.hpp"
 %include "AbstractSpace.hpp"
 %include "AbstractFitness.hpp"
@@ -71,7 +76,7 @@ double swigCArrayGet(double* a, int index) {
  * @param index - index of the wanted element
  * @param value - the new value to be set
  */
-void swigCArraySet(double*, int index, double value) {
+void swigCArraySet(double* a, int index, double value) {
     a[index] = value;
 }
 
@@ -82,7 +87,8 @@ void swigCArraySet(double*, int index, double value) {
  * @return - the string
  */
 std::string swigNewCppString(unsigned int n) {
-    std::string s(n, 'a');
+    std::string s;
+    s.reserve(n);
     return s;
 }
 
@@ -90,7 +96,7 @@ std::string swigNewCppString(unsigned int n) {
  * creates a new c++ vector of arbitrary type
  * @return - an empty vector
  */
-template<type T>
+template<class T>
 std::vector<T> swigNewCppVector() {
     std::vector<T> vec;
     return vec;
@@ -98,11 +104,21 @@ std::vector<T> swigNewCppVector() {
 
 %}
 
+%rename(delete_array) free(void*);
+
+// instantiate the function swigNewCppVector()
 %template(swigNewIntVector) swigNewCppVector<int>;
 %template(swigNewDblVector) swigNewCppVector<double>;
 %template(swigNewStrVector) swigNewCppVector<std::string>;
 
-%rename(delete_array) free(void*);
+// instantiate the vector class; if this is not done, the memory leak appears
+// because this SWIG file only sees the declaration of vector<T>. This is not a
+// "complete" class and it does not have a callable destructor, so it is needed
+// to instantiate the templated type to have the definition of the "complete"
+// type
+%template(vecint) std::vector<int>;
+%template(vecdbl) std::vector<double>;
+%template(vecstr) std::vector<std::string>;
 
 // these functions are to be used for python structures
 %pythoncode %{
@@ -136,9 +152,11 @@ def swigPyToCppString(pyStr):
     @param pyStr - python string
     @param - c++ string
     '''
+    #return pyStr
     cppStr = swigNewCppString(len(pyStr))
     for i in xrange(len(pyStr)):
-        cppStr[i] = pyStr[i]
+        #cppStr[i] = pyStr[i]
+        cppStr.push_back(pyStr[i])
     return cppStr
 
 def swigPyListToCppVector(pyList, vartype):
@@ -153,11 +171,11 @@ def swigPyListToCppVector(pyList, vartype):
 
     vector = None
 
-    if vartype == 'int':
+    if vartype == 'array int':
         vector = swigNewIntVector()
-    elif vartype == 'float':
+    elif vartype == 'array float':
         vector = swigNewDblVector()
-    elif vartype == 'str':
+    elif vartype == 'array str':
         vector = swigNewStrVector()
     else:
         raise ValueError("wrong vartype supported to swigPyListToCppVector")

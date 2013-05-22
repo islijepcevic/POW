@@ -1,12 +1,8 @@
 next:
-test swigPyListToCppVector (in test/polymorphism) - it doesn't work
-    (if it really won't work, just make 3 distinct functions instead using
-    the template)
-change Parser class - because input file with parameters is called too late
-    in every place of "#TODO IVAN" call self.addToBaseParams()
 FIRST RUN
 add/recover and finish Dimension 
 recover everything in AbstractSpace
+recover everything from Particle
 recover Neighbourhood
 think of how to proceed communicating the data in the PSO
 recover serialization in Particle
@@ -78,6 +74,8 @@ Connect BaseParameters with Parameters:
 (12.4.)+> think of methods to fill in the c++ map from Python when
 initializing
 (12.4.)+> think of how to update when something is set in both directions
+(20.5.)+> throughout Parser class, addded calls that integrate with c++
+BaseParameters
 
 Space / Dimension
 (15.4.)+> Dimension.checkBoundaries() updates the particle. check if it needs
@@ -129,6 +127,7 @@ SWIG:
 (17.5.)+> list-to-vector adaptor implemented
 (17.5.)+> update polymorphism for every class
 (17.5.)+> added pyString to cppString functionality
+(20.5.)+> add templated vector methods from test/vector_in_python
 
 REPORT:
 (14.5.)+> first class diagram in violet

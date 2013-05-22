@@ -22,7 +22,7 @@ class Fitness(BF):
         return np.sum(np.sin(np.radians(pos)))/dimensions+1.0
 
 class Space(S):
-    def __int__(self, params, data):
+    def __init__(self, params, data):
         S.__init__(self)
 
         # assign low boundaries

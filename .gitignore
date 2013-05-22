@@ -2,3 +2,7 @@
 *.swp
 *.db
 *.pyc
+PSO/*.o
+PSO/PSO_wrap*
+PSO/PSO.py
+PSO/_PSO.so

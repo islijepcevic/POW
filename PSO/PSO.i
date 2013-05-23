@@ -15,17 +15,17 @@
 #include "PSO.hpp"
 #include "AbstractFitness.hpp"
 #include "AbstractSpace.hpp"
-#include "BaseParameters.hpp"
+#include "PsoParameters.hpp"
 #include "Particle.hpp"
 #include <vector>
 #include <string>
+#include <mpi.h>
 // add all the other stuff - boost serializations, boost mpi, ...
 %}
 
 
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
 %feature("director") AbstractFitness;
-%feature("director") BaseParameters;
 %feature("director") AbstractSpace;
 
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
@@ -34,10 +34,15 @@
 %include <std_vector.i>
 %include <std_string.i>
 
+// this needs to be included in order to map python''s MPI.comm into c/c++
+// MPI_comm
+%include mpi4py/mpi4py.i
+%mpi4py_typemap(Comm, MPI_Comm);
+
 // this is instead of rewriting all the code here
 // this will be accessible in python code
 %include "Particle.hpp"
-%include "BaseParameters.hpp"
+%include "PsoParameters.hpp"
 %include "AbstractSpace.hpp"
 %include "AbstractFitness.hpp"
 %include "PSO.hpp"

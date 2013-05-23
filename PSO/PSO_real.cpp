@@ -16,7 +16,7 @@
 
 namespace PSO {
 
-PSO::PSO(BaseParameters& _params, AbstractSpace& _space,
+PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
             AbstractFitness& _fitness, MPI_Comm _comm) :
     params(_params),
     space(_space),

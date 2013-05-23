@@ -5,7 +5,7 @@ swig -c++ -python -I/usr/lib/python2.7/site-packages/mpi4py/include PSO.i
 
 echo "COMPILE MY CPP"
 mpic++ -O2 -fPIC -c AbstractSpace.cpp          #compiled
-mpic++ -O2 -fPIC -c BaseParameters.cpp         #compiled
+mpic++ -O2 -fPIC -c PsoParameters.cpp         #compiled
 #mpic++ -O2 -fPIC -c Dimension.cpp             #compiled
 #mpic++ -O2 -fPIC -c GeometricNeighbourhood.cpp
 #mpic++ -O2 -fPIC -c GlobalNeighbourhood.cpp   
@@ -23,7 +23,7 @@ mpic++ -O2 -fPIC -c PSO_wrap.cxx -I/usr/include/python2.7 \
     -I/usr/lib/python2.7/site-packages/mpi4py/include
 
 echo "LINK"
-mpic++ -shared -o _PSO.so PSO_wrap.o AbstractSpace.o BaseParameters.o \
+mpic++ -shared -o _PSO.so PSO_wrap.o AbstractSpace.o PsoParameters.o \
     PSO.o Particle.o randomUtils.o
 #    IndexedNeighbourhood.o NeighbourhoodFactory.o PeriodicDimension.o \
 #    ReflexiveDimension.o Dimension.o GeometricNeighbourhood.o \

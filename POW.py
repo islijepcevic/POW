@@ -17,7 +17,7 @@
 # Web site : http://lbm.epfl.ch
 
 
-from PSO.PSO import PSO
+from PSO.PSO import PSO, PsoParameters
 
 #import wx
 import os, sys
@@ -87,6 +87,9 @@ if rank == 0:
     params.check_standard_variables() 
     params.check_variables() 
 
+    # init params that are used in c++
+    psoParams = PsoParameters()
+    params.addAllToPsoParams(psoParams)
 
     #load requested data structures
     print '>> importing data...'
@@ -134,13 +137,13 @@ else:
 #propagate parameters, data, space and fitness function to slaves
 comm.Barrier()
 params=comm.bcast(params,root=0)
-space=comm.bcast(space,root=0)
-fitness=comm.bcast(fitness,root=0)
+#space=comm.bcast(space,root=0)      # removed by Ivan
+#fitness=comm.bcast(fitness,root=0)  # removed by Ivan
 data=comm.bcast(data,root=0)
 comm.Barrier()
 
 #prepare optimizer
-search=PSO(params,space,fitness)
+search=PSO(psoParams,space,fitness, comm)
 
 #init optimization timer
 if rank==0:

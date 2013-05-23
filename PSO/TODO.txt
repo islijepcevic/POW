@@ -1,13 +1,20 @@
 next:
-FIRST RUN
 add/recover and finish Dimension 
 recover everything in AbstractSpace
 recover everything from Particle
 recover Neighbourhood
+think of how to perform upgradeable log writing (observer?)
 think of how to proceed communicating the data in the PSO
 recover serialization in Particle
 serialize the neighbourhood(s)
 recover everything in PSO
+
+ADD TO DOCUMENTATION:
+-> POW must create PsoParameters, then call params.<method>(psoParams) before
+passing it to PSO
+-> space and fitness are not bcasted. space - not needed. fitness - modify
+printer (will be a new class)
+
 
 PSO (c++):
 -> continue implementing according to comments in the methods
@@ -40,21 +47,21 @@ MPI: after testing regular code, add MPI support
 -> implement skeleton/content
 
 TEST:
--> BaseParameters with Parameters integration (do they fill correctly)
--> BaseParameters has std::string, test if it works that way. Maybe there is
-need of char*. Otherwise, in Parser.add() I can call some converter from
-python string to c++ string, which I implement in swig's module.i
--> BaseParameters has references to std::vector, test how it works
+-> PsoParameters with Parameters integration (do they fill correctly)
 -> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
 
 IF THERE IS TIME:
--> kick and reset
+-> kick and reseed
 -> repellers
 -> save/load to enable restart from file
 
 ##############################################################################
 # DONE:                                                                      #
 ##############################################################################
+
+General:
+(22/23.5.)+> FIRST COMPILE AND RUN! although PSO is basically empty, it
+finally integrates together
 
 PSO:
 (3.5.)+> skeleton created
@@ -70,12 +77,16 @@ Swarm
 Neighbourhood and derived:
 (29.4.)+> implemented basic versions
 
-Connect BaseParameters with Parameters:
+Parser/params:
 (12.4.)+> think of methods to fill in the c++ map from Python when
 initializing
 (12.4.)+> think of how to update when something is set in both directions
-(20.5.)+> throughout Parser class, addded calls that integrate with c++
-BaseParameters
+(20.5.)+> throughout Parser class, added calls that integrate with c++
+BaseParameters, including all conversion between python and c++ types
+(22.5.)+> renamed BaseParameters to PsoParameters; this class is no more a
+superclass of Parser - it was not possible to broadcast it because it could
+not be pickled; PsoParameters will serve as a standalone c++ class with its
+own maps, and all the parameters from params will be copied there
 
 Space / Dimension
 (15.4.)+> Dimension.checkBoundaries() updates the particle. check if it needs

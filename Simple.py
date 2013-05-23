@@ -53,7 +53,12 @@ class Space(S):
 class Parser(P):
     def __init__(self):
         P.__init__(self)
+
     def check_variables(self):
+        '''
+        this method is for checking additional variables, introduced by module
+        programmer
+        '''
         pass
 
 class Data:

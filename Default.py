@@ -23,17 +23,16 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import BaseParameters, AbstractFitness, AbstractSpace, \
+from PSO.PSO import AbstractFitness, AbstractSpace, \
         VectorAdaptor, swigPyListToCppVector#, swigPyToCppString 
 
-class Parser(BaseParameters): # this is imported in the file
+class Parser: # this is imported in the file
     parameters={}
 
     def __init__(self):
-        BaseParameters.__init__(self)
+        self.paramsForPso = {}
 
     def add_standard(self):
-
 
         #keyword_name, variable_name, type, default value
         self.add('repeat','repeat','int',1)
@@ -68,9 +67,10 @@ class Parser(BaseParameters): # this is imported in the file
         the tuples above in the self.parameter xX
         '''
         self.parameters[key]=[variable,vartype,default]
+        self.paramsForPso[variable] = [default, vartype] # by Ivan
 
 
-    def addToBaseParams(self, varkey, value, vartype):
+    def addToPsoParams(self, psoParams, varkey, value, vartype):
         '''
         adds parameter to map in c++ superclass
         by Ivan
@@ -78,6 +78,8 @@ class Parser(BaseParameters): # this is imported in the file
         @param value - value to the map
         @param vartype - string, one of the supported types
                         (int, float, str, array int, array float, array str)
+
+        @author Ivan
         '''
 
         if value == "NA" and vartype != "str":
@@ -85,26 +87,40 @@ class Parser(BaseParameters): # this is imported in the file
 
         if vartype == 'int':
             value = int(value)
-            self._setIntParam(varkey, value)
+            psoParams.setIntParam(varkey, value)
         elif vartype == 'float':
             value = float(value)
-            self._setDoubleParam(varkey, value)
+            psoParams.setDoubleParam(varkey, value)
         elif vartype == 'str':
-            self._setStringParam(varkey, value)
+            psoParams.setStringParam(varkey, value)
         else:
-            if vartype == 'aray int':
+            if vartype == 'array int':
                 value = map(lambda x: int(x), value)
                 vectorValue = swigPyListToCppVector(value, vartype)
-                self._setIntArrayParam(varkey, vectorValue)
+                psoParams.setIntArrayParam(varkey, vectorValue)
             elif vartype == 'array float':
                 value = map(lambda x: float(x), value)
                 print value
                 vectorValue = swigPyListToCppVector(value, vartype)
-                self._setDoubleArrayParam(varkey, vectorValue)
+                psoParams.setDoubleArrayParam(varkey, vectorValue)
             elif vartype == 'array str':
-                self._setStringArrayParam(varkey, vectorValue)
+                psoParams.setStringArrayParam(varkey, vectorValue)
             else:
-                print >> sys.stderr, "added parameter of non-supported type"
+                print >> sys.stderr, "added parameter of non-supported type", \
+                    (varkey, value, vartype)
+
+
+    def addAllToPsoParams(self, psoParams):
+        '''
+        adds all the params in the self.parameters dict to the psoParams
+        @param psoParams - object of PsoParameters class
+
+        @author Ivan
+        '''
+        for k, v in self.paramsForPso.iteritems():
+            # k = varName
+            # v = [value, type]
+            self.addToPsoParams(psoParams, k, v[0], v[1])
 
 
     def set_default_values(self):
@@ -115,8 +131,30 @@ class Parser(BaseParameters): # this is imported in the file
         for k,v in self.parameters.iteritems():
             # this is where the self.style comes from
             exec 'self.%s=v[2]'%v[0] 
-            self.addToBaseParams(v[0], v[2], v[1]) # by Ivan
 
+            # further code by Ivan - add to self.paramsForPso
+            # a little workaround
+            # THAT SEEMS VERY VERY BAD BECAUSE I HAVE v[1]
+            #vartype = type(v[2])
+            #if vartype == int:
+            #    vartype = "int"
+            #elif vartype == float:
+            #    vartype = "float"
+            #elif vartype == str:
+            #    print "setting type:", k, v
+            #    vartype = "str"
+            #elif vartype == list or vartype == np.ndarray:
+            #    subtype = type(vartype)
+            #    if subtype == int:
+            #        vartype = "array int"
+            #    elif subtype == float:
+            #        vartype = "array float"
+            #    elif subtype == str:
+            #        vartype = "array str"
+            #    else:
+            #        ValueError("unsupported type of parameter in the list")
+
+            self.paramsForPso[v[0]] = [v[2], v[1]]
 
     def parse(self,infile):
         '''
@@ -145,7 +183,7 @@ class Parser(BaseParameters): # this is imported in the file
                     # Xx here you are replacing the default by input paramater
                     exec 'self.%s=%s("%s")'%(val[0],val[1],w[1])
 
-                    self.addToBaseParams(val[0], w[1], val[1]) # by Ivan
+                    self.paramsForPso[val[0]] = [w[1], val[1]]
 
                     # Xx exec -> self.restart_load = str("NA")
                     # xX the "NA" is from the input file
@@ -154,7 +192,7 @@ class Parser(BaseParameters): # this is imported in the file
                 elif val[1].split()[0]=='int' or val[1].split()[0]=='float':
                     exec 'self.%s=%s(%s)'%(val[0],val[1],w[1])
 
-                    self.addToBaseParams(val[0], w[1], val[1]) # by Ivan
+                    self.paramsForPso[val[0]] = [w[1], val[1]]
 
                 # GIORGIO_CODE in case the variable_name is a monomer or
                 # trajectory having multiple files
@@ -190,7 +228,7 @@ class Parser(BaseParameters): # this is imported in the file
                     exec 'self.%s=np.array(%s).astype(%s)' \
                             %(val[0],w[1:len(w)],val[1].split()[1])
 
-                    self.addToBaseParams(val[0], w[1:], val[1]) # by Ivan
+                    self.paramsForPso[val[0]] = [w[1:], val[1]] # by Ivan
                 else:
                     print "unrecognised type for keyword %s: %s"%(w[0],val[1])
                     sys.exit(1)
@@ -209,11 +247,18 @@ class Parser(BaseParameters): # this is imported in the file
         #if needed, init repellers
         if self.repel == 'on' :
             self.repel=True
+            self.paramsForPso["repel"] = ["True", "str"] # by Ivan 
+
             #repel_factor should be < 1!
             #self.repel_factor=0.05
+
         elif self.repel == 'off':
             self.repel=False
+            self.paramsForPso["repel"] = ["False", "str"] # by Ivan
+
             self.repel_factor=0
+            self.paramsForPso["repel_factor"] = [0.0, "float"] # by Ivan
+
         if self.repel != False and self.repel != True:
             print 'ERROR: repulsion should either be "on" or "off"!'
             sys.exit(1)
@@ -223,8 +268,11 @@ class Parser(BaseParameters): # this is imported in the file
             print "ERROR: restart frequency should be smaller than " \
                 + "total number of steps!"
             sys.exit(1)
+
         if self.restart_freq==0:
             self.restart_freq=int(float(self.max_steps)/10.0)
+            self.paramsForPso["restart_freq"] = [self.restart_freq, "int"] # by Ivan
+
             #print ">>> a restart file will be created every %s steps"\
                     #%self.restart_freq
 

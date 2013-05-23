@@ -9,7 +9,7 @@
 #ifndef __PSO__
 #define __PSO__
 
-#include "BaseParameters.hpp"
+#include "PsoParameters.hpp"
 #include "AbstractSpace.hpp"
 #include "AbstractFitness.hpp"
 //#include "Swarm.hpp"
@@ -26,7 +26,7 @@ class PSO {
 private:
 
     // all the parameters
-    BaseParameters& params;
+    PsoParameters& params;
 
     // space
     AbstractSpace& space;
@@ -84,7 +84,7 @@ public:
      * @param _space - space for the particles
      * @param _fitness - class for the fitness function
      */
-    PSO(BaseParameters& _params, AbstractSpace& _space,
+    PSO(PsoParameters& _params, AbstractSpace& _space,
             AbstractFitness& _fitness, MPI_Comm _comm);
 
     /*

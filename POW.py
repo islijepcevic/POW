@@ -143,7 +143,10 @@ data=comm.bcast(data,root=0)
 comm.Barrier()
 
 #prepare optimizer
-search=PSO(psoParams,space,fitness, comm)
+if rank == 0:
+    search=PSO(psoParams,space,fitness, comm)
+else:
+    search=PSO()
 
 #init optimization timer
 if rank==0:

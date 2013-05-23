@@ -12,11 +12,14 @@
 
 namespace PSO {
 
+PSO::PSO() {
+}
+
 PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
             AbstractFitness& _fitness, MPI_Comm _comm) :
     params(_params),
-    space(_space),
-    fitness(_fitness),
+    space(&_space),
+    fitness(&_fitness),
 //    mpiWorld(_comm, boost::mpi::comm_attach),
 //    swarm(),
 //    neighbourhood(NULL),
@@ -37,6 +40,7 @@ PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
 }
 
 PSO::~PSO() {
+    // space and fitness will be freed in Python (automatically)
 //    free(neighbourhood);
 }
 

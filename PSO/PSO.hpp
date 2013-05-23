@@ -26,13 +26,13 @@ class PSO {
 private:
 
     // all the parameters
-    PsoParameters& params;
+    PsoParameters params;
 
     // space
-    AbstractSpace& space;
+    AbstractSpace* space;
 
     // fitness function
-    AbstractFitness& fitness;
+    AbstractFitness* fitness;
 
 //    // MPI comm world
 //    boost::mpi::communicator mpiWorld;
@@ -78,7 +78,12 @@ private:
 public:
 
     /*
-     * constructor
+     * minimal constructor - used for slave nodes
+     */
+    PSO();
+
+    /*
+     * constructor - used for master node
      * @param _comm - mpi comm world from python
      * @param _params - parameters to the algorithm
      * @param _space - space for the particles

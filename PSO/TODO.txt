@@ -45,6 +45,9 @@ MPI: after testing regular code, add MPI support
 -> add MPI
 -> Master/slave architecture
 -> implement skeleton/content
+-> think if AbstractSpace and AbstractFitness in PSO need to be pointers.
+Could they be references? References are difficult to pass in POW.py while
+making the PSO object. Pointerst might be difficult to pass over mpi.
 
 TEST:
 -> PsoParameters with Parameters integration (do they fill correctly)

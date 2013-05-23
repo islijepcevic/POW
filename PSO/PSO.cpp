@@ -26,8 +26,7 @@ PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
-    inertiaMin(params.getDoubleParam("inertia_min")),
-    logFileName(params.getStringParam("output_file")) {
+    inertiaMin(params.getDoubleParam("inertia_min")) {
 
 //    if (mpiWorld.rank() == 0) {
 //        swarm = Swarm(params.getIntParam("n_particles"), space);
@@ -44,12 +43,21 @@ PSO::~PSO() {
 //    free(neighbourhood);
 }
 
+void PSO::registerPrinterObserver(AbstractPrinter* printer) {
+    printers.push_back(printer);
+}
+
 /*
  * main launch
  */
 void PSO::launch() {
 
+    // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");
+    // print using observers
+    for (int i = 0; i < printers.size(); i++) {
+        (printers[i])->printRepetitionStart(*this);
+    }
 
 //    if (mpiWorld.rank() == 0) {
 //        manager();

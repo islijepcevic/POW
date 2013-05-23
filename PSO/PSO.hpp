@@ -12,6 +12,7 @@
 #include "PsoParameters.hpp"
 #include "AbstractSpace.hpp"
 #include "AbstractFitness.hpp"
+#include "AbstractPrinter.hpp"
 //#include "Swarm.hpp"
 //#include "Neighbourhood.hpp"
 
@@ -54,11 +55,8 @@ private:
     double inertiaMax;
     double inertiaMin;
 
-    // output file name
-    std::string logFileName;
-
-    // lof file
-    FILE* logFile;
+    // list of printer observers
+    std::vector<AbstractPrinter*> printers;
 
     /*
      * method that runs on master process and manages all the work
@@ -98,10 +96,15 @@ public:
     virtual ~PSO();
 
     /*
+     * method that registers a printer observer
+     * @param printer - an instance of some printer class
+     */
+    void registerPrinterObserver(AbstractPrinter* printer);
+
+    /*
      * launches the PSO algorithm
      */
     void launch();
-
 
 };
 

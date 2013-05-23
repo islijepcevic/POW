@@ -23,7 +23,7 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import AbstractFitness, AbstractSpace, \
+from PSO.PSO import AbstractFitness, AbstractSpace, AbstractPrinter, \
         VectorAdaptor, swigPyListToCppVector#, swigPyToCppString 
 
 class Parser: # this is imported in the file
@@ -664,3 +664,42 @@ class Postprocess:
         RMSD = np.sqrt(abs(RMSD / L))
 
         return RMSD
+
+class StdPrinter(AbstractPrinter):
+    '''
+    example of class that prints data on the sys.stdout during the execution of
+    PSO
+    '''
+
+    def __init__(self):
+        AbstractPrinter.__init__(self)
+
+    def printRepetitionStart(self, pso):
+        print "\nREPETITION STARTED\n"
+
+    def printIterationStart(self, pso):
+        pass
+
+    def printIterationEnd(self, pso):
+        pass
+
+
+class LogPrinter(AbstractPrinter):
+    '''
+    example of class that writes data to log during the execution of PSO
+    '''
+
+    def __init__(self, params):
+        AbstractPrinter.__init__(self)
+
+        self.logFile = open(params.output_file, 'w')
+
+    def printRepetitionStart(self, pso):
+        pass
+
+    def printIterationStart(self, pso):
+        pass
+
+    def printIterationEnd(self, pso):
+        self.logFile.write("iteration ended, print lot of data\n")
+

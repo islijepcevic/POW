@@ -25,6 +25,8 @@ import time
 import numpy as np
 #import ClusterAndDraw as CnD
 
+from Default import StdPrinter, LogPrinter
+
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
@@ -145,6 +147,14 @@ comm.Barrier()
 #prepare optimizer
 if rank == 0:
     search=PSO(psoParams,space,fitness, comm)
+
+    # register different types of printers
+    stdPrinter = StdPrinter()
+    search.registerPrinterObserver(stdPrinter)
+
+    logPrinter = LogPrinter(params)
+    search.registerPrinterObserver(logPrinter)
+
 else:
     search=PSO()
 

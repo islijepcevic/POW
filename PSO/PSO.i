@@ -17,6 +17,7 @@
 #include "AbstractSpace.hpp"
 #include "PsoParameters.hpp"
 #include "Particle.hpp"
+#include "AbstractPrinter.hpp"
 #include <vector>
 #include <string>
 #include <mpi.h>
@@ -27,6 +28,7 @@
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
 %feature("director") AbstractFitness;
 %feature("director") AbstractSpace;
+%feature("director") AbstractPrinter;
 
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
 
@@ -45,6 +47,8 @@
 %include "PsoParameters.hpp"
 %include "AbstractSpace.hpp"
 %include "AbstractFitness.hpp"
+%include "PSOForward.hpp"
+%include "AbstractPrinter.hpp"
 %include "PSO.hpp"
 
 // #############################################################################

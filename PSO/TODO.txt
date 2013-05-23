@@ -1,9 +1,8 @@
 next:
-add/recover and finish Dimension 
+add/recover and finish Dimension / Swarm
 recover everything in AbstractSpace
 recover everything from Particle
 recover Neighbourhood
-think of how to perform upgradeable log writing (observer?)
 think of how to proceed communicating the data in the PSO
 recover serialization in Particle
 serialize the neighbourhood(s)
@@ -14,11 +13,14 @@ ADD TO DOCUMENTATION:
 passing it to PSO
 -> space and fitness are not bcasted. space - not needed. fitness - modify
 printer (will be a new class)
+-> printing: observer AbstractPrinter, two classes in Default.py, it could be
+done that module programmer inherits them and writes whatever he wants
 
 
 PSO (c++):
 -> continue implementing according to comments in the methods
 -> recover all the commented stuff
+-> getters for swarm and space (and maybe fitness and params)
 
 Particle:
 -> recover commented stuff
@@ -104,6 +106,11 @@ with evaluate (need Particle)
 (17.5.)-> Fitness is then implemented by the user. Added Simple.py to test
 (17.5.)-> in BaseFitness check the consistency of the called methods for
 array/list conversion and particle methods after they are implemented
+
+Printing data:
+(23.5.)+> added observers for upgradeable log writing: in c++ class
+AbstractPrinter, and in python LogPrinter and StdPrinter (these two are still
+unfinished)
 
 MPI
 (6.5.)+> find out a way to send serialized objects (considering that MPI was

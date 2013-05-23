@@ -2,9 +2,10 @@
 
 cd PSO
 
-./compile.sh
+#./compile.sh
+make
 
 cd ..
 
 echo "RUN"
-mpiexec -n 1 python2 POW.py Simple.py input_simple
+mpiexec -n 4 python2 POW.py Simple.py input_simple

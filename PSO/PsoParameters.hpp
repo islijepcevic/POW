@@ -1,13 +1,14 @@
 /*
- * BaseParameters.hpp
+ * PsoParameters.hpp
  *
- * Basic class providing parameters
+ * class for c++ code, similar to Parser in python code
+ * serves as collection of parameters
  *
  * author: Ivan Slijepcevic
  * e-mail: ivan.slijepcevic@epfl.ch
  */
-#ifndef __BASE_PARAMETERS__
-#define __BASE_PARAMETERS__
+#ifndef __PSO_PARAMETERS__
+#define __PSO_PARAMETERS__
 
 #include <map>
 #include <vector>
@@ -15,7 +16,7 @@
 
 namespace PSO {
 
-class BaseParameters {
+class PsoParameters {
 private:
     // rely on existing exceptions if maps dereferenced wrongly
     std::map<std::string, int> parametersInt;
@@ -30,34 +31,34 @@ public: // this should be protected
     /*
      * setter for int parameter
      */
-    void _setIntParam(const std::string& key, const int value);
+    void setIntParam(const std::string& key, const int value);
 
      /*
      * setter for double parameter
      */
-    void _setDoubleParam(const std::string& key, const double value);
+    void setDoubleParam(const std::string& key, const double value);
      
     /*
      * setter for string parameter
      */
-    void _setStringParam(const std::string& key, const std::string value);
+    void setStringParam(const std::string& key, const std::string& value);
 
      /*
      * setter for int array parameter
      */
-    void _setIntArrayParam(const std::string& key,
+    void setIntArrayParam(const std::string& key,
                         const std::vector<int>& value);
      
     /*
      * setter for double array parameter
      */
-    void _setDoubleArrayParam(const std::string& key,
+    void setDoubleArrayParam(const std::string& key,
                             const std::vector<double>& value);
 
     /*
      * setter for string array parameter
      */
-    void _setStringArrayParam(const std::string& key,
+    void setStringArrayParam(const std::string& key,
                             const std::vector<std::string>& value);
 
 // this is really public now
@@ -65,12 +66,12 @@ public: // this should be protected
     /*
      * constructor
      */
-    BaseParameters();
+    PsoParameters();
 
     /*
      * destructor
      */
-    virtual ~BaseParameters();
+    virtual ~PsoParameters();
 
     /*
      * getter for int parameter
@@ -106,4 +107,4 @@ public: // this should be protected
 
 } // namespace PSO
 
-#endif // __BASE_PARAMETERS__
+#endif // __PSO_PARAMETERS__

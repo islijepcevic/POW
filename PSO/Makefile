@@ -10,6 +10,9 @@ MPI4PY=/usr/lib/python2.7/site-packages/mpi4py/include
 SWIG=swig
 SWIGFLAGS= -c++ -python -I$(MPI4PY)
 
+BOOSTSERIAL= -lboost_serialization
+BOOSTMPI= -I/usr/include/boost/mpi -Llibdir -lboost_mpi $(BOOSTSERIAL)
+
 all: _PSO.so
 
 PSO_wrap.cxx: PSO.i *.hpp
@@ -25,7 +28,7 @@ randomUtils.o: randomUtils.cpp randomUtils.hpp
 	$(CC) $(CFLAGS) randomUtils.cpp -o randomUtils.o
 
 Particle.o: Particle.cpp Particle.hpp
-	$(CC) $(CFLAGS) Particle.cpp -o Particle.o
+	$(CC) $(CFLAGS) Particle.cpp -o Particle.o $(BOOSTSERIAL)
 
 Dimension.o: Dimension.cpp Dimension.hpp
 	$(CC) $(CFLAGS) Dimension.cpp -o Dimension.o
@@ -39,18 +42,21 @@ ReflexiveDimension.o: ReflexiveDimension.cpp ReflexiveDimension.hpp
 SpaceFactory.o: SpaceFactory.cpp SpaceFactory.hpp
 	$(CC) $(CFLAGS) SpaceFactory.cpp -o SpaceFactory.o
 
+Swarm.o: Swarm.cpp Swarm.hpp
+	$(CC) $(CFLAGS) Swarm.cpp -o Swarm.o
+
 PSO.o: PSO.cpp PSO.hpp
-	$(CC) $(CFLAGS) PSO.cpp -o PSO.o
+	$(CC) $(CFLAGS) PSO.cpp -o PSO.o $(BOOSTMPI)
 
 PSO_wrap.o: PSO_wrap.cxx PSO.o PsoSpace.o PsoParameters.o Particle.o \
     randomUtils.o Dimension.o PeriodicDimension.o ReflexiveDimension.o \
-    SpaceFactory.o
-	$(CC) $(CFLAGS) PSO_wrap.cxx -I$(PYDIR) -I$(MPI4PY)
+    SpaceFactory.o Swarm.o
+	$(CC) $(CFLAGS) PSO_wrap.cxx -I$(PYDIR) -I$(MPI4PY) $(BOOSTMPI)
 
 _PSO.so: PSO_wrap.o
-	$(CC) $(LDFLAGS) -o _PSO.so PSO_wrap.o PsoSpace.o Particle.o \
-	    PsoParameters.o PSO.o randomUtils.o Dimension.o SpaceFactory.o \
-	    PeriodicDimension.o ReflexiveDimension.o
+	$(CC) $(LDFLAGS) $(BOOSTMPI) -o _PSO.so PSO_wrap.o PsoSpace.o \
+	    Particle.o PsoParameters.o PSO.o randomUtils.o Dimension.o \
+	    SpaceFactory.o PeriodicDimension.o ReflexiveDimension.o Swarm.o
 
 clean:
 	\rm -f *.o  *~ PSO_wrap.*

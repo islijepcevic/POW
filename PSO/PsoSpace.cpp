@@ -8,17 +8,21 @@
  */
 #include "PsoSpace.hpp"
 
+#include <cstdio>
+
 namespace PSO {
 
 PsoSpace::PsoSpace() {
 }
 
 PsoSpace::PsoSpace(const std::vector<Dimension*>& _dimensions) :
-    dimensions(_dimensions) {
+    dimensions(_dimensions),
+    noDimensions(dimensions.size()) {
 }
 
 PsoSpace::PsoSpace(const PsoSpace& _space) :
-    dimensions(_space.dimensions) {
+    dimensions(_space.dimensions),
+    noDimensions(_space.noDimensions) {
 }
 
 PsoSpace::~PsoSpace() {
@@ -33,7 +37,7 @@ PsoSpace& PsoSpace::operator= (const PsoSpace& _space) {
 }
 
 int PsoSpace::getNoDimensions() const {
-    return dimensions.size();
+    return noDimensions;
 }
 
 double PsoSpace::getLowerBound(int dimensionIndex) {

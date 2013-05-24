@@ -45,6 +45,7 @@ class Space(S):
                               
         # set boundary type (default is periodic)
         self.boundary_type=np.zeros(len(params.low_input))
+        self.boundary_type[1] = 1
         if params.boundary_type!="NA":
             for i in xrange(0,len(params.low_input),1):
              	self.boundary_type[i]=params.boundary_type[i] 

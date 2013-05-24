@@ -85,23 +85,18 @@ void PSO::launch() {
     }
 
 
-//    if (mpiWorld.rank() == 0) {
-//        manager();
-//    } else {
-//        worker();
-//    }
+    if (mpiWorld.rank() == 0) {
+        manager();
+    } else {
+        worker();
+    }
 }
 
-///*
-// * main code for rank 0
-// */
-//void PSO::manager() {
-//
-//    // open log file
-//    logFile = fopen(logFileName.c_str(), "w");
-//    if (logFile == NULL) {
-//        throw std::bad_alloc("could not open log file");
-//    }
+/*
+ * main code for rank 0
+ */
+void PSO::manager() {
+
 //
 //    // synchronize (barrier, broadcast), maybe NOT; TODO
 //
@@ -157,12 +152,12 @@ void PSO::launch() {
 //    // gather all data
 //
 //    // write all to the log
-//}
-//
-///*
-// * main code for every other node
-// */
-//void PSO::worker() {
-//}
+}
+
+/*
+ * main code for every other node
+ */
+void PSO::worker() {
+}
 
 } // namespace PSO

@@ -57,10 +57,14 @@ private:
     // list of printer observers
     std::vector<AbstractPrinter*> printers;
 
+/********************************************************************
+ * METHODS
+ *******************************************************************/
+
     /*
      * method that runs on master process and manages all the work
      */
-//    void manager();
+    void manager();
 
     /*
      * method that performs an iteration of one PSO launch
@@ -70,7 +74,7 @@ private:
     /*
      * method that runs on all other processes (slaves)
      */
-//    void worker();
+    void worker();
 
 public:
 

@@ -80,22 +80,33 @@ public:
      */
     double getSize(int dimensionIndex);
 
-//    /*
-//     *
-//     */
-//    void checkBoundaries(Particle& particle) const;
-//
-//    /*
-//     * do not return void
-//     */
-//    void calculateDistanceVector(const Particle& particle1,
-//                            const Particle& particle2) const;
-//
-//    /*
-//     * do not return void
-//     */
-//    void calculateShortestDistanceVector(const Particle& particle1,
-//                            const Particle& particle2) const;
+    /*
+     * method that checks particle's position if it is within boundaries of this
+     * space. If not, then position and velocity are updated, for each dimension
+     * in the specific way
+     * @param particle - particle whose position is checked and updated
+     */
+    void checkBoundaries(Particle& particle) const;
+
+    /*
+     * returns distance between two particles in this space
+     * @param particle1 - first particle
+     * @param particle2 - second particle
+     * @return - distance vector
+     */
+    std::vector<double> calculateDistanceVector(const Particle& particle1,
+                            const Particle& particle2) const;
+
+    /*
+     * returns shortest distance between two particles in this space
+     * in dimensions of some type, distance can be measured in several ways,
+     * and this method surely returns the shortest possible distance
+     * @param particle1 - first particle
+     * @param particle2 - second particle
+     * @return - shortest distance vector
+     */
+    std::vector<double> calculateShortestDistanceVector(
+            const Particle& particle1, const Particle& particle2) const;
 
 };
 

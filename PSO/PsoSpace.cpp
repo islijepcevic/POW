@@ -52,22 +52,48 @@ double PsoSpace::getSize(int dimensionIndex) {
     return dimensions[dimensionIndex]->getSize();
 }
 
-//void PsoSpace::checkBoundaries(Particle& particle) const {
-//    // TODO
-//}
-//
-//void PsoSpace::calculateDistanceVector(const Particle& particle1,
-//                                        const Particle& particle2) const {
-//    // TODO
-//    //
-//    // for every dimension, get the distance between two particles
-//}
-//
-//void PsoSpace::calculateShortestDistanceVector(const Particle& particle1,
-//                                        const Particle& particle2) const {
-//    // TODO
-//    //
-//    // for every dimension, get the shortest distance between two particles
-//}
+void PsoSpace::checkBoundaries(Particle& particle) const {
+
+    for (int i = 0; i < noDimensions; i++) {
+        std::pair<double, double> pv = dimensions[i]->checkBoundaries(
+                particle.currentPosition[i], particle.currentVelocity[i]
+        );
+
+        particle.currentPosition[i] = pv.first;
+        particle.currentVelocity[i] = pv.second;
+    }
+}
+
+std::vector<double> PsoSpace::calculateDistanceVector(const Particle& particle1,
+                                        const Particle& particle2) const {
+
+    // for every dimension, get the distance between two particles
+    std::vector<double> dist;
+    dist.reserve( getNoDimensions() );
+
+    for (int i = 0; i < noDimensions; i++) {
+        double p1 = particle1.currentPosition[i];
+        double p2 = particle2.currentPosition[i];
+        dist.push_back( dimensions[i]->calculateDistance(p1, p2) );
+    }
+
+    return dist;
+}
+
+std::vector<double> PsoSpace::calculateShortestDistanceVector(
+                const Particle& particle1, const Particle& particle2) const {
+
+    // for every dimension, get the shortest distance between two particles
+    std::vector<double> dist;
+    dist.reserve( getNoDimensions() );
+
+    for (int i = 0; i < noDimensions; i++) {
+        double p1 = particle1.currentPosition[i];
+        double p2 = particle2.currentPosition[i];
+        dist.push_back( dimensions[i]->calculateShortestDistance(p1, p2) );
+    }
+
+    return dist;
+}
 
 } // namespace PSO

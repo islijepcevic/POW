@@ -13,7 +13,10 @@
 // not everything from here will be accessible in python code
 #define SWIG_FILE_WITH_INIT
 #include "PSOForward.hpp"
+#include "PsoSpaceForward.hpp"
 #include "Dimension.hpp"
+#include "PeriodicDimension.hpp"
+#include "ReflexiveDimension.hpp"
 #include "constants.hpp"
 #include "randomUtils.hpp"
 #include "AbstractFitness.hpp"
@@ -22,8 +25,7 @@
 #include "Particle.hpp"
 #include "AbstractPrinter.hpp"
 #include "SpaceFactory.hpp"
-#include "PeriodicDimension.hpp"
-#include "ReflexiveDimension.hpp"
+#include "Swarm.hpp"
 #include "PSO.hpp"
 #include <vector>
 #include <string>

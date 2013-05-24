@@ -35,10 +35,21 @@ public:
     PsoSpace(const std::vector<Dimension*>& _dimensions);
 
     /*
+     * copy costructor
+     */
+    PsoSpace(const PsoSpace& _space);
+
+    /*
      * destructor
      * empty imelpmentation provided
      */
     virtual ~PsoSpace();
+
+    /*
+     * assignment operator
+     */
+    PsoSpace& operator= (const PsoSpace& _space);
+
 
     /*
      * getter for number of dimensions

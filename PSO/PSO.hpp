@@ -86,7 +86,7 @@ public:
      * @param _space - space for the particles
      * @param _fitness - class for the fitness function
      */
-    PSO(PsoParameters& _params, PsoSpace& _space,
+    PSO(PsoParameters& _params, PsoSpace* _space,
             AbstractFitness& _fitness, MPI_Comm _comm);
 
     /*

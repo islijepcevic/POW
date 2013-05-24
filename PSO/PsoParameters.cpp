@@ -14,6 +14,15 @@ namespace PSO {
 PsoParameters::PsoParameters() {
 }
 
+PsoParameters::PsoParameters(const PsoParameters& _params) :
+    parametersInt(_params.parametersInt),
+    parametersDouble(_params.parametersDouble),
+    parametersString(_params.parametersString),
+    parametersArrayInt(_params.parametersArrayInt),
+    parametersArrayDouble(_params.parametersArrayDouble),
+    parametersArrayString(_params.parametersArrayString) {
+}
+
 PsoParameters::~PsoParameters() {
 }
 

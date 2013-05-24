@@ -19,7 +19,7 @@
 
 namespace PSO {
 
-PsoSpace createPsoSpace(std::vector<double>& lowBoundaries,
+PsoSpace* createPsoSpace(std::vector<double>& lowBoundaries,
         std::vector<double>& highBoundaries, std::vector<int>& boundaryTypes,
         std::vector<double>& cellSize) {
 
@@ -40,25 +40,17 @@ PsoSpace createPsoSpace(std::vector<double>& lowBoundaries,
         } else {
             throw std::invalid_argument("wrong boundary type for dimension");
         }
-        printf("C %d\n", i);
-        printf("D %d %lf\n", i, cellSize[i]); // I OVO JE GRESKA
-        // TU ISPOD JE GRESKA
 
         double size = cellSize[i];
-        printf("E %d\n", i);
         double dsize = dim->getSize();
-        printf("F %d\n", i);
         if (size != dim->getSize()) {
             throw std::invalid_argument("cell size is wrong");
         }
-        printf("G %d\n", i);
 
         dimensions.push_back(dim);
     }
-    printf("Z\n");
 
-    PsoSpace space(dimensions);
-
+    PsoSpace *space = new PsoSpace(dimensions);
     return space;
 }
 

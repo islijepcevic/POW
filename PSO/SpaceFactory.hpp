@@ -24,7 +24,7 @@ namespace PSO {
  * @return - new PsoSpace object with set dimensions
  * @throws std::invalid_argument - if wrong parameter is provided
  */
-PsoSpace createPsoSpace(std::vector<double>& lowBoundaries,
+PsoSpace* createPsoSpace(std::vector<double>& lowBoundaries,
         std::vector<double>& highBoundaries, std::vector<int>& boundaryTypes,
         std::vector<double>& cellSize);
 

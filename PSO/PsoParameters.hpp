@@ -69,6 +69,11 @@ public: // this should be protected
     PsoParameters();
 
     /*
+     * copy constructor
+     */
+    PsoParameters(const PsoParameters& _params);
+
+    /*
      * destructor
      */
     virtual ~PsoParameters();

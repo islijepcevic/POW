@@ -15,13 +15,21 @@ PsoSpace::PsoSpace() {
 
 PsoSpace::PsoSpace(const std::vector<Dimension*>& _dimensions) :
     dimensions(_dimensions) {
+}
 
+PsoSpace::PsoSpace(const PsoSpace& _space) :
+    dimensions(_space.dimensions) {
 }
 
 PsoSpace::~PsoSpace() {
     for (int i = 0; i < dimensions.size(); i++) {
         delete dimensions[i];
     }
+}
+
+PsoSpace& PsoSpace::operator= (const PsoSpace& _space) {
+    dimensions = _space.dimensions;
+    return *this;
 }
 
 int PsoSpace::getNoDimensions() const {

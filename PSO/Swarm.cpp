@@ -17,7 +17,7 @@ namespace PSO {
 Swarm::Swarm() {
 }
 
-Swarm::Swarm(int noParticles, AbstractSpace& _space) :
+Swarm::Swarm(int noParticles, PsoSpace& _space) :
     particles( noParticles, Particle(_space.getNoDimensions()) ),
     space(_space),
     inertia(0.0) {
@@ -33,7 +33,7 @@ int Swarm::getNoParticles() const {
     return particles.size();
 }
 
-AbstractSpace& Swarm::getSpace() const {
+PsoSpace& Swarm::getSpace() const {
     return space;
 }
 

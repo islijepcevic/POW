@@ -29,7 +29,7 @@ Particle::Particle(const int _index, const int noDimensions) :
 Particle::~Particle() {
 }
 
-//void Particle::seed(const AbstractSpace& space) {
+//void Particle::seed(const PsoSpace& space) {
 //    currentValue = bestValue = VERY_LARGE_VALUE;
 //
 //    for (int d = 0; d < currentPosition.size(); d++) {

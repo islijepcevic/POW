@@ -146,7 +146,9 @@ comm.Barrier()
 
 #prepare optimizer
 if rank == 0:
-    search=PSO(psoParams,space,fitness, comm)
+    pSpace = space.createPsoSpace()
+
+    search=PSO(psoParams,pSpace,fitness, comm)
 
     # register different types of printers
     stdPrinter = StdPrinter()

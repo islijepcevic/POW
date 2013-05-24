@@ -12,12 +12,19 @@
 // put here what you need to compile everything
 // not everything from here will be accessible in python code
 #define SWIG_FILE_WITH_INIT
-#include "PSO.hpp"
+#include "PSOForward.hpp"
+#include "Dimension.hpp"
+#include "constants.hpp"
+#include "randomUtils.hpp"
 #include "AbstractFitness.hpp"
-#include "AbstractSpace.hpp"
+#include "PsoSpace.hpp"
 #include "PsoParameters.hpp"
 #include "Particle.hpp"
 #include "AbstractPrinter.hpp"
+#include "SpaceFactory.hpp"
+#include "PeriodicDimension.hpp"
+#include "ReflexiveDimension.hpp"
+#include "PSO.hpp"
 #include <vector>
 #include <string>
 #include <mpi.h>
@@ -27,7 +34,6 @@
 
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
 %feature("director") AbstractFitness;
-%feature("director") AbstractSpace;
 %feature("director") AbstractPrinter;
 
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
@@ -44,12 +50,14 @@
 // this is instead of rewriting all the code here
 // this will be accessible in python code
 %include "Particle.hpp"
+%include "Dimension.hpp"
 %include "PsoParameters.hpp"
-%include "AbstractSpace.hpp"
+%include "PsoSpace.hpp"
 %include "AbstractFitness.hpp"
 %include "PSOForward.hpp"
 %include "AbstractPrinter.hpp"
 %include "PSO.hpp"
+%include "SpaceFactory.hpp"
 
 // #############################################################################
 
@@ -128,6 +136,7 @@ std::vector<T> swigNewCppVector() {
 %template(vecint) std::vector<int>;
 %template(vecdbl) std::vector<double>;
 %template(vecstr) std::vector<std::string>;
+%template(vecdim) std::vector<PSO::Dimension*>;
 
 // these functions are to be used for python structures
 %pythoncode %{

@@ -10,7 +10,7 @@
 #define __PSO__
 
 #include "PsoParameters.hpp"
-#include "AbstractSpace.hpp"
+#include "PsoSpace.hpp"
 #include "AbstractFitness.hpp"
 #include "AbstractPrinter.hpp"
 //#include "Swarm.hpp"
@@ -18,7 +18,6 @@
 
 #include <mpi.h>
 //#include <string>
-#include <cstdio>
 //#include <boost/mpi.hpp>
 
 namespace PSO {
@@ -30,7 +29,7 @@ private:
     PsoParameters params;
 
     // space
-    AbstractSpace* space;
+    PsoSpace space;
 
     // fitness function
     AbstractFitness* fitness;
@@ -87,7 +86,7 @@ public:
      * @param _space - space for the particles
      * @param _fitness - class for the fitness function
      */
-    PSO(PsoParameters& _params, AbstractSpace& _space,
+    PSO(PsoParameters& _params, PsoSpace& _space,
             AbstractFitness& _fitness, MPI_Comm _comm);
 
     /*

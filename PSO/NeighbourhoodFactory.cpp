@@ -13,6 +13,8 @@
 #include "IndexedNeighbourhood.hpp"
 #include <stdexcept>
 
+namespace PSO {
+
 Neighbourhood* createNeighbourhood(std::string neighbourhoodType,
                                 const Swarm& swarm) {
 
@@ -30,3 +32,5 @@ Neighbourhood* createNeighbourhood(std::string neighbourhoodType,
 
     return nHood;
 }
+
+} // namespace PSO

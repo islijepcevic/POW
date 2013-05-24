@@ -1,6 +1,6 @@
 next:
-add/recover and finish Dimension / Swarm
-recover everything in AbstractSpace
+add/recover and finish Dimension / PsoSpace
+recover everything in Swarm
 recover everything from Particle
 recover Neighbourhood
 think of how to proceed communicating the data in the PSO
@@ -31,7 +31,7 @@ Neighbourhood and derived classes
 -> get rid of all TODOs within these classes after Swarm is implemented
 
 Space / Dimension
--> AbstractSpace - implement checkBoundaries (first needs to have idea of what
+-> PsoSpace - implement checkBoundaries (first needs to have idea of what
 should be the input parameter - Particle or vector, but for that, I need to
 know how PSO and Particle will work)
 -> add method that converts high/low/... to Dimension classes (think if this
@@ -47,7 +47,7 @@ MPI: after testing regular code, add MPI support
 -> add MPI
 -> Master/slave architecture
 -> implement skeleton/content
--> think if AbstractSpace and AbstractFitness in PSO need to be pointers.
+-> think if PsoSpace and AbstractFitness in PSO need to be pointers.
 Could they be references? References are difficult to pass in POW.py while
 making the PSO object. Pointerst might be difficult to pass over mpi.
 
@@ -96,8 +96,10 @@ own maps, and all the parameters from params will be copied there
 Space / Dimension
 (15.4.)+> Dimension.checkBoundaries() updates the particle. check if it needs
 to return a new particle, or some vectors
-(19.4.)+>AbstractSpace / Space will then have a list of references to
+(19.4.)+> AbstractSpace / Space will then have a list of references to
 dimensions, instead the list of high/low/cell_size/...
+(24.5.)+> renamed AbstractSpace to PsoSpace - it is no longer the superclass
+of Space in Python.
 
 AbstractFitness / BaseFitness:
 (old)+> connect to Python: AbstractFitness <- BaseFitness <- Fitness

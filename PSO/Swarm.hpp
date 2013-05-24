@@ -22,7 +22,7 @@ protected:
     std::vector<Particle> particles;
 
     // reference to space
-    AbstractSpace& space;
+    PsoSpace& space;
 
 public:
 
@@ -38,7 +38,7 @@ public:
      * constructor of the Swarm
      * (meant to be used in master process)
      */
-    Swarm(int noParticles, AbstractSpace& _space);
+    Swarm(int noParticles, PsoSpace& _space);
 
     /*
      * destructor of the Swarm
@@ -55,7 +55,7 @@ public:
      * getter for the space
      * @return - reference to the space object
      */
-    AbstractSpace& getSpace() const;
+    PsoSpace& getSpace() const;
 
     /*
      * getter for a particular particle

@@ -23,8 +23,8 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import AbstractFitness, AbstractSpace, AbstractPrinter, \
-        VectorAdaptor, swigPyListToCppVector#, swigPyToCppString 
+from PSO.PSO import AbstractFitness, PsoSpace, AbstractPrinter, \
+        VectorAdaptor, swigPyListToCppVector, createPsoSpace
 
 class Parser: # this is imported in the file
     parameters={}
@@ -333,21 +333,34 @@ class Parser: # this is imported in the file
             sys.exit(1)
 
 
-class Space(AbstractSpace):
+class Space:
 
     def __init__(self):
-        '''
-        the constructor
-        it is mandatory to call the super constructor, because the super class
-        is implemented in c++, so this is the only way of constructing the
-        object properly
-        '''
-        AbstractSpace.__init__(self)
-
         self.low=[]
         self.high=[]
         self.boundary_type=[]
         self.cell_size=[]
+
+
+    def createPsoSpace(self):
+        '''
+        this method creates an instance of PsoSpace from its own data, to be
+        used in c++ PSO
+        it is meant to be called after all the data is set in an object of this
+        class
+
+        @return - a new instance of PsoSpace
+        '''
+
+        low = swigPyListToCppVector(self.low, 'array float')
+        high = swigPyListToCppVector(self.high, 'array float')
+        boundary = map(lambda x: int(x), self.boundary_type)
+        boundary = swigPyListToCppVector(boundary, 'array int')
+        cellSize = swigPyListToCppVector(self.cell_size, 'array float')
+
+        pSpace = createPsoSpace(low, high, boundary, cellSize)
+        return pSpace
+
 
     def check_boundaries(self,p,v):
     ####PERIODIC###

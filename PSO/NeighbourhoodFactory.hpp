@@ -11,6 +11,8 @@
 #include "Swarm.hpp"
 #include <string>
 
+namespace PSO {
+
 /*
  * parameterized factory function for Neighbourhood family of classes.
  * this is to be changed if new neighbourhood type should be created
@@ -24,3 +26,5 @@
  */
 Neighbourhood* createNeighbourhood(std::string neighbourhoodType,
                                     const Swarm& swarm);
+
+} // namespace PSO

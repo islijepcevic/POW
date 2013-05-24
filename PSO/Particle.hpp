@@ -14,7 +14,7 @@
 //#include <boost/archive/binary_iarchive.hpp>
 //#include <boost/serialization/vector.hpp>
 
-#include "AbstractSpace.hpp"
+#include "PsoSpace.hpp"
 
 namespace PSO {
 
@@ -80,7 +80,7 @@ public:
 //     * seeds a particle to the new random position
 //     * @param space - a reference to space
 //     */
-//    void seed(const AbstractSpace& space);
+//    void seed(const PsoSpace& space);
 };
 
 } // namespace PSO 

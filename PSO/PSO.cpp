@@ -15,10 +15,10 @@ namespace PSO {
 PSO::PSO() {
 }
 
-PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
+PSO::PSO(PsoParameters& _params, PsoSpace& _space,
             AbstractFitness& _fitness, MPI_Comm _comm) :
     params(_params),
-    space(&_space),
+    space(_space),
     fitness(&_fitness),
 //    mpiWorld(_comm, boost::mpi::comm_attach),
 //    swarm(),
@@ -28,6 +28,10 @@ PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
     inertiaMax(params.getDoubleParam("inertia_max")),
     inertiaMin(params.getDoubleParam("inertia_min")) {
 
+    //if (mpiWorld.rank() != 0) {
+    //    throw some error;
+    //}
+        // this constructor is called from rank 0 anyway
 //    if (mpiWorld.rank() == 0) {
 //        swarm = Swarm(params.getIntParam("n_particles"), space);
 //
@@ -35,7 +39,7 @@ PSO::PSO(PsoParameters& _params, AbstractSpace& _space,
 //            params.getStringParam("neigh_type"),
 //            swarm
 //        );
-//    }
+    //}
 }
 
 PSO::~PSO() {

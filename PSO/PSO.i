@@ -30,7 +30,10 @@
 #include <vector>
 #include <string>
 #include <mpi.h>
-// add all the other stuff - boost serializations, boost mpi, ...
+#include <boost/mpi.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
 %}
 
 

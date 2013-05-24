@@ -58,6 +58,7 @@ void PSO::launch() {
 
     // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");
+    printf("no dimensions: %d\n", space.getNoDimensions());
     // print using observers
     for (int i = 0; i < printers.size(); i++) {
         (printers[i])->printRepetitionStart(*this);

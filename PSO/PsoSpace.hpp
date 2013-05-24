@@ -21,6 +21,8 @@ private:
     // this is for the description of dimensions
     std::vector<Dimension*> dimensions;
 
+    int noDimensions;
+
 public:
 
     /*

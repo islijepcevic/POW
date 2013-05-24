@@ -474,7 +474,7 @@ class BaseFitness(AbstractFitness):
         '''
 
         vectorAdaptor = VectorAdaptor(particle.currentPositions)
-        return self.evaluate(particle.INDEX, VectorAdaptor)
+        return self.evaluate(particle.getIndex(), vectorAdaptor)
 
     def evaluate(self, num, pos):
         '''

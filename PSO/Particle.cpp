@@ -8,17 +8,17 @@
  */
 #include "Particle.hpp"
 
+#include "PsoSpace.hpp"
 #include "constants.hpp"
 #include "randomUtils.hpp"
 
 namespace PSO {
 
-Particle::Particle() :
-   INDEX(0) {
+Particle::Particle() {
 }
 
 Particle::Particle(const int _index, const int noDimensions) :
-        INDEX(_index),
+        index(_index),
         currentPosition(noDimensions),
         currentVelocity(noDimensions),
         currentValue(VERY_LARGE_VALUE),

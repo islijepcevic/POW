@@ -20,6 +20,10 @@ namespace PSO {
 
 class Particle {
 private:
+
+    // index of the particle
+    int index;
+
 //    // BOOST SERIALIZATION
 //    friend class boost::serialization::access;
 //
@@ -30,7 +34,8 @@ private:
 //     */
 //    template<class Archive>
 //    void serialize(Archive& ar, const unsigned int version) {
-//        ar & const_cast<int&>(INDEX);
+//        ar & index;
+//        //ar & const_cast<int&>(INDEX);
 //        ar & currentPosition;
 //        ar & currentVelocity;
 //        ar & currentValue;
@@ -39,9 +44,6 @@ private:
 //    }
 
 public:
-
-    // index of the particle
-    const int INDEX;
 
     // variables associated to current solution
     std::vector<double> currentPosition;

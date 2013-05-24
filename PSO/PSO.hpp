@@ -13,7 +13,7 @@
 #include "PsoSpace.hpp"
 #include "AbstractFitness.hpp"
 #include "AbstractPrinter.hpp"
-//#include "Swarm.hpp"
+#include "Swarm.hpp"
 //#include "Neighbourhood.hpp"
 
 #include <mpi.h>

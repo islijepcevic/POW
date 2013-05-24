@@ -8,6 +8,10 @@
  */
 #include "PSO.hpp"
 
+// temporary include
+#include <cstdio>
+#include <iostream>
+
 //#include "NeighbourhoodFactory.hpp"
 
 namespace PSO {
@@ -109,9 +113,18 @@ void PSO::launch() {
 //    // init local variables
 //    double inertiaMax = params.getDoubleParam("inertia_max");
 //    double inertiaMin = params.getDoubleParam("inertia_min");
-//
-//        swarm.seedParticles();
-//
+
+        swarm.seedParticles();
+        // anyway - this loop is to be removed, despite weird errors
+        for (int i = 0; i < swarm.getNoParticles(); i++) {
+            Particle& p = swarm.getParticle(i);
+            std::cout << p; // THIS WORKS
+            //std::cout << swarm.getParticle(i);
+            // THE LINE ABOVE WAS VERY PROBLEMATIC
+            // compiling PSO_wrap.cxx:
+            //      undefined symbol: _ZNK3PSO5Swarm11getParticleEi
+        }
+
 //        // main loop for one PSO launch
 //        for (int step = 0; step < totalSteps; step++) {
 //            // do the work

@@ -49,15 +49,17 @@
 
 // this is instead of rewriting all the code here
 // this will be accessible in python code
-%include "Particle.hpp"
-%include "Dimension.hpp"
+%include "PsoSpaceForward.hpp"      
+%include "Particle.hpp"             // needs PsoSpaceForward
+%include "Dimension.hpp"            
+%include "PsoSpace.hpp"             // needs Dimension and Particle
 %include "PsoParameters.hpp"
-%include "PsoSpace.hpp"
 %include "AbstractFitness.hpp"
+%include "Swarm.hpp"                // needs Particle and PsoSpace
 %include "PSOForward.hpp"
-%include "AbstractPrinter.hpp"
-%include "PSO.hpp"
-%include "SpaceFactory.hpp"
+%include "AbstractPrinter.hpp"      // needs PSOForward
+%include "PSO.hpp"                  // needs a lot of them
+%include "SpaceFactory.hpp"         // needs PsoSpace and Dimension
 
 // #############################################################################
 

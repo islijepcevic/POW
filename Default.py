@@ -342,12 +342,43 @@ class Space:
         self.cell_size=[]
 
 
+    def checkCellSize(self):
+        '''
+        method that checks if cell_size is set, and if it is not, sets it
+        it is meant to be called by POW after class has been initialized
+        @raise ValueError - if cell size is set, and it is not correct
+        '''
+        if self.cell_size == []:
+
+            if type(self.low) == list:
+                self.low = np.array(self.low)
+            if type(self.high) == list:
+                self.high = np.array(self.high)
+
+            self.cell_size = self.high - self.low
+
+
+    def checkDimensions(self):
+        '''
+        method that cheks if all the arrays have the same size
+        it is meant to be called by POV after checkCellSize
+        @raise ValueError - if they don't
+        '''
+        if (len(self.low) != len(self.high)) or \
+        (len(self.low) != len(self.boundary_type)) or \
+        (len(self.low) != len(self.cell_size)):
+
+            raise ValueError(\
+                "space description lists are of different dimensions" \
+            )
+
+
     def createPsoSpace(self):
         '''
         this method creates an instance of PsoSpace from its own data, to be
         used in c++ PSO
-        it is meant to be called after all the data is set in an object of this
-        class
+        it is meant to be called after all the data is set and checked in an
+        object of this class
 
         @return - a new instance of PsoSpace
         '''
@@ -359,6 +390,7 @@ class Space:
         cellSize = swigPyListToCppVector(self.cell_size, 'array float')
 
         pSpace = createPsoSpace(low, high, boundary, cellSize)
+
         return pSpace
 
 

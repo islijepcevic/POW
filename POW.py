@@ -103,6 +103,8 @@ if rank == 0:
     print ">> "+str(len(space.low))+"D space generated (min_pos, max_pos):"
     for i in xrange(0,len(space.low),1):
         print "   %s, %s"%(space.low[i],space.high[i])
+    space.checkCellSize()
+    space.checkDimensions()
 
     #charge module fitness function or the one requested by user
     if params.fit=="NA":
@@ -123,7 +125,7 @@ if rank == 0:
                 'a class Fitness with a function evaluate(id,values_array) '
         fitness=user_fit.Fitness(data,params)
 
-    if params.dimensions != space.cell_size:
+    if params.dimensions != len(space.cell_size):
         print >> sys.stderr, "params.dimensions and space.cell_size DIFFER;", \
                             "updating params.dimensions accordingly"
 

@@ -166,7 +166,7 @@ else:
 if rank==0:
     start2=time.time()
 
-search.launch()
+search.launch(rank)
 comm.Barrier()
 
 if rank==0:

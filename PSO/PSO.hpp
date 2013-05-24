@@ -103,7 +103,7 @@ public:
     /*
      * launches the PSO algorithm
      */
-    void launch();
+    void launch(int rank);
 
 };
 

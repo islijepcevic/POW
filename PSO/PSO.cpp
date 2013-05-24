@@ -53,8 +53,11 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
 
 /*
  * main launch
+ *
+ * RANK IS ONLY PARAMETER HERE FOR TESTING PURPOSES - REMOVE IT WHEN REAL
+ * MPI TAKES THE PLACE
  */
-void PSO::launch() {
+void PSO::launch(int rank) {
 
     // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");

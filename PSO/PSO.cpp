@@ -61,11 +61,28 @@ void PSO::launch(int rank) {
 
     // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");
-    printf("no dimensions: %d\n", space.getNoDimensions());
     // print using observers
     for (int i = 0; i < printers.size(); i++) {
         (printers[i])->printRepetitionStart(*this);
     }
+
+    Particle p;
+    p.currentPosition.push_back(6.0);
+    p.currentPosition.push_back(6.0);
+    p.currentVelocity.push_back(10);
+    p.currentVelocity.push_back(10);
+
+    if (rank == 0) {
+        printf("no dimensions: %d\n", space.getNoDimensions());
+        printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
+            p.currentPosition[0], p.currentPosition[1],
+            p.currentVelocity[0], p.currentVelocity[1]);
+        space.checkBoundaries(p);
+        printf("PARTICLE AFTER; p: %lf %lf; v: %lf %lf\n",
+            p.currentPosition[0], p.currentPosition[1],
+            p.currentVelocity[0], p.currentVelocity[1]);
+    }
+
 
 //    if (mpiWorld.rank() == 0) {
 //        manager();

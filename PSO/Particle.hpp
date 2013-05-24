@@ -14,7 +14,7 @@
 //#include <boost/archive/binary_iarchive.hpp>
 //#include <boost/serialization/vector.hpp>
 
-#include "PsoSpace.hpp"
+#include "PsoSpaceForward.hpp"
 
 namespace PSO {
 

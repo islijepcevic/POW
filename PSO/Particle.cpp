@@ -26,7 +26,32 @@ Particle::Particle(const int _index, const int noDimensions) :
         bestValue(VERY_LARGE_VALUE) {
 }
 
+Particle::Particle(const Particle& _particle) :
+    index(_particle.index),
+    currentPosition(_particle.currentPosition),
+    currentVelocity(_particle.currentVelocity),
+    currentValue(_particle.currentValue),
+    bestPosition(_particle.bestPosition),
+    bestValue(_particle.bestValue) {
+}
+
 Particle::~Particle() {
+}
+
+Particle& Particle::operator=(const Particle& _particle) {
+
+    index = _particle.index;
+    currentPosition = _particle.currentPosition;
+    currentVelocity = _particle.currentVelocity;
+    currentValue = _particle.currentValue;
+    bestPosition = _particle.bestPosition;
+    bestValue = _particle.bestValue;
+
+    return *this;
+}
+
+int Particle::getIndex() {
+    return index;
 }
 
 //void Particle::seed(const PsoSpace& space) {

@@ -74,9 +74,24 @@ public:
     Particle(const int _index, const int noDimensions);
 
     /*
+     * copy constructor
+     */
+    Particle(const Particle& _particle);
+
+    /*
      * destructor
      */
     ~Particle();
+
+    /*
+     * assignment operator
+     */
+    Particle& operator=(const Particle& _particle);
+
+    /*
+     * getter for particle index
+     */
+    int getIndex();
 
 //    /*
 //     * seeds a particle to the new random position

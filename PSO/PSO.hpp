@@ -18,7 +18,7 @@
 
 #include <mpi.h>
 //#include <string>
-//#include <boost/mpi.hpp>
+#include <boost/mpi.hpp>
 
 namespace PSO {
 
@@ -34,12 +34,12 @@ private:
     // fitness function
     AbstractFitness* fitness;
 
-//    // MPI comm world
-//    boost::mpi::communicator mpiWorld;
-//
-//    // swarm of particles
-//    Swarm swarm;
-//
+    // MPI comm world
+    boost::mpi::communicator mpiWorld;
+
+    // swarm of particles
+    Swarm swarm;
+
 //    // neighbourhood
 //    Neighbourhood* neighbourhood;
 
@@ -103,7 +103,7 @@ public:
     /*
      * launches the PSO algorithm
      */
-    void launch(int rank);
+    void launch();
 
 };
 

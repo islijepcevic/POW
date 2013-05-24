@@ -20,26 +20,23 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     params(_params),
     space(*_space),
     fitness(&_fitness),
-//    mpiWorld(_comm, boost::mpi::comm_attach),
-//    swarm(),
+    mpiWorld(_comm, boost::mpi::comm_attach),
+    swarm(),
 //    neighbourhood(NULL),
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
     inertiaMin(params.getDoubleParam("inertia_min")) {
 
-    //if (mpiWorld.rank() != 0) {
-    //    throw some error;
-    //}
-        // this constructor is called from rank 0 anyway
-//    if (mpiWorld.rank() == 0) {
-//        swarm = Swarm(params.getIntParam("n_particles"), space);
-//
+    // this constructor is called from rank 0 anyway
+    if (mpiWorld.rank() == 0) {
+        swarm = Swarm(params.getIntParam("n_particles"), space);
+
 //        neighbourhood = createNeighbourhood(
 //            params.getStringParam("neigh_type"),
 //            swarm
 //        );
-    //}
+    }
 }
 
 PSO::~PSO() {
@@ -57,7 +54,7 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
  * RANK IS ONLY PARAMETER HERE FOR TESTING PURPOSES - REMOVE IT WHEN REAL
  * MPI TAKES THE PLACE
  */
-void PSO::launch(int rank) {
+void PSO::launch() {
 
     // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");
@@ -72,7 +69,7 @@ void PSO::launch(int rank) {
     p.currentVelocity.push_back(10);
     p.currentVelocity.push_back(10);
 
-    if (rank == 0) {
+    if (mpiWorld.rank() == 0) {
         printf("no dimensions: %d\n", space.getNoDimensions());
         printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
             p.currentPosition[0], p.currentPosition[1],

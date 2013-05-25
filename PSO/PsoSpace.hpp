@@ -64,21 +64,21 @@ public:
      * @param dimensionIndex - index of the wanted dimension
      * @return - lower bound for given dimension
      */
-    double getLowerBound(int dimensionIndex);
+    double getLowerBound(int dimensionIndex) const;
 
     /*
      * getter for higher bound of wanted dimension
      * @param dimensionIndex - index of the wanted dimension
      * @return - higher bound for given dimension
      */
-    double getHigherBound(int dimensionIndex);
+    double getHigherBound(int dimensionIndex) const;
 
     /*
      * getter for lower bound of dimension d
      * @param dimensionIndex - index of the wanted dimension
      * @return - lower bound for given dimension
      */
-    double getSize(int dimensionIndex);
+    double getSize(int dimensionIndex) const;
 
     /*
      * method that checks particle's position if it is within boundaries of this

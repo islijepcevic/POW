@@ -38,15 +38,15 @@ int PsoSpace::getNoDimensions() const {
     return noDimensions;
 }
 
-double PsoSpace::getLowerBound(int dimensionIndex) {
+double PsoSpace::getLowerBound(int dimensionIndex) const {
     return dimensions[dimensionIndex]->getLowerBound();
 }
 
-double PsoSpace::getHigherBound(int dimensionIndex) {
+double PsoSpace::getHigherBound(int dimensionIndex) const {
     return dimensions[dimensionIndex]->getHigherBound();
 }
 
-double PsoSpace::getSize(int dimensionIndex) {
+double PsoSpace::getSize(int dimensionIndex) const {
     return dimensions[dimensionIndex]->getSize();
 }
 

@@ -65,4 +65,33 @@ void Particle::seed(const PsoSpace& space) {
     }
 }
 
+std::ostream& operator<<(std::ostream& out, const Particle& part) {
+    out << "PARTICLE " << part.index << std::endl;
+
+    out << "pos: ";
+    for (int i = 0; i < part.currentPosition.size(); i++) {
+        out << part.currentPosition[i] << " ";
+    }
+    out << std::endl;
+
+    out << "vel: ";
+    for (int i = 0; i < part.currentVelocity.size(); i++) {
+        out << part.currentVelocity[i] << " ";
+    }
+    out << std::endl;
+
+    out << "value: " << part.currentValue << std::endl;
+
+
+    out << "best pos: ";
+    for (int i = 0; i < part.bestPosition.size(); i++) {
+        out << part.bestPosition[i] << " ";
+    }
+    out << std::endl;
+
+    out << "best value: " << part.bestValue << std::endl;
+
+    out << std::endl;
+}
+
 } // namespace PSO 

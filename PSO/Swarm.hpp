@@ -42,9 +42,19 @@ public:
     Swarm(int noParticles, PsoSpace& _space);
 
     /*
+     * copy constructor
+     */
+    Swarm(const Swarm& _swarm);
+
+    /*
      * destructor of the Swarm
      */
     ~Swarm();
+
+    /*
+     * assignment operator
+     */
+    Swarm& operator=(const Swarm& _swarm);
 
     /*
      * getter for the number of particles

@@ -12,8 +12,6 @@
 #include "ReflexiveDimension.hpp"
 #include <stdexcept>
 
-#include <cstdio>
-
 #define PERIODIC 0
 #define REFLEXIVE 1
 

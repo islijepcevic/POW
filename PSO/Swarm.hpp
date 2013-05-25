@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "Particle.hpp"
+#include "PsoSpace.hpp"
 
 namespace PSO {
 

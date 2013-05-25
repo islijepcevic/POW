@@ -54,15 +54,15 @@ int Particle::getIndex() {
     return index;
 }
 
-//void Particle::seed(const PsoSpace& space) {
-//    currentValue = bestValue = VERY_LARGE_VALUE;
-//
-//    for (int d = 0; d < currentPosition.size(); d++) {
-//        currentPosition[d] = bestPosition[d] = randDouble(
-//                space.getLowerBound(d), space.getHigherBound(d)
-//        );
-//        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
-//    }
-//}
+void Particle::seed(const PsoSpace& space) {
+    currentValue = bestValue = VERY_LARGE_VALUE;
+
+    for (int d = 0; d < currentPosition.size(); d++) {
+        currentPosition[d] = bestPosition[d] = randDouble(
+                space.getLowerBound(d), space.getHigherBound(d)
+        );
+        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
+    }
+}
 
 } // namespace PSO 

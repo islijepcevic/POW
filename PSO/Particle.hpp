@@ -94,11 +94,16 @@ public:
      */
     int getIndex();
 
-//    /*
-//     * seeds a particle to the new random position
-//     * @param space - a reference to space
-//     */
-//    void seed(const PsoSpace& space);
+    /*
+     * seeds a particle to the new random position
+     * @param space - a reference to space
+     */
+    void seed(const PsoSpace& space);
+
+    /*
+     * overloaded << operator for printing the object
+     */
+    friend std::ostream& operator<<(std::ostream& out, const Particle& part);
 };
 
 } // namespace PSO 

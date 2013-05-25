@@ -57,12 +57,12 @@ int Swarm::getNoParticles() const {
     return particles.size();
 }
 
-PsoSpace& Swarm::getSpace() const {
+const PsoSpace& Swarm::getSpace() const {
     return space;
 }
 
-Particle& Swarm::getParticle(int index) const {
-    return particles[i];
+Particle& Swarm::getParticle(int index) {
+    return particles[index];
 }
 
 void Swarm::seedParticles() {

@@ -66,14 +66,14 @@ public:
      * getter for the space
      * @return - reference to the space object
      */
-    PsoSpace& getSpace() const;
+    const PsoSpace& getSpace() const;
 
     /*
      * getter for a particular particle
      * @param index - index of the particle
      * @return - reference to the index-th particle
      */
-    Particle& getParticle(int index) const;
+    Particle& getParticle(int index);
 
     /*
      * method that seeds particles to new random values

@@ -1,4 +1,4 @@
-/*
+/**
  * PSO.hpp
  *
  * class that implements Particle Swarm Optimization algorithm
@@ -14,7 +14,7 @@
 #include "AbstractFitness.hpp"
 #include "AbstractPrinter.hpp"
 #include "Swarm.hpp"
-//#include "Neighbourhood.hpp"
+#include "Neighbourhood.hpp"
 
 #include <mpi.h>
 //#include <string>
@@ -40,8 +40,8 @@ private:
     // swarm of particles
     Swarm swarm;
 
-//    // neighbourhood
-//    Neighbourhood* neighbourhood;
+    // neighbourhood
+    Neighbourhood* neighbourhood;
 
     // number of iterations or steps in one run of the PSO
     int totalSteps;

@@ -34,7 +34,7 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     fitness(&_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(),
-//    neighbourhood(NULL),
+    neighbourhood(NULL),
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
@@ -44,16 +44,19 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     if (mpiWorld.rank() == 0) {
         swarm = Swarm(params.getIntParam("n_particles"), space);
 
-//        neighbourhood = createNeighbourhood(
-//            params.getStringParam("neigh_type"),
-//            swarm
-//        );
+        neighbourhood = createNeighbourhood(
+             params.getStringParam("neigh_type"),
+             swarm,
+             params.getIntParam("neigh_size")
+        );
     }
 }
 
 PSO::~PSO() {
     // space and fitness will be freed in Python (automatically)
-//    free(neighbourhood);
+    if (neighbourhood == NULL) {
+        delete neighbourhood;
+    }
 }
 
 void PSO::registerPrinterObserver(AbstractPrinter* printer) {

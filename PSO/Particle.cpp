@@ -12,6 +12,8 @@
 #include "constants.hpp"
 #include "randomUtils.hpp"
 
+#include <cstdio>
+
 namespace PSO {
 
 Particle::Particle() {
@@ -40,12 +42,20 @@ Particle::~Particle() {
 
 Particle& Particle::operator=(const Particle& _particle) {
 
+
+    printf("JEDNAKO1\n");
     index = _particle.index;
+    printf("JEDNAKO2\n");
     currentPosition = _particle.currentPosition;
+    printf("JEDNAKO3\n");
     currentVelocity = _particle.currentVelocity;
+    printf("JEDNAKO4\n");
     currentValue = _particle.currentValue;
+    printf("JEDNAKO5\n");
     bestPosition = _particle.bestPosition;
+    printf("JEDNAKO6\n");
     bestValue = _particle.bestValue;
+    printf("JEDNAKO7\n");
 
     return *this;
 }

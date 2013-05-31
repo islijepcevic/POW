@@ -8,24 +8,27 @@
  */
 #include "NeighbourhoodFactory.hpp"
 
-#include "GlobalNeighbourhood.hpp"
-#include "GeometricNeighbourhood.hpp"
+//#include "GlobalNeighbourhood.hpp"
+#include "GeographicNeighbourhood.hpp"
 #include "IndexedNeighbourhood.hpp"
+#include <string>
 #include <stdexcept>
 
 namespace PSO {
 
 Neighbourhood* createNeighbourhood(std::string neighbourhoodType,
-                                const Swarm& swarm) {
+                                const Swarm& swarm, int nhoodSize) {
 
     Neighbourhood* nHood;
 
-    if (neighbourhoodType == "global") {
-        nHood = new GlobalNeighbourhood(swarm);
+    int nParticles = swarm.getNoParticles();
+
+    if (neighbourhoodType == "geographic") {
+        nHood = new GeographicNeighbourhood(nParticles, nhoodSize);
     } else if (neighbourhoodType == "indexed") {
-        nHood = new IndexedNeighbourhood(swarm);
-    } else if (neighbourhoodType == "geographic") {
-        nHood = new GeometricNeighbourhood(swarm);
+        nHood = new IndexedNeighbourhood(nParticles, nhoodSize);
+//    } else if (neighbourhoodType == "global") {
+//        nHood = new GlobalNeighbourhood(swarm);
     } else {
         throw std::invalid_argument("wrong parameter to Neighbourhood factory");
     }

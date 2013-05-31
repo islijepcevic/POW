@@ -7,7 +7,7 @@
 
 steps 200
 
-particles 80
+particles 10
 
 repeat 3
 
@@ -23,7 +23,7 @@ kar_threshold 0.01
 #######################
 
 
-neighborSize 1
+neighborSize 2
 
 neighborType indexed
 

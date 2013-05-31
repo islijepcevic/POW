@@ -22,6 +22,9 @@
 
 namespace PSO {
 
+/**
+ * a class that implements PSO algorithm
+ */
 class PSO {
 private:
 
@@ -57,33 +60,33 @@ private:
     // list of printer observers
     std::vector<AbstractPrinter*> printers;
 
-/********************************************************************
+/*********************************************************************
  * METHODS
  *******************************************************************/
 
-    /*
+    /**
      * method that runs on master process and manages all the work
      */
     void manager();
 
-    /*
+    /**
      * method that performs an iteration of one PSO launch
      */
 //    void performNextIteration(int step);
 
-    /*
+    /**
      * method that runs on all other processes (slaves)
      */
     void worker();
 
 public:
 
-    /*
+    /**
      * minimal constructor - used for slave nodes
      */
-    PSO();
+    PSO(MPI_Comm _comm);
 
-    /*
+    /**
      * constructor - used for master node
      * @param _comm - mpi comm world from python
      * @param _params - parameters to the algorithm
@@ -93,18 +96,18 @@ public:
     PSO(PsoParameters& _params, PsoSpace* _space,
             AbstractFitness& _fitness, MPI_Comm _comm);
 
-    /*
+    /**
      * destructor
      */
     virtual ~PSO();
 
-    /*
+    /**
      * method that registers a printer observer
      * @param printer - an instance of some printer class
      */
     void registerPrinterObserver(AbstractPrinter* printer);
 
-    /*
+    /**
      * launches the PSO algorithm
      */
     void launch();

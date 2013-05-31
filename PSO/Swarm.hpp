@@ -1,4 +1,4 @@
-/*
+/**
  * Swarm.hpp
  *
  * a class that contains the whole swarm of particles
@@ -10,12 +10,16 @@
 #define __SWARM__
 
 #include <vector>
+#include <string>
 
 #include "Particle.hpp"
 #include "PsoSpace.hpp"
 
 namespace PSO {
 
+/**
+ * a collection of all the paticles
+ */
 class Swarm {
 protected:
 
@@ -30,52 +34,59 @@ public:
     // inertia at current step
     double inertia;
 
-    /*
+    /**
      * default constructor of the Swarm
      */
     Swarm();
 
-    /*
+    /**
      * constructor of the Swarm
      * (meant to be used in master process)
      */
     Swarm(int noParticles, PsoSpace& _space);
 
-    /*
+    /**
      * copy constructor
      */
     Swarm(const Swarm& _swarm);
 
-    /*
+    /**
      * destructor of the Swarm
      */
     ~Swarm();
 
-    /*
+    /**
      * assignment operator
      */
     Swarm& operator=(const Swarm& _swarm);
 
-    /*
+    /**
      * getter for the number of particles
      * @return - number of particles
      */
     int getNoParticles() const;
 
-    /*
+    /**
      * getter for the space
      * @return - reference to the space object
      */
     const PsoSpace& getSpace() const;
 
-    /*
+    /**
      * getter for a particular particle
      * @param index - index of the particle
      * @return - reference to the index-th particle
      */
     Particle& getParticle(int index);
 
-    /*
+    /**
+     * getter for a particular particle
+     * @param index - index of the particle
+     * @return - reference to the index-th particle
+     */
+    const Particle& getParticle(int index) const;
+
+    /**
      * method that seeds particles to new random values
      */
     void seedParticles();

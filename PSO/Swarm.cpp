@@ -65,6 +65,10 @@ Particle& Swarm::getParticle(int index) {
     return particles[index];
 }
 
+const Particle& Swarm::getParticle(int index) const {
+    return particles[index];
+}
+
 void Swarm::seedParticles() {
 
     for (int i = 0; i < particles.size(); i++) {

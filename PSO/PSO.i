@@ -13,6 +13,7 @@
 // not everything from here will be accessible in python code
 #define SWIG_FILE_WITH_INIT
 #include "PSOForward.hpp"
+#include "SwarmForward.hpp"
 #include "PsoSpaceForward.hpp"
 #include "Dimension.hpp"
 #include "PeriodicDimension.hpp"
@@ -27,6 +28,10 @@
 #include "SpaceFactory.hpp"
 #include "Swarm.hpp"
 #include "PSO.hpp"
+#include "Neighbourhood.hpp"
+#include "IndexedNeighbourhood.hpp"
+#include "GeographicNeighbourhood.hpp"
+#include "NeighbourhoodFactory.hpp"
 #include <vector>
 #include <string>
 #include <mpi.h>
@@ -34,6 +39,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/base_object.hpp>
 %}
 
 
@@ -55,6 +61,7 @@
 // this is instead of rewriting all the code here
 // this will be accessible in python code
 %include "PsoSpaceForward.hpp"      
+%include "SwarmForward.hpp"
 %include "Particle.hpp"             // needs PsoSpaceForward
 %include "Dimension.hpp"            
 %include "PsoSpace.hpp"             // needs Dimension and Particle
@@ -63,6 +70,7 @@
 %include "Swarm.hpp"                // needs Particle and PsoSpace
 %include "PSOForward.hpp"
 %include "AbstractPrinter.hpp"      // needs PSOForward
+%include "Neighbourhood.hpp"        // needs Swarmforward and Particle
 %include "PSO.hpp"                  // needs a lot of them
 %include "SpaceFactory.hpp"         // needs PsoSpace and Dimension
 
@@ -144,6 +152,8 @@ std::vector<T> swigNewCppVector() {
 %template(vecdbl) std::vector<double>;
 %template(vecstr) std::vector<std::string>;
 %template(vecdim) std::vector<PSO::Dimension*>;
+%template(vecpart) std::vector<PSO::Particle>;
+%template(vecprint) std::vector<PSO::AbstractPrinter*>;
 
 // these functions are to be used for python structures
 %pythoncode %{

@@ -101,6 +101,11 @@ void PSO::launch() {
     } else {
         worker();
     }
+    mpiWorld.barrier();
+        delete neighbourhood;
+        neighbourhood = NULL;
+        printf("RANK:%d POINTER1 %p\n", neighbourhood, mpiWorld.rank());
+        printf("RANK:%d POINTER2 %p\n", neighbourhood, mpiWorld.rank());
 }
 
 /*
@@ -121,10 +126,15 @@ void PSO::manager() {
 //    double inertiaMin = params.getDoubleParam("inertia_min");
 
         swarm.seedParticles();
+        neighbourhood->scanNeighbours(swarm);
         // anyway - this loop is to be removed, despite weird errors
         for (int i = 0; i < swarm.getNoParticles(); i++) {
             Particle& p = swarm.getParticle(i);
+            std::cout << "PARTICLE" << std::endl;
             std::cout << p; // THIS WORKS
+         //   const Particle& pbest = neighbourhood->findBestNeighbour(i);
+         //   std::cout << "NEIGHBOUR" << std::endl;
+         //   std::cout << pbest;
             //std::cout << swarm.getParticle(i);
             // THE LINE ABOVE WAS VERY PROBLEMATIC
             // compiling PSO_wrap.cxx:
@@ -152,7 +162,7 @@ void PSO::manager() {
 //        - (double)step / totalSteps * (inertiaMax - inertiaMin);
 //
 //    // update neighbourhood
-//    neighbourhood.scanNeighbours();
+//    neighbourhood->scanNeighbours(swarm);
 //
 //    // for every particle, send data to worker()
 //    for (int indexParticle = 0; indexParticle = swarm.getNoParticles();

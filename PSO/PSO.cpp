@@ -11,12 +11,20 @@
 // temporary include
 #include <cstdio>
 #include <iostream>
-
-//#include "NeighbourhoodFactory.hpp"
+#include "NeighbourhoodFactory.hpp"
 
 namespace PSO {
 
-PSO::PSO() {
+PSO::PSO(MPI_Comm _comm) :
+    params(),
+    space(),
+    fitness(NULL),
+    mpiWorld(_comm, boost::mpi::comm_attach),
+    swarm(), 
+    neighbourhood(NULL),
+    totalSteps(),
+    inertiaMax(),
+    inertiaMin() {
 }
 
 PSO::PSO(PsoParameters& _params, PsoSpace* _space,

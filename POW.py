@@ -160,7 +160,7 @@ if rank == 0:
     search.registerPrinterObserver(logPrinter)
 
 else:
-    search=PSO()
+    search=PSO(comm)
 
 #init optimization timer
 if rank==0:

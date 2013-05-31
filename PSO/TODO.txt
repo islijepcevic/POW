@@ -1,8 +1,14 @@
 next:
-recover Neighbourhood
+ERROR IN CURRENT CODE:
+-> last implemented: Neighborhood
+-> lot of printouts are here (in PSO.master(), in IndexedNhood.scanNeibs(),
+and in Particle.operator=
+-> it seems that one or more particles are initialized to weird values with
+weird lengths of vectors
+-> even if I comment out anything with Neighborhood in PSO, there is a
+segfault
 think of how to proceed communicating the data in the PSO
 recover serialization in Particle
-serialize the neighbourhood(s)
 recover everything in PSO
 
 ADD TO DOCUMENTATION:
@@ -12,20 +18,22 @@ passing it to PSO
 printer (will be a new class)
 -> printing: observer AbstractPrinter, two classes in Default.py, it could be
 done that module programmer inherits them and writes whatever he wants
+-> neighbourhood size in indexed neighbourhood (what it represents, and the
+way it is handeled if tried to init if too large)
 
 
 PSO (c++):
 -> continue implementing according to comments in the methods
 -> recover all the commented stuff
 -> getters for swarm and space (and maybe fitness and params)
+-> at least add the support for implementing KaR
 
 Particle:
--
+-> kick()
+-> reseed()
 
 Neighbourhood and derived classes
--> remove Swarm as property of N'hood, put Swarm to be parameter for methods
--> serialize N'hoods
--> get rid of all TODOs within these classes after Swarm is implemented
+-> make neighborhood part of swarm
 
 Space / Dimension
 
@@ -73,6 +81,7 @@ Swarm
 
 Neighbourhood and derived:
 (29.4.)+> implemented basic versions
+(31.5.)+> serialize the neighbourhood(s)
 
 Parser/params:
 (12.4.)+> think of methods to fill in the c++ map from Python when

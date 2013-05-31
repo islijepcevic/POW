@@ -375,12 +375,14 @@ class particle :
             # extract best fitness of neighbors (included particle's own
             # fitness)
             self.best_id = self.swarm.part_max_val[ \
-                    self.dist_sort[0:self.params.neigh_size+1]].argmin()
+                        self.dist_sort[0:self.params.neigh_size+1]
+                    ].argmin()
 
             #extract best pos of particle having lowest best fitness within
             # neighbors
             self.best_pos = self.swarm.part_pos[ \
-                                self.dist_sort[self.best_id]].copy()
+                                self.dist_sort[self.best_id]
+                            ].copy()
 
         ###compute new velocity in search space###
 

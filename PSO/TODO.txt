@@ -1,6 +1,4 @@
 next:
-recover everything in Swarm
-recover everything from Particle
 recover Neighbourhood
 think of how to proceed communicating the data in the PSO
 recover serialization in Particle
@@ -22,7 +20,7 @@ PSO (c++):
 -> getters for swarm and space (and maybe fitness and params)
 
 Particle:
--> recover commented stuff
+-
 
 Neighbourhood and derived classes
 -> remove Swarm as property of N'hood, put Swarm to be parameter for methods
@@ -66,10 +64,12 @@ PSO:
 
 Particle
 (29.4.)+> implemented basic version
+(24.5.)+> recover everything from Particle
 
 Swarm
 (29.4.)+> implemented basic version
 (10.5.)+> serialization added
+(24.5.)+> recover everything in Swarm
 
 Neighbourhood and derived:
 (29.4.)+> implemented basic versions

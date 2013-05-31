@@ -8,6 +8,7 @@
  */
 #include "SpaceFactory.hpp"
 
+#include "Dimension.hpp"
 #include "PeriodicDimension.hpp"
 #include "ReflexiveDimension.hpp"
 #include <stdexcept>

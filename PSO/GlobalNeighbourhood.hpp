@@ -16,19 +16,22 @@ namespace PSO {
 class GlobalNeighbourhood : public Neighbourhood {
 private:
 
-    Particle& bestParticle;
+    /**
+     * globally best found particle
+     */
+    Particle bestParticle;
 
 public:
 
-    GlobalNeighbourhood(const Swarm& _swarm);
+    GlobalNeighbourhood();
 
     ~GlobalNeighbourhood();
 
     // Override
-    virtual void scanNeighbours();
+    virtual void scanNeighbours(const Smarm& swarm);
 
     // Override
-    virtual Particle& findBestNeighbour(int particleIndex) const;
+    virtual const Particle& findBestNeighbour(int particleIndex) const;
 };
 
 } // namespace PSO

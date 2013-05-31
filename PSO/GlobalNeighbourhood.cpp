@@ -8,20 +8,22 @@
  */
 #include "GlobalNeighbourhood.hpp"
 
+#include "Swarm.hpp"
+
 namespace PSO {
 
-GlobalNeighbourhood::GlobalNeighbourhood(const Swarm& _swarm) :
-        Neighbourhood(_swarm) {
+GlobalNeighbourhood::GlobalNeighbourhood() {
 }
 
 GlobalNeighbourhood::~GlobalNeighbourhood() {
 }
 
-void GlobalNeighbourhood::scanNeighbours() {
+void GlobalNeighbourhood::scanNeighbours(const Swarm& swarm) {
     // TODO iterate through all the swarm, finding the best particle
 }
 
-Particle& GlobalNeighbourhood::findBestNeighbour(int particleIndex) const {
+const Particle& GlobalNeighbourhood::findBestNeighbour(int particleIndex) const
+{
     return bestParticle;
 }
 

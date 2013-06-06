@@ -11,6 +11,7 @@
 #include "PsoSpace.hpp"
 #include "constants.hpp"
 #include "randomUtils.hpp"
+#include <algorithm>
 
 #include <cstdio>
 
@@ -40,25 +41,24 @@ Particle::Particle(const Particle& _particle) :
 Particle::~Particle() {
 }
 
-Particle& Particle::operator=(const Particle& _particle) {
-
-
-    printf("JEDNAKO1\n");
-    index = _particle.index;
-    printf("JEDNAKO2\n");
-    currentPosition = _particle.currentPosition;
-    printf("JEDNAKO3\n");
-    currentVelocity = _particle.currentVelocity;
-    printf("JEDNAKO4\n");
-    currentValue = _particle.currentValue;
-    printf("JEDNAKO5\n");
-    bestPosition = _particle.bestPosition;
-    printf("JEDNAKO6\n");
-    bestValue = _particle.bestValue;
-    printf("JEDNAKO7\n");
-
+Particle& Particle::operator=(Particle _particle) {
+    swap(*this, _particle);
     return *this;
 }
+
+//Particle& Particle::operator=(const Particle& _particle) {
+//
+//
+//    index = _particle.index;
+//    currentPosition.clear();
+//    currentPosition = _particle.currentPosition;
+//    currentVelocity = _particle.currentVelocity;
+//    currentValue = _particle.currentValue;
+//    bestPosition = _particle.bestPosition;
+//    bestValue = _particle.bestValue;
+//
+//    return *this;
+//}
 
 int Particle::getIndex() {
     return index;
@@ -103,5 +103,17 @@ std::ostream& operator<<(std::ostream& out, const Particle& part) {
 
     out << std::endl;
 }
+
+void swap(Particle& p1, Particle& p2) {
+    using std::swap; // maybe switch to boost::swap
+
+    swap(p1.index, p2.index);
+    swap(p1.currentPosition, p2.currentPosition);
+    swap(p1.currentVelocity, p2.currentVelocity);
+    swap(p1.currentValue, p2.currentValue);
+    swap(p1.bestPosition, p2.bestPosition);
+    swap(p1.bestValue, p2.bestValue);
+}
+
 
 } // namespace PSO 

@@ -87,7 +87,8 @@ public:
     /*
      * assignment operator
      */
-    Particle& operator=(const Particle& _particle);
+    //Particle& operator=(const Particle& _particle);
+    Particle& operator=(Particle _particle);
 
     /*
      * getter for particle index
@@ -104,6 +105,8 @@ public:
      * overloaded << operator for printing the object
      */
     friend std::ostream& operator<<(std::ostream& out, const Particle& part);
+
+    friend void swap(Particle& p1, Particle& p2);
 };
 
 } // namespace PSO 

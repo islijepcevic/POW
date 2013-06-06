@@ -15,6 +15,8 @@
 #include "SwarmForward.hpp"
 #include "Particle.hpp"
 
+#include <cstdio>
+
 namespace PSO {
 
 class Neighbourhood {
@@ -37,6 +39,7 @@ public:
     }
 
     ~Neighbourhood() {
+        printf("Neighbourhood destructor\n");
     }
 
     /*

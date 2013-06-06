@@ -54,7 +54,8 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 
 PSO::~PSO() {
     // space and fitness will be freed in Python (automatically)
-    if (neighbourhood == NULL) {
+    printf("PSO destructor, rank %d\n", mpiWorld.rank());
+    if (neighbourhood != NULL) {
         delete neighbourhood;
     }
 }
@@ -84,16 +85,17 @@ void PSO::launch() {
     p.currentVelocity.push_back(10);
     p.currentVelocity.push_back(10);
 
-    if (mpiWorld.rank() == 0) {
-        printf("no dimensions: %d\n", space.getNoDimensions());
-        printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
-            p.currentPosition[0], p.currentPosition[1],
-            p.currentVelocity[0], p.currentVelocity[1]);
-        space.checkBoundaries(p);
-        printf("PARTICLE AFTER; p: %lf %lf; v: %lf %lf\n",
-            p.currentPosition[0], p.currentPosition[1],
-            p.currentVelocity[0], p.currentVelocity[1]);
-    }
+    //    TEST FOR CHECK BOUNDARIES (successful)
+//    if (mpiWorld.rank() == 0) {
+//        printf("no dimensions: %d\n", space.getNoDimensions());
+//        printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
+//            p.currentPosition[0], p.currentPosition[1],
+//            p.currentVelocity[0], p.currentVelocity[1]);
+//        space.checkBoundaries(p);
+//        printf("PARTICLE AFTER; p: %lf %lf; v: %lf %lf\n",
+//            p.currentPosition[0], p.currentPosition[1],
+//            p.currentVelocity[0], p.currentVelocity[1]);
+//    }
 
 
     if (mpiWorld.rank() == 0) {
@@ -102,10 +104,12 @@ void PSO::launch() {
         worker();
     }
     mpiWorld.barrier();
-        delete neighbourhood;
-        neighbourhood = NULL;
-        printf("RANK:%d POINTER1 %p\n", neighbourhood, mpiWorld.rank());
-        printf("RANK:%d POINTER2 %p\n", neighbourhood, mpiWorld.rank());
+//    if (mpiWorld.rank() == 0) {
+//        delete neighbourhood;
+//        neighbourhood = NULL;
+//    }
+//        printf("RANK:%d POINTER1 %p\n", mpiWorld.rank(), neighbourhood);
+//        printf("RANK:%d POINTER2 %p\n", mpiWorld.rank(), neighbourhood);
 }
 
 /*
@@ -126,12 +130,14 @@ void PSO::manager() {
 //    double inertiaMin = params.getDoubleParam("inertia_min");
 
         swarm.seedParticles();
+        // set best values to check neighborhoods
         for (int i = 0; i < swarm.getNoParticles(); i++) {
             Particle& p( swarm.getParticle(i) );
             p.bestValue = (double)i;
-            std::cout << p;
+            //std::cout << p;
         }
 
+        printf("SCANNING NHOOD\n");
         neighbourhood->scanNeighbours(swarm);
 
         // anyway - this loop is to be removed, despite weird errors
@@ -142,8 +148,8 @@ void PSO::manager() {
             const Particle& pbest = neighbourhood->findBestNeighbour(i);
             std::cout << "NEIGHBOUR" << std::endl;
             std::cout << pbest;
-            std::cout << "PRINTED NEIGHBOUR" << std::endl;
-            std::cout << swarm.getParticle(i);
+
+            //std::cout << swarm.getParticle(i); // already printed
             // THE LINE ABOVE WAS VERY PROBLEMATIC
             // compiling PSO_wrap.cxx:
             //      undefined symbol: _ZNK3PSO5Swarm11getParticleEi

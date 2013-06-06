@@ -8,6 +8,8 @@
  */
 #include "PsoSpace.hpp"
 
+#include <cstdio>
+
 namespace PSO {
 
 PsoSpace::PsoSpace() {
@@ -24,6 +26,7 @@ PsoSpace::PsoSpace(const PsoSpace& _space) :
 }
 
 PsoSpace::~PsoSpace() {
+    printf("PsoSpace destructor\n");
     for (int i = 0; i < dimensions.size(); i++) {
         delete dimensions[i];
     }

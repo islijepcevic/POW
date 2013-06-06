@@ -12,6 +12,8 @@
 #include <ctime>
 #include "randomUtils.hpp"
 
+#include <cstdio>
+
 namespace PSO {
 
 // workaround
@@ -44,6 +46,7 @@ Swarm::Swarm(const Swarm& _swarm) :
 }
 
 Swarm::~Swarm() {
+    printf("Swarm destructor\n");
 }
 
 Swarm& Swarm::operator=(const Swarm& _swarm) {

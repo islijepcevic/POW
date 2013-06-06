@@ -31,6 +31,8 @@ IndexedNeighbourhood::IndexedNeighbourhood(int nParticles, int _nhoodSize) :
 }
 
 IndexedNeighbourhood::~IndexedNeighbourhood() {
+    printf("IndexedNeighbourhood destructor\n");
+    bestNeighbours.clear();
 }
 
 void IndexedNeighbourhood::scanNeighbours(const Swarm& swarm) {

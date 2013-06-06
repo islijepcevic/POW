@@ -23,11 +23,11 @@ IndexedNeighbourhood::IndexedNeighbourhood(int nParticles, int _nhoodSize) :
     bestNeighbours(),
     nhoodSize(_nhoodSize) {
 
-    bestNeighbours.reserve(nhoodSize);
-
     if (2*nhoodSize + 1 > nParticles) {
         nhoodSize = (nParticles - 1) / 2;
     }
+
+    bestNeighbours.resize(nParticles);
 }
 
 IndexedNeighbourhood::~IndexedNeighbourhood() {
@@ -52,21 +52,12 @@ void IndexedNeighbourhood::scanNeighbours(const Swarm& swarm) {
             // defined like shit (and even changes with different compilers)
             int index = (iter + noParticles) % noParticles;
             double value = swarm.getParticle(index).bestValue;
-            
+
             if (value < bestValue)  {
                 bestValue = value;
                 bestIndex = index;
-            }
-        }
-
-        printf("SAD ME NAMJESTI\n");
-        printf("pos %d\nvel %d\nval %lf\nbps %d\nbvl %lf\n",
-                swarm.getParticle(bestIndex).currentPosition.size(),
-                swarm.getParticle(bestIndex).currentVelocity.size(),
-                swarm.getParticle(bestIndex).currentValue,
-                swarm.getParticle(bestIndex).bestPosition.size(),
-                swarm.getParticle(bestIndex).bestValue
-      );
+            } } 
+        printf("NASAO BEST\n");
 
         bestNeighbours[partIndex] = swarm.getParticle(bestIndex);
         printf("OCU DALJE\n");

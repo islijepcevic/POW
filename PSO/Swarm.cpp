@@ -76,5 +76,4 @@ void Swarm::seedParticles() {
     }
 }
 
-
 } // namespace PSO

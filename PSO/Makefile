@@ -18,49 +18,50 @@ all: _PSO.so
 PSO_wrap.cxx: PSO.i *.hpp
 	$(SWIG) $(SWIGFLAGS) PSO.i
 
-PsoSpace.o: PsoSpace.cpp hppPsoSpace
+PsoSpace.o: PsoSpace.cpp PsoSpace.hpp
 	$(CC) $(CFLAGS) PsoSpace.cpp -o PsoSpace.o
 
-PsoParameters.o: PsoParameters.cpp hppPsoParameters
+PsoParameters.o: PsoParameters.cpp PsoParameters.hpp
 	$(CC) $(CFLAGS) PsoParameters.cpp -o PsoParameters.o
 
-randomUtils.o: randomUtils.cpp hppRandomUtils
+randomUtils.o: randomUtils.cpp randomUtils.hpp
 	$(CC) $(CFLAGS) randomUtils.cpp -o randomUtils.o
 
-Particle.o: Particle.cpp hppParticle hppPsoSpace hppConstants hppRandomUtils
+Particle.o: Particle.cpp Particle.hpp PsoSpace.hpp constants.hpp \
+    randomUtils.hpp
 	$(CC) $(CFLAGS) Particle.cpp -o Particle.o $(BOOSTSERIAL)
 
-Dimension.o: Dimension.cpp hppDimension
+Dimension.o: Dimension.cpp Dimension.hpp
 	$(CC) $(CFLAGS) Dimension.cpp -o Dimension.o
 
-PeriodicDimension.o: PeriodicDimension.cpp hppPeriodicDimension
+PeriodicDimension.o: PeriodicDimension.cpp PeriodicDimension.hpp
 	$(CC) $(CFLAGS) PeriodicDimension.cpp -o PeriodicDimension.o
 
-ReflexiveDimension.o: ReflexiveDimension.cpp hppReflexiveDimension
+ReflexiveDimension.o: ReflexiveDimension.cpp ReflexiveDimension.hpp
 	$(CC) $(CFLAGS) ReflexiveDimension.cpp -o ReflexiveDimension.o
 
-SpaceFactory.o: SpaceFactory.cpp hppSpaceFactory hppDimension \
-    hppPeriodicDimension hppReflexiveDimension
+SpaceFactory.o: SpaceFactory.cpp SpaceFactory.hpp Dimension.hpp \
+    PeriodicDimension.hpp ReflexiveDimension.hpp
 	$(CC) $(CFLAGS) SpaceFactory.cpp -o SpaceFactory.o
 
-Swarm.o: Swarm.cpp hppSwarm hppRandomUtils
+Swarm.o: Swarm.cpp Swarm.hpp randomUtils.hpp
 	$(CC) $(CFLAGS) Swarm.cpp -o Swarm.o
 
-IndexedNeighbourhood.o: IndexedNeighbourhood.cpp hppIndexedNeighbourhood \
-    hppSwarm hppConstants
+IndexedNeighbourhood.o: IndexedNeighbourhood.cpp IndexedNeighbourhood.hpp \
+    Swarm.hpp constants.hpp
 	$(CC) $(CFLAGS) IndexedNeighbourhood.cpp -o IndexedNeighbourhood.o \
 	    $(BOOSTSERIAL)
 
 GeographicNeighbourhood.o: GeographicNeighbourhood.cpp \
-    hppGeographicNeighbourhood hppSwarm hppPsoSpace hppConstants
+    GeographicNeighbourhood.hpp Swarm.hpp PsoSpace.hpp constants.hpp
 	$(CC) $(CFLAGS) GeographicNeighbourhood.cpp -o \
 	    GeographicNeighbourhood.o $(BOOSTSERIAL)
 
-NeighbourhoodFactory.o: NeighbourhoodFactory.cpp hppNeighbourhoodFactory \
-    hppGeographicNeighbourhood hppIndexedNeighbourhood
+NeighbourhoodFactory.o: NeighbourhoodFactory.cpp NeighbourhoodFactory.hpp \
+    GeographicNeighbourhood.hpp IndexedNeighbourhood.hpp
 	$(CC) $(CFLAGS) NeighbourhoodFactory.cpp -o NeighbourhoodFactory.o
 
-PSO.o: PSO.cpp hppPSO hppNeighbourhoodFactory
+PSO.o: PSO.cpp PSO.hpp NeighbourhoodFactory.hpp
 	$(CC) $(CFLAGS) PSO.cpp -o PSO.o $(BOOSTMPI)
 
 PSO_wrap.o: PSO_wrap.cxx PSO.o PsoSpace.o PsoParameters.o Particle.o \
@@ -76,41 +77,33 @@ _PSO.so: PSO_wrap.o
 	    GeographicNeighbourhood.o IndexedNeighbourhood.o \
 	    NeighbourhoodFactory.o
 
-hppAbstractFitness: AbstractFitness.hpp Particle.hpp
-
-hppAbstractPrinter: AbstractPrinter.hpp PSOForward.hpp
-
-hppConstants: constants.hpp
-
-hppDimension: Dimension.hpp
-
-hppGeographicNeighbourhood: GeographicNeighbourhood.hpp Neighbourhood.hpp
-
-hppIndexedNeighbourhood: IndexedNeighbourhood.hpp Neighbourhood.hpp
-
-hppNeighbourhoodFactory: NeighbourhoodFactory.hpp Swarm.hpp
-
-hppNeighbourhood: Neighbourhood.hpp SwarmForward.hpp Particle.hpp
-
-hppParticle: Particle.hpp PsoSpaceForward.hpp
-
-hppPeriodicDimension: PeriodicDimension.hpp Dimension.hpp
-
-hppPSO: PSO.hpp PsoParameters.hpp PsoSpace.hpp AbstractFitness.hpp \
-    AbstractPrinter.hpp Swarm.hpp Neighbourhood.hpp
-
-hppPsoParameters: PsoParameters.hpp
-
-hppPsoSpace: PsoSpace.hpp Particle.hpp Dimension.hpp
-
-hppRandomUtils: randomUtils.hpp
-
-hppReflexiveDimension: ReflexiveDimension.hpp Dimension.hpp
-
-hppSpaceFactory: SpaceFactory.hpp PsoSpace.hpp
-
-hppSwarm: Swarm.hpp Particle.hpp PsoSpace.hpp 
-
 clean:
 	\rm -f *.o  *~ PSO_wrap.*
 
+# HEADER FILES
+AbstractFitness.hpp: Particle.hpp
+
+AbstractPrinter.hpp: PSOForward.hpp
+
+GeographicNeighbourhood.hpp: Neighbourhood.hpp
+
+IndexedNeighbourhood.hpp: Neighbourhood.hpp
+
+NeighbourhoodFactory.hpp: Swarm.hpp
+
+Neighbourhood.hpp: SwarmForward.hpp Particle.hpp
+
+Particle.hpp: PsoSpaceForward.hpp
+
+PeriodicDimension.hpp: Dimension.hpp
+
+PSO.hpp: PsoParameters.hpp PsoSpace.hpp AbstractFitness.hpp \
+    AbstractPrinter.hpp Swarm.hpp Neighbourhood.hpp
+
+PsoSpace.hpp: Particle.hpp Dimension.hpp
+
+ReflexiveDimension.hpp: Dimension.hpp
+
+SpaceFactory.hpp: PsoSpace.hpp
+
+Swarm.hpp: Particle.hpp PsoSpace.hpp 

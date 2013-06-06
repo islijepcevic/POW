@@ -126,16 +126,24 @@ void PSO::manager() {
 //    double inertiaMin = params.getDoubleParam("inertia_min");
 
         swarm.seedParticles();
+        for (int i = 0; i < swarm.getNoParticles(); i++) {
+            Particle& p( swarm.getParticle(i) );
+            p.bestValue = (double)i;
+            std::cout << p;
+        }
+
         neighbourhood->scanNeighbours(swarm);
+
         // anyway - this loop is to be removed, despite weird errors
         for (int i = 0; i < swarm.getNoParticles(); i++) {
             Particle& p = swarm.getParticle(i);
             std::cout << "PARTICLE" << std::endl;
             std::cout << p; // THIS WORKS
-         //   const Particle& pbest = neighbourhood->findBestNeighbour(i);
-         //   std::cout << "NEIGHBOUR" << std::endl;
-         //   std::cout << pbest;
-            //std::cout << swarm.getParticle(i);
+            const Particle& pbest = neighbourhood->findBestNeighbour(i);
+            std::cout << "NEIGHBOUR" << std::endl;
+            std::cout << pbest;
+            std::cout << "PRINTED NEIGHBOUR" << std::endl;
+            std::cout << swarm.getParticle(i);
             // THE LINE ABOVE WAS VERY PROBLEMATIC
             // compiling PSO_wrap.cxx:
             //      undefined symbol: _ZNK3PSO5Swarm11getParticleEi

@@ -13,6 +13,8 @@
 #include "IndexedNeighbourhood.hpp"
 #include <string>
 #include <stdexcept>
+#include <new>
+#include <iostream>
 
 namespace PSO {
 
@@ -23,14 +25,20 @@ Neighbourhood* createNeighbourhood(std::string neighbourhoodType,
 
     int nParticles = swarm.getNoParticles();
 
-    if (neighbourhoodType == "geographic") {
-        nHood = new GeographicNeighbourhood(nParticles, nhoodSize);
-    } else if (neighbourhoodType == "indexed") {
-        nHood = new IndexedNeighbourhood(nParticles, nhoodSize);
-//    } else if (neighbourhoodType == "global") {
-//        nHood = new GlobalNeighbourhood(swarm);
-    } else {
-        throw std::invalid_argument("wrong parameter to Neighbourhood factory");
+    try {
+        if (neighbourhoodType == "geographic") {
+            nHood = new GeographicNeighbourhood(nParticles, nhoodSize);
+        } else if (neighbourhoodType == "indexed") {
+            nHood = new IndexedNeighbourhood(nParticles, nhoodSize);
+//        } else if (neighbourhoodType == "global") {
+//            nHood = new GlobalNeighbourhood(swarm);
+        } else {
+            throw std::invalid_argument("wrong parameter to Neighbourhood factory");
+        }
+    } catch (std::bad_alloc& ba) {
+        std::cerr << "bad_alloc caught while constructing neighbourhood: "
+            << ba.what() << std::endl;
+        throw;
     }
 
     return nHood;

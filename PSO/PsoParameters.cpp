@@ -9,8 +9,6 @@
  */
 #include "PsoParameters.hpp"
 
-#include <cstdio>
-
 namespace PSO {
 
 PsoParameters::PsoParameters() {
@@ -26,7 +24,6 @@ PsoParameters::PsoParameters(const PsoParameters& _params) :
 }
 
 PsoParameters::~PsoParameters() {
-    printf("Params destructor\n");
 }
 
 int PsoParameters::getIntParam(const std::string& key) const {

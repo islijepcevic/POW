@@ -12,8 +12,6 @@
 
 #include <cmath>
 
-#include <cstdio>
-
 namespace PSO {
 
 Dimension::Dimension(const double _lower, const double _higher) :
@@ -26,7 +24,6 @@ Dimension::Dimension(const double _lower, const double _higher) :
 }
 
 Dimension::~Dimension() {
-    printf("Dimension destructor\n");
 }
 
 double Dimension::getLowerBound() {

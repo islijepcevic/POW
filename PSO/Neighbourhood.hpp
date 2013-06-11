@@ -15,8 +15,6 @@
 #include "SwarmForward.hpp"
 #include "Particle.hpp"
 
-#include <cstdio>
-
 namespace PSO {
 
 class Neighbourhood {

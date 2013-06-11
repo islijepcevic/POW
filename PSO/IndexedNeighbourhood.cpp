@@ -11,9 +11,6 @@
 #include "constants.hpp"
 #include "Swarm.hpp"
 
-#include <cstdio>
-#include <iostream>
-
 namespace PSO {
 
 IndexedNeighbourhood::IndexedNeighbourhood() {
@@ -31,7 +28,6 @@ IndexedNeighbourhood::IndexedNeighbourhood(int nParticles, int _nhoodSize) :
 }
 
 IndexedNeighbourhood::~IndexedNeighbourhood() {
-    printf("IndexedNeighbourhood destructor\n");
     bestNeighbours.clear();
 }
 
@@ -39,8 +35,6 @@ void IndexedNeighbourhood::scanNeighbours(const Swarm& swarm) {
 
     int noParticles = swarm.getNoParticles();
     for (int partIndex = 0; partIndex < noParticles; partIndex++) {
-
-        printf("PETLJAM PO PARTICLIMA %d\n", partIndex);
 
         int startIndex = (partIndex - nhoodSize);
         int endIndex = (partIndex + nhoodSize);
@@ -58,13 +52,10 @@ void IndexedNeighbourhood::scanNeighbours(const Swarm& swarm) {
             if (value < bestValue)  {
                 bestValue = value;
                 bestIndex = index;
-            } } 
-        printf("NASAO BEST\n");
-
+            }
+        } 
         bestNeighbours[partIndex] = swarm.getParticle(bestIndex);
-        printf("OCU DALJE\n");
     }
-    printf("OCU VAN\n");
 }
 
 const Particle& IndexedNeighbourhood::findBestNeighbour(int particleIndex) const

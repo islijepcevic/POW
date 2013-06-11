@@ -54,7 +54,6 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 
 PSO::~PSO() {
     // space and fitness will be freed in Python (automatically)
-    printf("PSO destructor, rank %d\n", mpiWorld.rank());
     if (neighbourhood != NULL) {
         delete neighbourhood;
     }

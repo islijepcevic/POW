@@ -8,8 +8,6 @@
  */
 #include "PsoSpace.hpp"
 
-#include <cstdio>
-
 namespace PSO {
 
 PsoSpace::PsoSpace() {

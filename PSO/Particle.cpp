@@ -13,8 +13,6 @@
 #include "randomUtils.hpp"
 #include <algorithm>
 
-#include <cstdio>
-
 namespace PSO {
 
 Particle::Particle() {
@@ -39,7 +37,6 @@ Particle::Particle(const Particle& _particle) :
 }
 
 Particle::~Particle() {
-    printf("Particle destructor\n");
 }
 
 Particle& Particle::operator=(Particle _particle) {

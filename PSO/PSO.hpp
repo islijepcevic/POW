@@ -17,6 +17,7 @@
 #include "Neighbourhood.hpp"
 
 #include <mpi.h>
+#include <list>
 //#include <string>
 #include <boost/mpi.hpp>
 
@@ -58,7 +59,7 @@ private:
     double inertiaMin;
 
     // list of printer observers
-    std::vector<AbstractPrinter*> printers;
+    std::list<AbstractPrinter*> printers;
 
 /*********************************************************************
  * METHODS

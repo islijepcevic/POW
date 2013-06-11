@@ -17,7 +17,7 @@ namespace PSO {
 
 PSO::PSO(MPI_Comm _comm) :
     params(),
-    space(),
+    space(NULL),
     fitness(NULL),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(), 
@@ -30,7 +30,7 @@ PSO::PSO(MPI_Comm _comm) :
 PSO::PSO(PsoParameters& _params, PsoSpace* _space,
             AbstractFitness& _fitness, MPI_Comm _comm) :
     params(_params),
-    space(*_space),
+    space(_space),
     fitness(&_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(),
@@ -42,7 +42,7 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
-        swarm = Swarm(params.getIntParam("n_particles"), space);
+        swarm = Swarm(params.getIntParam("n_particles"), *space);
 
         neighbourhood = createNeighbourhood(
              params.getStringParam("neigh_type"),
@@ -86,11 +86,11 @@ void PSO::launch() {
 
     //    TEST FOR CHECK BOUNDARIES (successful)
 //    if (mpiWorld.rank() == 0) {
-//        printf("no dimensions: %d\n", space.getNoDimensions());
+//        printf("no dimensions: %d\n", space->getNoDimensions());
 //        printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
 //            p.currentPosition[0], p.currentPosition[1],
 //            p.currentVelocity[0], p.currentVelocity[1]);
-//        space.checkBoundaries(p);
+//        space->checkBoundaries(p);
 //        printf("PARTICLE AFTER; p: %lf %lf; v: %lf %lf\n",
 //            p.currentPosition[0], p.currentPosition[1],
 //            p.currentVelocity[0], p.currentVelocity[1]);

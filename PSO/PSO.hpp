@@ -32,7 +32,7 @@ private:
     PsoParameters params;
 
     // space
-    PsoSpace space;
+    PsoSpace* space;
 
     // fitness function
     AbstractFitness* fitness;

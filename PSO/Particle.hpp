@@ -82,7 +82,7 @@ public:
     /*
      * destructor
      */
-    ~Particle();
+    virtual ~Particle();
 
     /*
      * assignment operator

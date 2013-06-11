@@ -57,7 +57,7 @@ public:
 
     GeographicNeighbourhood(int nParticles, int _nhoodSize);
 
-    ~GeographicNeighbourhood();
+    virtual ~GeographicNeighbourhood();
 
     /// Override
     virtual void scanNeighbours(const Swarm& swarm);

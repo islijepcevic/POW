@@ -25,7 +25,7 @@ public:
 
     GlobalNeighbourhood();
 
-    ~GlobalNeighbourhood();
+    virtual ~GlobalNeighbourhood();
 
     // Override
     virtual void scanNeighbours(const Smarm& swarm);

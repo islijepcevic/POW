@@ -62,7 +62,7 @@ public:
 
     IndexedNeighbourhood(int nParticles, int _nhoodSize);
 
-    ~IndexedNeighbourhood();
+    virtual ~IndexedNeighbourhood();
 
     // Override
     virtual void scanNeighbours(const Swarm& swarm);

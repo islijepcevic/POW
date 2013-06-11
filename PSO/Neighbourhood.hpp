@@ -36,8 +36,7 @@ public:
     Neighbourhood() {
     }
 
-    ~Neighbourhood() {
-        printf("Neighbourhood destructor\n");
+    virtual ~Neighbourhood() {
     }
 
     /*

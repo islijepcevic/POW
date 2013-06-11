@@ -52,7 +52,7 @@ void GeographicNeighbourhood::scanNeighbours(const Swarm& swarm) {
                     swarm.getParticle(partIndex), swarm.getParticle(otherIndex)
                 );
             double squareSum = 0.0;
-            for (int i = 0; i < distVect.size(); i++) {
+            for (unsigned int i = 0; i < distVect.size(); i++) {
                 squareSum += (distVect[i] * distVect[i]);
             }
             

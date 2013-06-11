@@ -65,7 +65,7 @@ int Particle::getIndex() {
 void Particle::seed(const PsoSpace& space) {
     currentValue = bestValue = VERY_LARGE_VALUE;
 
-    for (int d = 0; d < currentPosition.size(); d++) {
+    for (unsigned int d = 0; d < currentPosition.size(); d++) {
         currentPosition[d] = bestPosition[d] = randDouble(
                 space.getLowerBound(d), space.getHigherBound(d)
         );
@@ -77,13 +77,13 @@ std::ostream& operator<<(std::ostream& out, const Particle& part) {
     out << "PARTICLE " << part.index << std::endl;
 
     out << "pos: ";
-    for (int i = 0; i < part.currentPosition.size(); i++) {
+    for (unsigned int i = 0; i < part.currentPosition.size(); i++) {
         out << part.currentPosition[i] << " ";
     }
     out << std::endl;
 
     out << "vel: ";
-    for (int i = 0; i < part.currentVelocity.size(); i++) {
+    for (unsigned int i = 0; i < part.currentVelocity.size(); i++) {
         out << part.currentVelocity[i] << " ";
     }
     out << std::endl;
@@ -92,7 +92,7 @@ std::ostream& operator<<(std::ostream& out, const Particle& part) {
 
 
     out << "best pos: ";
-    for (int i = 0; i < part.bestPosition.size(); i++) {
+    for (unsigned int i = 0; i < part.bestPosition.size(); i++) {
         out << part.bestPosition[i] << " ";
     }
     out << std::endl;
@@ -100,6 +100,8 @@ std::ostream& operator<<(std::ostream& out, const Particle& part) {
     out << "best value: " << part.bestValue << std::endl;
 
     out << std::endl;
+
+    return out;
 }
 
 void swap(Particle& p1, Particle& p2) {

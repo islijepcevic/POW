@@ -24,8 +24,7 @@ PsoSpace::PsoSpace(const PsoSpace& _space) :
 }
 
 PsoSpace::~PsoSpace() {
-    printf("PsoSpace destructor\n");
-    for (int i = 0; i < dimensions.size(); i++) {
+    for (unsigned int i = 0; i < dimensions.size(); i++) {
         delete dimensions[i];
     }
 }

@@ -49,7 +49,7 @@ std::pair<double, double> ReflexiveDimension::checkBoundaries(double position,
 
 double ReflexiveDimension::calculateShortestDistance(double pos1, double pos2)
                                                                         const {
-    this->calculateDistance(pos1, pos2);
+    return this->calculateDistance(pos1, pos2);
 }
 
 } // namespace PSO

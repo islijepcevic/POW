@@ -1,7 +1,7 @@
 #! /usr/bin/env make
 
 CC=mpic++
-CFLAGS= -O2 -fPIC -c -lm -ggdb
+CFLAGS= -O2 -fPIC -c -lm -Wall -ggdb
 LDFLAGS= -shared
 
 PYDIR=/usr/include/python2.7

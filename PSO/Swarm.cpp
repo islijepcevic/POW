@@ -71,7 +71,7 @@ const Particle& Swarm::getParticle(int index) const {
 
 void Swarm::seedParticles() {
 
-    for (int i = 0; i < particles.size(); i++) {
+    for (unsigned int i = 0; i < particles.size(); i++) {
         particles[i].seed(space);
     }
 }

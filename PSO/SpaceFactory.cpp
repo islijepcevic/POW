@@ -41,7 +41,6 @@ PsoSpace* createPsoSpace(std::vector<double>& lowBoundaries,
         }
 
         double size = cellSize[i];
-        double dsize = dim->getSize();
         if (size != dim->getSize()) {
             throw std::invalid_argument("cell size is wrong");
         }

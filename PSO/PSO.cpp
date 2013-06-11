@@ -74,7 +74,7 @@ void PSO::launch() {
     // some prints only for the test
     printf("this is Hello from c++ PSO.launch()\n");
     // print using observers
-    for (int i = 0; i < printers.size(); i++) {
+    for (unsigned int i = 0; i < printers.size(); i++) {
         (printers[i])->printRepetitionStart(*this);
     }
 

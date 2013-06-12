@@ -1,25 +1,21 @@
 next:
-ERROR IN CURRENT CODE:
--> last implemented: Neighborhood
--> lot of printouts are here (in PSO.master(), in IndexedNhood.scanNeibs(),
-and in Particle.operator=
--> it seems that one or more particles are initialized to weird values with
-weird lengths of vectors
--> even if I comment out anything with Neighborhood in PSO, there is a
-segfault
 think of how to proceed communicating the data in the PSO
-recover serialization in Particle
 recover everything in PSO
 
 ADD TO DOCUMENTATION:
 -> POW must create PsoParameters, then call params.<method>(psoParams) before
 passing it to PSO
--> space and fitness are not bcasted. space - not needed. fitness - modify
-printer (will be a new class)
+->printer (will be a new class)
 -> printing: observer AbstractPrinter, two classes in Default.py, it could be
 done that module programmer inherits them and writes whatever he wants
 -> neighbourhood size in indexed neighbourhood (what it represents, and the
 way it is handeled if tried to init if too large)
+-> space and fitness bcasted and recreated in python part of POW. It would be
+nicer (at least for space) to do it in c++, but it is too much work right now
+to accomplish it with boost::mpi and boost::serialization (tried with space,
+not with fitness); it would be nicer because right now python Space is
+bcasted, and in every node a c++ PsoSpace is created from factory method, so
+they are not necessarily the copy of same object
 
 
 PSO (c++):
@@ -52,6 +48,7 @@ making the PSO object. Pointerst might be difficult to pass over mpi.
 TEST:
 -> PsoParameters with Parameters integration (do they fill correctly)
 -> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
+-> serialization of Particle
 
 IF THERE IS TIME:
 -> kick and reseed

@@ -10,6 +10,10 @@
 #define __PSO_SPACE__
 
 #include <vector>
+//#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+//#include <boost/serialization/vector.hpp>
+
 #include "Dimension.hpp"
 #include "Particle.hpp"
 
@@ -22,6 +26,20 @@ private:
     std::vector<Dimension*> dimensions;
 
     int noDimensions;
+
+//    // BOOST SERIALIZATION
+//    friend class boost::serialization::access;
+//
+//    /*
+//     * method that for serializing and deserializing objects of this class
+//     * @param ar - archive stream
+//     * @param version - don't know, not used
+//     */
+//    template<class Archive>
+//    void serialize(Archive& ar, const unsigned int version) {
+//        ar & dimensions;
+//        ar & noDimensions;
+//    }
 
 public:
 

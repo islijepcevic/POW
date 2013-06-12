@@ -141,7 +141,7 @@ else:
 #propagate parameters, data, space and fitness function to slaves
 comm.Barrier()
 params=comm.bcast(params,root=0)
-#space=comm.bcast(space,root=0)      # removed by Ivan
+space=comm.bcast(space,root=0)      # removed by Ivan
 #fitness=comm.bcast(fitness,root=0)  # removed by Ivan
 data=comm.bcast(data,root=0)
 comm.Barrier()
@@ -160,7 +160,8 @@ if rank == 0:
     search.registerPrinterObserver(logPrinter)
 
 else:
-    search=PSO(comm)
+    pSpace = space.createPsoSpace()
+    search=PSO(pSpace, comm)
 
 #init optimization timer
 if rank==0:

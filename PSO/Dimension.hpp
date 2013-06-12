@@ -13,10 +13,30 @@
 
 #include <utility>
 #include <stdexcept>
+//#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+//#include <boost/serialization/serialization.hpp>
+//#include <boost/serialization/nvp.hpp>
 
 namespace PSO {
 
 class Dimension {
+private:
+//    // BOOST SERIALIZATION
+//    friend class boost::serialization::access;
+//
+//    /*
+//     * method that for serializing and deserializing objects of this class
+//     * @param ar - archive stream
+//     * @param version - don't know, not used
+//     */
+//    template<class Archive>
+//    void serialize(Archive& ar, const unsigned int version) {
+//        ar & boost::serialization::make_nvp("LowerBound", lowerBound);
+//        ar & boost::serialization::make_nvp("HigherBound", higherBound);
+//        ar & boost::serialization::make_nvp("Size", size);
+//    }
+
 protected:
     
     // lower bound of the dimension
@@ -86,6 +106,8 @@ public:
     virtual double calculateShortestDistance(double pos1, double pos2)
                                                                 const = 0;
 };
+
+//BOOST_SERIALIZATION_ASSUME_ABSTRACT(Dimension);
 
 } // namspace PSO
 

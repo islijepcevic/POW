@@ -15,16 +15,22 @@
 
 namespace PSO {
 
-PSO::PSO(MPI_Comm _comm) :
+PSO::PSO(PsoSpace* _space, AbstractFitness& _fitness, MPI_Comm _comm) :
     params(),
-    space(NULL),
-    fitness(NULL),
+    space(_space),
+    fitness(&_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(), 
     neighbourhood(NULL),
     totalSteps(),
     inertiaMax(),
     inertiaMin() {
+
+    if (mpiWorld.rank() != 0) {
+//        printf("slave waiting for space\n");
+//        broadcast(mpiWorld, *space, 0);
+//        printf("slave has space\n");
+    }
 }
 
 PSO::PSO(PsoParameters& _params, PsoSpace* _space,
@@ -42,6 +48,11 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
+
+//        printf("master sending space\n");
+//        broadcast(mpiWorld, *space, 0);
+//        printf("master sent space\n");
+
         swarm = Swarm(params.getIntParam("n_particles"), *space);
 
         neighbourhood = createNeighbourhood(
@@ -49,6 +60,8 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
              swarm,
              params.getIntParam("neigh_size")
         );
+
+        // mpi send skeletons
     }
 }
 

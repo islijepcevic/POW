@@ -85,7 +85,7 @@ public:
     /**
      * minimal constructor - used for slave nodes
      */
-    PSO(MPI_Comm _comm);
+    PSO(PsoSpace* _space, AbstractFitness& _fitness, MPI_Comm _comm);
 
     /**
      * constructor - used for master node

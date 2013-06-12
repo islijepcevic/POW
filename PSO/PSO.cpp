@@ -91,7 +91,6 @@ void PSO::launch() {
         (*printIterator)->printRepetitionStart(*this);
     }
 
-    printf("%d; nodim %d\n", mpiWorld.rank(), space->getNoDimensions());
     mpiWorld.barrier();
 
     if (mpiWorld.rank() == 0) {
@@ -131,19 +130,19 @@ void PSO::manager() {
         neighbourhood->scanNeighbours(swarm);
 
         // anyway - this loop is to be removed, despite weird errors
-        for (int i = 0; i < swarm.getNoParticles(); i++) {
-            Particle& p = swarm.getParticle(i);
-            std::cout << "PARTICLE" << std::endl;
-            std::cout << p; // THIS WORKS
-            const Particle& pbest = neighbourhood->findBestNeighbour(i);
-            std::cout << "NEIGHBOUR" << std::endl;
-            std::cout << pbest;
+//        for (int i = 0; i < swarm.getNoParticles(); i++) {
+//            Particle& p = swarm.getParticle(i);
+//            std::cout << "PARTICLE" << std::endl;
+//            std::cout << p; // THIS WORKS
+//            const Particle& pbest = neighbourhood->findBestNeighbour(i);
+//            std::cout << "NEIGHBOUR" << std::endl;
+//            std::cout << pbest;
 
             //std::cout << swarm.getParticle(i); // already printed
             // THE LINE ABOVE WAS VERY PROBLEMATIC
             // compiling PSO_wrap.cxx:
             //      undefined symbol: _ZNK3PSO5Swarm11getParticleEi
-        }
+//        }
 
 //        // main loop for one PSO launch
 //        for (int step = 0; step < totalSteps; step++) {

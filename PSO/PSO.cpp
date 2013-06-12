@@ -84,44 +84,22 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
  */
 void PSO::launch() {
 
-    // some prints only for the test
-    printf("this is Hello from c++ PSO.launch()\n");
     // print using observers
-    for (unsigned int i = 0; i < printers.size(); i++) {
-        (printers[i])->printRepetitionStart(*this);
+    for (std::list<AbstractPrinter*>::const_iterator printIterator
+            = printers.begin(); printIterator != printers.end();
+            printIterator++) {
+        (*printIterator)->printRepetitionStart(*this);
     }
 
-    Particle p;
-    p.currentPosition.push_back(6.0);
-    p.currentPosition.push_back(6.0);
-    p.currentVelocity.push_back(10);
-    p.currentVelocity.push_back(10);
-
-    //    TEST FOR CHECK BOUNDARIES (successful)
-//    if (mpiWorld.rank() == 0) {
-//        printf("no dimensions: %d\n", space->getNoDimensions());
-//        printf("PARTICLE BEFORE; p: %lf %lf; v: %lf %lf\n",
-//            p.currentPosition[0], p.currentPosition[1],
-//            p.currentVelocity[0], p.currentVelocity[1]);
-//        space->checkBoundaries(p);
-//        printf("PARTICLE AFTER; p: %lf %lf; v: %lf %lf\n",
-//            p.currentPosition[0], p.currentPosition[1],
-//            p.currentVelocity[0], p.currentVelocity[1]);
-//    }
-
+    printf("%d; nodim %d\n", mpiWorld.rank(), space->getNoDimensions());
+    mpiWorld.barrier();
 
     if (mpiWorld.rank() == 0) {
         manager();
     } else {
         worker();
     }
-    mpiWorld.barrier();
-//    if (mpiWorld.rank() == 0) {
-//        delete neighbourhood;
-//        neighbourhood = NULL;
-//    }
-//        printf("RANK:%d POINTER1 %p\n", mpiWorld.rank(), neighbourhood);
-//        printf("RANK:%d POINTER2 %p\n", mpiWorld.rank(), neighbourhood);
+
 }
 
 /*

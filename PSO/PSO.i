@@ -265,3 +265,18 @@ class VectorAdaptor(list):
         vector[key] = item 
     
 %}
+
+// this beautiful part of code makes it possible that when Python function is
+// called from c++, and python error is thrown, the correct error/exception is
+// shown together with the traceback
+// If this is not here, then all I get is Swig::DirectorMethodException (which
+// is wrong)
+%feature("director:except") {
+    if( $error != NULL ) {
+        PyObject *ptype, *pvalue, *ptraceback;
+        PyErr_Fetch( &ptype, &pvalue, &ptraceback );
+        PyErr_Restore( ptype, pvalue, ptraceback );
+        PyErr_Print();
+        Py_Exit(1);
+    }
+}

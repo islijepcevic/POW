@@ -11,7 +11,7 @@
 
 #include "PsoParameters.hpp"
 #include "PsoSpace.hpp"
-#include "AbstractFitness.hpp"
+#include "AbstractFitnessProxy.hpp"
 #include "AbstractPrinter.hpp"
 #include "Swarm.hpp"
 #include "Neighbourhood.hpp"
@@ -36,7 +36,7 @@ private:
     PsoSpace* space;
 
     // fitness function
-    AbstractFitness* fitness;
+    AbstractFitnessProxy& fitness;
 
     // MPI comm world
     boost::mpi::communicator mpiWorld;
@@ -85,7 +85,7 @@ public:
     /**
      * minimal constructor - used for slave nodes
      */
-    PSO(PsoSpace* _space, AbstractFitness& _fitness, MPI_Comm _comm);
+    PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm);
 
     /**
      * constructor - used for master node
@@ -95,7 +95,7 @@ public:
      * @param _fitness - class for the fitness function
      */
     PSO(PsoParameters& _params, PsoSpace* _space,
-            AbstractFitness& _fitness, MPI_Comm _comm);
+            AbstractFitnessProxy& _fitness, MPI_Comm _comm);
 
     /**
      * destructor

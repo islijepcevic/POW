@@ -25,7 +25,7 @@ import time
 import numpy as np
 #import ClusterAndDraw as CnD
 
-from Default import StdPrinter, LogPrinter
+from Default import StdPrinter, LogPrinter, FitnessProxy
 
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
@@ -142,15 +142,17 @@ else:
 comm.Barrier()
 params=comm.bcast(params,root=0)
 space=comm.bcast(space,root=0)      # removed by Ivan
-#fitness=comm.bcast(fitness,root=0)  # removed by Ivan
+fitness=comm.bcast(fitness,root=0)  # removed by Ivan
+fitnessProxy = FitnessProxy(fitness)
 data=comm.bcast(data,root=0)
 comm.Barrier()
 
 #prepare optimizer
 if rank == 0:
+
     pSpace = space.createPsoSpace()
 
-    search=PSO(psoParams,pSpace,fitness, comm)
+    search=PSO(psoParams,pSpace,fitnessProxy, comm)
 
     # register different types of printers
     stdPrinter = StdPrinter()
@@ -161,7 +163,7 @@ if rank == 0:
 
 else:
     pSpace = space.createPsoSpace()
-    search=PSO(pSpace, comm)
+    search=PSO(pSpace, fitnessProxy, comm)
 
 #init optimization timer
 if rank==0:

@@ -15,10 +15,10 @@
 
 namespace PSO {
 
-PSO::PSO(PsoSpace* _space, AbstractFitness& _fitness, MPI_Comm _comm) :
+PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
     params(),
     space(_space),
-    fitness(&_fitness),
+    fitness(_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(), 
     neighbourhood(NULL),
@@ -34,10 +34,10 @@ PSO::PSO(PsoSpace* _space, AbstractFitness& _fitness, MPI_Comm _comm) :
 }
 
 PSO::PSO(PsoParameters& _params, PsoSpace* _space,
-            AbstractFitness& _fitness, MPI_Comm _comm) :
+            AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
     params(_params),
     space(_space),
-    fitness(&_fitness),
+    fitness(_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(),
     neighbourhood(NULL),

@@ -20,10 +20,10 @@
 #include "ReflexiveDimension.hpp"
 #include "constants.hpp"
 #include "randomUtils.hpp"
-#include "AbstractFitness.hpp"
+#include "Particle.hpp"
+#include "AbstractFitnessProxy.hpp"
 #include "PsoSpace.hpp"
 #include "PsoParameters.hpp"
-#include "Particle.hpp"
 #include "AbstractPrinter.hpp"
 #include "SpaceFactory.hpp"
 #include "Swarm.hpp"
@@ -44,7 +44,7 @@
 
 
 // DIRECTORS - they enable inheritance and polymorphism from c++ to python
-%feature("director") AbstractFitness;
+%feature("director") AbstractFitnessProxy;
 %feature("director") AbstractPrinter;
 
 // INCLUSION OF ALL THE FILES/CLASESS IMPLEMENTED IN C++
@@ -66,7 +66,7 @@
 %include "Dimension.hpp"            
 %include "PsoSpace.hpp"             // needs Dimension and Particle
 %include "PsoParameters.hpp"
-%include "AbstractFitness.hpp"
+%include "AbstractFitnessProxy.hpp"
 %include "Swarm.hpp"                // needs Particle and PsoSpace
 %include "PSOForward.hpp"
 %include "AbstractPrinter.hpp"      // needs PSOForward
@@ -221,6 +221,16 @@ def swigPyListToCppVector(pyList, vartype):
         vector.push_back(elem)
 
     return vector
+
+def swigCppVectorToPyList(vector):
+    '''
+    this method converts c++ vector to python list
+    '''
+    pyList = [1] * vector.size()
+    for i in xrange(vector.size()):
+        pyList[i] = vector[i]
+    return pyList
+    
 
 
 class VectorAdaptor(list):

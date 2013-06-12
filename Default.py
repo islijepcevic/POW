@@ -23,8 +23,8 @@ from copy import deepcopy
 import os, sys
 
 # integration with c++ code
-from PSO.PSO import AbstractFitness, PsoSpace, AbstractPrinter, \
-        VectorAdaptor, swigPyListToCppVector, createPsoSpace
+from PSO.PSO import AbstractFitnessProxy, AbstractPrinter, \
+        swigPyListToCppVector, createPsoSpace, swigCppVectorToPyList
 
 class Parser: # this is imported in the file
     parameters={}
@@ -433,13 +433,64 @@ class Space:
         return p,v
 
 
-class BaseFitness(AbstractFitness):
-    '''
-    A class that serves as a bridge between AbstractFitness in c++ and the
-    true Fitness implementation by the module programmer.
+#class OldBaseFitness(AbstractFitness):
+#    '''
+#    A class that serves as a bridge between AbstractFitness in c++ and the
+#    true Fitness implementation by the module programmer.
+#
+#    It inherits from AbstractFitness, and needs to be inherited in the Fitness
+#    class.
+#    '''
+#    
+#    def __init__(self):
+#        '''
+#        The constructor.
+#
+#        NOTE TO THE MODULE PROGRAMMER:
+#        Please, make the call similar to this while implementing the derived
+#        function. This is needed because of the integration with c++. Sample
+#        code would be like this:
+#
+#        class Fitness(BaseFitness):
+#            def __init__(self, other_params):
+#                BaseFitness.__init__(self)
+#
+#                #your_code
+#        '''
+#        AbstractFitness.__init__(self)
+#
+#    def evaluation(self, particle):
+#        '''
+#        method that is called from PSO in c++ for evaluating the particle
+#
+#        NOTE TO THE MODULE PROGRAMMER:
+#        instead of using evaluate() method, it might be better to override
+#        and use this method and use the particle object instead. It should
+#        give much more freedom.
+#
+#        @param particle - object of Particle class that contains all the
+#                        necessary information
+#        @return - value at the position of the particle, float
+#        '''
+#
+#        vectorAdaptor = VectorAdaptor(particle.currentPositions)
+#        return self.evaluate(particle.getIndex(), vectorAdaptor)
+#
+#    def evaluate(self, num, pos):
+#        '''
+#        method that should be implemented by the module programmer, which
+#        performs the actual evaluation of the particle
+#
+#        @param num - the index of the particle, integer
+#        @param pos - the position of the particle,
+#                     list of coordinates, of length d
+#        '''
+#        raise NotImplementedError("call of not implemented evaluate()")
 
-    It inherits from AbstractFitness, and needs to be inherited in the Fitness
-    class.
+
+class BaseFitness:
+    '''
+    A base class for user's Fitness
     '''
     
     def __init__(self):
@@ -457,24 +508,7 @@ class BaseFitness(AbstractFitness):
 
                 #your_code
         '''
-        AbstractFitness.__init__(self)
-
-    def evaluation(self, particle):
-        '''
-        method that is called from PSO in c++ for evaluating the particle
-
-        NOTE TO THE MODULE PROGRAMMER:
-        instead of using evaluate() method, it might be better to override
-        and use this method and use the particle object instead. It should
-        give much more freedom.
-
-        @param particle - object of Particle class that contains all the
-                        necessary information
-        @return - value at the position of the particle, float
-        '''
-
-        vectorAdaptor = VectorAdaptor(particle.currentPositions)
-        return self.evaluate(particle.getIndex(), vectorAdaptor)
+        pass
 
     def evaluate(self, num, pos):
         '''
@@ -486,6 +520,32 @@ class BaseFitness(AbstractFitness):
                      list of coordinates, of length d
         '''
         raise NotImplementedError("call of not implemented evaluate()")
+
+
+class FitnessProxy(AbstractFitnessProxy):
+    '''
+    concrete fitness proxy
+    '''
+
+    def __init__(self, fitness):
+        '''
+        constructor; needs to call base constructor
+        @param fitness - instance of BaseFitness (or anything derived)
+        '''
+        AbstractFitnessProxy.__init__(self)
+
+        self.fitness = fitness
+
+    def evaluation(self, particle):
+        '''
+        method that is called from PSO in c++ for evaluating the particle
+        @param particle - object of Particle class that contains all the
+                        necessary information
+        @return - value at the position of the particle, float
+        '''
+        tmpArray = np.array(swigCppVectorToPyList(particle.currentPosition))
+        return self.fitness.evaluate(particle.getIndex(), tmpArray)
+
 
 
 class Postprocess:

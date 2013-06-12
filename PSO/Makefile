@@ -83,6 +83,8 @@ clean:
 # HEADER FILES
 AbstractFitness.hpp: Particle.hpp
 
+AbstractFitnessProxy.hpp: Particle.hpp
+
 AbstractPrinter.hpp: PSOForward.hpp
 
 GeographicNeighbourhood.hpp: Neighbourhood.hpp
@@ -97,7 +99,7 @@ Particle.hpp: PsoSpaceForward.hpp
 
 PeriodicDimension.hpp: Dimension.hpp
 
-PSO.hpp: PsoParameters.hpp PsoSpace.hpp AbstractFitness.hpp \
+PSO.hpp: PsoParameters.hpp PsoSpace.hpp AbstractFitnessProxy.hpp \
     AbstractPrinter.hpp Swarm.hpp Neighbourhood.hpp
 
 PsoSpace.hpp: Particle.hpp Dimension.hpp

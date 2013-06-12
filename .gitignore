@@ -1,5 +1,6 @@
 *~
 *.swp
+*.swo
 *.db
 *.pyc
 PSO/*.o

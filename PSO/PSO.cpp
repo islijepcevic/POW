@@ -21,7 +21,7 @@ PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
     fitness(_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(), 
-    neighbourhood(NULL),
+    neighbourhood(),
     totalSteps(),
     inertiaMax(),
     inertiaMin() {
@@ -84,13 +84,15 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
  */
 void PSO::launch() {
 
-    // print using observers
-    for (std::list<AbstractPrinter*>::const_iterator printIterator
-            = printers.begin(); printIterator != printers.end();
-            printIterator++) {
-        (*printIterator)->printRepetitionStart(*this);
-    }
+    mpiWorld.barrier();
 
+    if (mpiWorld.rank() == 0) {
+        swarm.getParticle(1).bestValue = 0.0;
+        neighbourhood->scanNeighbours(swarm);
+    }
+    broadcast(mpiWorld, neighbourhood, 0);
+    double best = neighbourhood->findBestNeighbour(0).bestValue;
+    printf("BEST %lf\n", best);
     mpiWorld.barrier();
 
     if (mpiWorld.rank() == 0) {
@@ -98,6 +100,7 @@ void PSO::launch() {
     } else {
         worker();
     }
+    printf("over from rank %d\n", mpiWorld.rank());
 
 }
 
@@ -106,82 +109,39 @@ void PSO::launch() {
  */
 void PSO::manager() {
 
-//
-//    // synchronize (barrier, broadcast), maybe NOT; TODO
-//
-//    // loop that repeats executing PSO algorithm
-//    for (int repeatNo = 0; repeatNo < totalRepetitions; repeatNo++) {
-//        printf("\n> REPETITION %d\n", repeatNo + 1);
-//
-//    // seed all the particles in the swarm
-//    // init local variables
-//    double inertiaMax = params.getDoubleParam("inertia_max");
-//    double inertiaMin = params.getDoubleParam("inertia_min");
-
-        swarm.seedParticles();
-        // set best values to check neighborhoods
-        for (int i = 0; i < swarm.getNoParticles(); i++) {
-            Particle& p( swarm.getParticle(i) );
-            p.bestValue = (double)i;
-            //std::cout << p;
+    // loop that repeats executing PSO algorithm
+    for (int repeatNo = 0; repeatNo < totalRepetitions; repeatNo++) {
+        // print using observers
+        for (std::list<AbstractPrinter*>::const_iterator printIterator
+                = printers.begin(); printIterator != printers.end();
+                printIterator++) {
+            (*printIterator)->printRepetitionStart(*this);
         }
 
-        printf("SCANNING NHOOD\n");
-        neighbourhood->scanNeighbours(swarm);
+        // seed all the particles in the swarm
+        swarm.seedParticles();
 
-        // anyway - this loop is to be removed, despite weird errors
-//        for (int i = 0; i < swarm.getNoParticles(); i++) {
-//            Particle& p = swarm.getParticle(i);
-//            std::cout << "PARTICLE" << std::endl;
-//            std::cout << p; // THIS WORKS
-//            const Particle& pbest = neighbourhood->findBestNeighbour(i);
-//            std::cout << "NEIGHBOUR" << std::endl;
-//            std::cout << pbest;
+        // main loop for one PSO launch
+        for (int step = 0; step < totalSteps; step++) {
 
-            //std::cout << swarm.getParticle(i); // already printed
-            // THE LINE ABOVE WAS VERY PROBLEMATIC
-            // compiling PSO_wrap.cxx:
-            //      undefined symbol: _ZNK3PSO5Swarm11getParticleEi
-//        }
+            // rescale inertia factor
+            swarm.inertia = inertiaMax
+                - (double)step / totalSteps * (inertiaMax - inertiaMin);
 
-//        // main loop for one PSO launch
-//        for (int step = 0; step < totalSteps; step++) {
-//            // do the work
-//            performNextIteration(step);
-//        }
-//    }
-//
-//    // close log file
-//    fclose(logFile);
-//}
-//
-///*
-// * this is still the work of root node (rank 0)
-// */
-//void PSO::performNextIteration(int step) {
-//
-//    // rescale inertia factor
-//    swarm.inertia = inertiaMax
-//        - (double)step / totalSteps * (inertiaMax - inertiaMin);
-//
-//    // update neighbourhood
-//    neighbourhood->scanNeighbours(swarm);
-//
-//    // for every particle, send data to worker()
-//    for (int indexParticle = 0; indexParticle = swarm.getNoParticles();
-//            indexParticle++) {
-//        //...
-//    }
-//
-//    // gather all data
-//
-//    // write all to the log
+            printf("0 scanning\n");
+            // update neighbourhood
+            neighbourhood->scanNeighbours(swarm);
+
+        }
+    }
+
 }
 
 /*
  * main code for every other node
  */
 void PSO::worker() {
+    printf("worker %d\n", mpiWorld.rank());
 }
 
 } // namespace PSO

@@ -71,11 +71,6 @@ private:
     void manager();
 
     /**
-     * method that performs an iteration of one PSO launch
-     */
-//    void performNextIteration(int step);
-
-    /**
      * method that runs on all other processes (slaves)
      */
     void worker();

@@ -1,5 +1,5 @@
 next:
-think of how to proceed communicating the data in the PSO
+continue in PSO part
 
 ADD TO DOCUMENTATION:
 -> POW must create PsoParameters, then call params.<method>(psoParams) before
@@ -18,39 +18,29 @@ they are not necessarily the copy of same object
 
 
 PSO (c++):
--> continue implementing according to comments in the methods
--> recover all the commented stuff
--> getters for swarm and space (and maybe fitness and params)
--> at least add the support for implementing KaR
+-> test master/worker
+-> updating particle in workers
 
 Particle:
 -> kick()
 -> reseed()
 
-Neighbourhood and derived classes
--> make neighborhood part of swarm
+Neighbourhood and derived classes:
 
-Space / Dimension
+Space / Dimension:
 
 SWIG module.i:
--> add mpi support
--> if needed, add interface from c++ to python string
 
 MPI: after testing regular code, add MPI support
--> add MPI
--> Master/slave architecture
 -> implement skeleton/content
--> think if PsoSpace and AbstractFitness in PSO need to be pointers.
-Could they be references? References are difficult to pass in POW.py while
-making the PSO object. Pointerst might be difficult to pass over mpi.
 
 TEST:
 -> PsoParameters with Parameters integration (do they fill correctly)
 -> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
 -> serialization of Particle
+-> test how master/worker works
 
 IF THERE IS TIME:
--> kick and reseed
 -> repellers
 -> save/load to enable restart from file
 
@@ -65,6 +55,7 @@ finally integrates together
 PSO:
 (3.5.)+> skeleton created
 (3.5.)+> make params.inertia part of PSO (or swarm) (instead of params)
+(13.6.)+> master/worker created
 
 Particle
 (29.4.)+> implemented basic version
@@ -78,6 +69,7 @@ Swarm
 Neighbourhood and derived:
 (29.4.)+> implemented basic versions
 (31.5.)+> serialize the neighbourhood(s)
+(13.6.)+> now finally serialization/sending works
 
 Parser/params:
 (12.4.)+> think of methods to fill in the c++ map from Python when
@@ -117,7 +109,7 @@ Printing data:
 AbstractPrinter, and in python LogPrinter and StdPrinter (these two are still
 unfinished)
 
-MPI
+MPI:
 (6.5.)+> find out a way to send serialized objects (considering that MPI was
 initialized in Python):
 """
@@ -147,6 +139,8 @@ boost::mpi::communicator with mpi4py's MPI_comm sent from Python.
 2) After this test was programmed, I had extreme doubts if it will be possible
 to compile everything through SWIG. Luckily, there is a way to do so.
 """
+(0X.6.)+> add MPI
+(13.6.)+> add master/worker architecture
 
 SWIG:
 (15.4.)+> do basic one
@@ -154,6 +148,7 @@ SWIG:
 (17.5.)+> update polymorphism for every class
 (17.5.)+> added pyString to cppString functionality
 (20.5.)+> add templated vector methods from test/vector_in_python
+(0X.6.)+> add mpi support
 
 REPORT:
 (14.5.)+> first class diagram in violet

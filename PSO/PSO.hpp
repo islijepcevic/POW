@@ -58,6 +58,11 @@ private:
     double inertiaMax;
     double inertiaMin;
 
+    // inertia at current step
+    // it would be conceptually more precise to make it a member of Swarm, but
+    // this is easier to mantain
+    double inertia;
+
     // list of printer observers
     std::list<AbstractPrinter*> printers;
 

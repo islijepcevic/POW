@@ -24,7 +24,8 @@ PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
     neighbourhood(),
     totalSteps(),
     inertiaMax(),
-    inertiaMin() {
+    inertiaMin(),
+    inertia() {
 
     if (mpiWorld.rank() != 0) {
 //        printf("slave waiting for space\n");
@@ -115,7 +116,7 @@ void PSO::manager() {
         for (int step = 0; step < totalSteps; step++) {
 
             // rescale inertia factor
-            swarm.inertia = inertiaMax
+            inertia = inertiaMax
                 - (double)step / totalSteps * (inertiaMax - inertiaMin);
 
             // update neighbourhood

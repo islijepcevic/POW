@@ -24,8 +24,7 @@ Swarm::Swarm() :
 
 Swarm::Swarm(int noParticles, PsoSpace& _space) :
     particles(),
-    space(_space),
-    inertia(0.0) {
+    space(_space) {
 
     particles.reserve(noParticles);
 

@@ -31,9 +31,6 @@ protected:
 
 public:
 
-    // inertia at current step
-    double inertia;
-
     /**
      * default constructor of the Swarm
      */

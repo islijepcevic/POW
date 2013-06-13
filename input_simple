@@ -5,11 +5,11 @@
 #######################
 
 
-steps 200
+steps 10
 
 particles 10
 
-repeat 3
+repeat 2
 
 repulsion off
 

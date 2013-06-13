@@ -87,20 +87,10 @@ void PSO::launch() {
     mpiWorld.barrier();
 
     if (mpiWorld.rank() == 0) {
-        swarm.getParticle(1).bestValue = 0.0;
-        neighbourhood->scanNeighbours(swarm);
-    }
-    broadcast(mpiWorld, neighbourhood, 0);
-    double best = neighbourhood->findBestNeighbour(0).bestValue;
-    printf("BEST %lf\n", best);
-    mpiWorld.barrier();
-
-    if (mpiWorld.rank() == 0) {
         manager();
     } else {
         worker();
     }
-    printf("over from rank %d\n", mpiWorld.rank());
 
 }
 
@@ -128,7 +118,6 @@ void PSO::manager() {
             swarm.inertia = inertiaMax
                 - (double)step / totalSteps * (inertiaMax - inertiaMin);
 
-            printf("0 scanning\n");
             // update neighbourhood
             neighbourhood->scanNeighbours(swarm);
 
@@ -141,7 +130,6 @@ void PSO::manager() {
  * main code for every other node
  */
 void PSO::worker() {
-    printf("worker %d\n", mpiWorld.rank());
 }
 
 } // namespace PSO

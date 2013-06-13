@@ -87,6 +87,13 @@ public:
     const Particle& getParticle(int index) const;
 
     /**
+     * setter for a particular particle; particle is copied in the array on the
+     * position of its own index
+     * @param particle - the particle to set
+     */
+    void setParticle(Particle& particle);
+
+    /**
      * method that seeds particles to new random values
      */
     void seedParticles();

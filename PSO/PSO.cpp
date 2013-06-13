@@ -29,7 +29,7 @@ PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
 
     if (mpiWorld.rank() != 0) {
 //        printf("slave waiting for space\n");
-//        broadcast(mpiWorld, *space, 0);
+//        broadcast(mpiWorld, space, 0);
 //        printf("slave has space\n");
     }
 }
@@ -45,13 +45,14 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
-    inertiaMin(params.getDoubleParam("inertia_min")) {
+    inertiaMin(params.getDoubleParam("inertia_min")),
+    inertia(inertiaMax) {
 
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
 
 //        printf("master sending space\n");
-//        broadcast(mpiWorld, *space, 0);
+//        broadcast(mpiWorld, space, 0);
 //        printf("master sent space\n");
 
         swarm = Swarm(params.getIntParam("n_particles"), *space);

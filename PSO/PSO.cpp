@@ -13,6 +13,17 @@
 #include <iostream>
 #include "NeighbourhoodFactory.hpp"
 
+// index for dummy particle
+#define DUMMY_INDEX      -1
+// mpi tag to signal normal send of a particle
+#define SEND_TAG        100
+// mpi tag to signal that next receive is neighbourhood bcast
+#define ITER_BCAST_TAG  101
+// mpi tag to signal to workers that algorithm is over
+#define DIE_TAG         102
+// mpi tag to signal that worker is done
+#define WORK_DONE_TAG   200
+
 namespace PSO {
 
 PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
@@ -96,10 +107,18 @@ void PSO::launch() {
 
 }
 
+/*********************************************************************
+ * MANAGER METHODS IMPLEMENTATION
+ *******************************************************************/
+
 /*
  * main code for rank 0
  */
 void PSO::manager() {
+
+    Particle dummmyParticle(DUMMY_INDEX, space->getNoDimensions());
+    Particle workingParticle(DUMMY_INDEX, space->getNoDimensions());
+    boost::mpi::status status;
 
     // loop that repeats executing PSO algorithm
     for (int repeatNo = 0; repeatNo < totalRepetitions; repeatNo++) {
@@ -123,15 +142,107 @@ void PSO::manager() {
             // update neighbourhood
             neighbourhood->scanNeighbours(swarm);
 
-        }
+            // notify all workers about neighbourhood bcast
+            for (int i = 1; i < mpiWorld.size(); i++) {
+                mpiWorld.isend(i, ITER_BCAST_TAG, dummmyParticle);
+            }
+            mpiWorld.barrier();
+            broadcast(mpiWorld, neighbourhood, 0);
+            broadcast(mpiWorld, inertia, 0);
+
+            // MAIN PART OF ALGORITHM - UPDATE ALL PARTICLES IN SWARM
+            int nParticlesSent = 0;
+            int totalParticles = swarm.getNoParticles();
+
+            // SEND PARTICLES TO ALL WORKERS
+            for (int i = 1; i < mpiWorld.size(); i++) {
+                mpiWorld.isend(i, SEND_TAG, swarm.getParticle(nParticlesSent));
+
+                nParticlesSent++;
+                if (nParticlesSent >= totalParticles) {
+                    break;
+                }
+            }
+
+            // WHEN WORKER IS FINISHED, SEND HIM ANOTHER PARTICLE
+            while (nParticlesSent < totalParticles) {
+                status = mpiWorld.recv(
+                    boost::mpi::any_source, WORK_DONE_TAG, workingParticle
+                );
+                swarm.setParticle(workingParticle);
+
+                mpiWorld.send(
+                    status.source(), SEND_TAG, swarm.getParticle(nParticlesSent)
+                );
+        
+                nParticlesSent++;
+            }
+
+            // GET ALL PARTICLES BACK
+            int nParticlesReceived = 0;
+            for (int i = 1; i < mpiWorld.size(); i++) {
+                mpiWorld.recv(
+                    boost::mpi::any_source, WORK_DONE_TAG, workingParticle
+                );
+                swarm.setParticle(workingParticle);
+
+                nParticlesReceived++;
+                if (nParticlesReceived >= totalParticles) {
+                    break;
+                }
+            }
+
+            // print using observers
+            for (std::list<AbstractPrinter*>::const_iterator printIterator
+                    = printers.begin(); printIterator != printers.end();
+                    printIterator++) {
+                (*printIterator)->printIterationEnd(*this);
+            }
+        } // end iteration
+    } // end repeat
+
+    // SHUTDOWN WORKERS
+    for (int i = 1; i < mpiWorld.size(); i++) {
+        mpiWorld.isend(i, DIE_TAG, dummmyParticle);
     }
 
 }
+
+/*********************************************************************
+ * WORKERS' METHODS IMPLEMENTATION
+ *******************************************************************/
 
 /*
  * main code for every other node
  */
 void PSO::worker() {
+
+    Particle particle();
+
+    boost::mpi::status status;
+
+    while (true) {
+
+        status = mpiWorld.recv(0, boost::mpi::any_tag, particle);
+
+        if (status.tag() == ITER_BCAST_TAG) {
+            mpiWorld.barrier();
+            broadcast(mpiWorld, neighbourhood, 0);
+            broadcast(mpiWorld, inertia, 0);
+            continue;
+
+        } else if (status.tag() == DIE_TAG) {
+            break;
+        }
+
+        updateParticle(particle);
+
+        mpiWorld.send(0, WORK_DONE_TAG, particle);
+    }
+}
+
+void PSO::updateParticle(Particle& particle) {
+
 }
 
 } // namespace PSO

@@ -80,6 +80,12 @@ private:
      */
     void worker();
 
+    /**
+     * updates a single particle; this is done by worker
+     * @param particle - a particle to update
+     */
+    void updateParticle(Particle& particle);
+
 public:
 
     /**

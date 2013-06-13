@@ -135,6 +135,13 @@ void PSO::manager() {
         // main loop for one PSO launch
         for (int step = 0; step < totalSteps; step++) {
 
+            // print using observers
+            for (std::list<AbstractPrinter*>::const_iterator printIterator
+                    = printers.begin(); printIterator != printers.end();
+                    printIterator++) {
+                (*printIterator)->printIterationStart(*this);
+            }
+
             // rescale inertia factor
             inertia = inertiaMax
                 - (double)step / totalSteps * (inertiaMax - inertiaMin);

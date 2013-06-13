@@ -1,6 +1,5 @@
 next:
 think of how to proceed communicating the data in the PSO
-recover everything in PSO
 
 ADD TO DOCUMENTATION:
 -> POW must create PsoParameters, then call params.<method>(psoParams) before

@@ -39,7 +39,7 @@ void IndexedNeighbourhood::scanNeighbours(const Swarm& swarm) {
         int startIndex = (partIndex - nhoodSize);
         int endIndex = (partIndex + nhoodSize);
 
-        int bestIndex = startIndex;
+        int bestIndex = (startIndex + noParticles) % noParticles;
         double bestValue = VERY_LARGE_VALUE;
 
         // search the neighbourhood

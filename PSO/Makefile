@@ -67,10 +67,10 @@ PSO.o: PSO.cpp PSO.hpp NeighbourhoodFactory.hpp
 PSO_wrap.o: PSO_wrap.cxx 
 	$(CC) $(CFLAGS) PSO_wrap.cxx -I$(PYDIR) -I$(MPI4PY) $(BOOSTMPI)
 
-_PSO.so: PSO_wrap.o PSO.o PsoSpace.o PsoParameters.o Particle.o \
+_PSO.so:  PSO.o PsoSpace.o PsoParameters.o Particle.o \
     randomUtils.o Dimension.o PeriodicDimension.o ReflexiveDimension.o \
     SpaceFactory.o Swarm.o GeographicNeighbourhood.o IndexedNeighbourhood.o \
-    NeighbourhoodFactory.o
+    NeighbourhoodFactory.o PSO_wrap.o
 	$(CC) $(LDFLAGS) $(BOOSTMPI) -o _PSO.so PSO_wrap.o PsoSpace.o \
 	    Particle.o PsoParameters.o PSO.o randomUtils.o Dimension.o \
 	    SpaceFactory.o PeriodicDimension.o ReflexiveDimension.o Swarm.o \

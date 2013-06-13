@@ -63,4 +63,7 @@ const Particle& IndexedNeighbourhood::findBestNeighbour(int particleIndex) const
     return bestNeighbours[particleIndex];
 }
 
+
 } // namespace PSO
+
+BOOST_CLASS_EXPORT_IMPLEMENT(PSO::IndexedNeighbourhood);

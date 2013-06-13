@@ -87,3 +87,5 @@ const Particle& GeographicNeighbourhood::findBestNeighbour(int particleIndex)
 }
 
 } // namespace PSO
+
+BOOST_CLASS_EXPORT_IMPLEMENT(PSO::GeographicNeighbourhood);

@@ -9,8 +9,13 @@
 #ifndef __NEIGHBOURHOOD__
 #define __NEIGHBOURHOOD__
 
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
+#include <boost/mpi/packed_iarchive.hpp>
+#include <boost/mpi/packed_oarchive.hpp>
+//#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/serialization.hpp>
+//#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/export.hpp>
 
 #include "SwarmForward.hpp"
 #include "Particle.hpp"
@@ -54,5 +59,8 @@ public:
 };
 
 } // namespace PSO
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(PSO::Neighbourhood);
+//BOOST_CLASS_EXPORT_KEY(PSO::Neighbourhood);
 
 #endif // __NEIGHBOURHOOD__

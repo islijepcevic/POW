@@ -68,4 +68,7 @@ public:
 
 } // namespace PSO
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY(PSO::GeographicNeighbourhood);
+
 #endif // __GEOGRAPHIC_NEIGHBOURHOOD__

@@ -14,6 +14,7 @@
 #include <vector>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/serialization.hpp>
 
 namespace PSO {
 
@@ -51,6 +52,7 @@ private:
      */
     template<class archive>
     void serialize(archive &ar, const unsigned int version) {
+        //ar.template register_type<Dimension>();
         ar & boost::serialization::base_object<Neighbourhood>(*this);
         ar & bestNeighbours;
         ar & nhoodSize;
@@ -72,5 +74,8 @@ public:
 };
 
 } // namespace PSO
+
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY(PSO::IndexedNeighbourhood);
 
 #endif // __INDEXED_NEIGHBOURHOOD__

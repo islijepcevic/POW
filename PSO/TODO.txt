@@ -35,6 +35,7 @@ MPI: after testing regular code, add MPI support
 
 TEST:
 -> serialization of Particle
+-> geographic nhood
 
 IF THERE IS TIME:
 -> repellers

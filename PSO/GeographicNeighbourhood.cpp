@@ -41,24 +41,28 @@ void GeographicNeighbourhood::scanNeighbours(const Swarm& swarm) {
     // this will be computed for each particle
     // pair is: <distance (from a given particle), index>
     std::vector< std::pair<double, double> > neighbourhood;
-    neighbourhood.resize( noParticles-1, std::make_pair(0.0, 0.0) );
+    neighbourhood.resize( noParticles, std::make_pair(0.0, 0.0) );
 
     // iterate through every particle
     for (int partIndex = 0; partIndex < noParticles; partIndex++) {
         for (int otherIndex = 0; otherIndex < noParticles; otherIndex++) {
 
-            std::vector<double> distVect =
-                space.calculateShortestDistanceVector(
-                    swarm.getParticle(partIndex), swarm.getParticle(otherIndex)
-                );
+            // calculate shortest distance vector between particles
+            const std::vector<double>& partPos =
+                swarm.getParticle(partIndex).currentPosition;
+            const std::vector<double>& otherPos =
+                swarm.getParticle(otherIndex).currentPosition;
+
+            const std::vector<double> distVect =
+                space.calculateShortestDistanceVector( partPos, otherPos );
+
+            // calculate shortest distance
             double squareSum = 0.0;
             for (unsigned int i = 0; i < distVect.size(); i++) {
                 squareSum += (distVect[i] * distVect[i]);
             }
             
-            neighbourhood[otherIndex] = std::make_pair(
-                squareSum, swarm.getParticle(otherIndex).bestValue
-            );
+            neighbourhood[otherIndex] = std::make_pair(squareSum, otherIndex);
         }
         
         std::sort(neighbourhood.begin(), neighbourhood.end());
@@ -66,7 +70,6 @@ void GeographicNeighbourhood::scanNeighbours(const Swarm& swarm) {
         // choose best from the neighbourhood
         int bestIndex = 0;
         double bestValue = VERY_LARGE_VALUE;
-
         // choose size of neighbourhood plus 1 for the particle itself
         int size = nhoodSize + 1;
         for (int i = 0; i <= size; i++) {

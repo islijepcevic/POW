@@ -44,32 +44,31 @@ Particle& Particle::operator=(Particle _particle) {
     return *this;
 }
 
-//Particle& Particle::operator=(const Particle& _particle) {
-//
-//
-//    index = _particle.index;
-//    currentPosition.clear();
-//    currentPosition = _particle.currentPosition;
-//    currentVelocity = _particle.currentVelocity;
-//    currentValue = _particle.currentValue;
-//    bestPosition = _particle.bestPosition;
-//    bestValue = _particle.bestValue;
-//
-//    return *this;
-//}
-
 int Particle::getIndex() {
     return index;
 }
 
 void Particle::seed(const PsoSpace& space) {
-    currentValue = bestValue = VERY_LARGE_VALUE;
+    kick(space);
+    reseed(space);
+
+    bestValue = VERY_LARGE_VALUE;
+}
+
+void Particle::kick(const PsoSpace& space) {
+
+    for (unsigned int d = 0; d < currentPosition.size(); d++) {
+        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
+    }
+}
+
+void Particle::reseed(const PsoSpace& space) {
+    currentValue = VERY_LARGE_VALUE;
 
     for (unsigned int d = 0; d < currentPosition.size(); d++) {
         currentPosition[d] = bestPosition[d] = randDouble(
                 space.getLowerBound(d), space.getHigherBound(d)
         );
-        currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
     }
 }
 

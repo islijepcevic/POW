@@ -21,8 +21,6 @@ PSO (c++):
 -> updating particle in workers
 
 Particle:
--> kick()
--> reseed()
 
 Neighbourhood and derived classes:
 
@@ -36,6 +34,7 @@ MPI: after testing regular code, add MPI support
 TEST:
 -> serialization of Particle
 -> geographic nhood
+-> kick, reseed
 
 IF THERE IS TIME:
 -> repellers
@@ -58,6 +57,8 @@ PSO:
 Particle
 (29.4.)+> implemented basic version
 (24.5.)+> recover everything from Particle
+(14.6.)+> kick()
+(14.6.)+> reseed()
 
 Swarm
 (29.4.)+> implemented basic version

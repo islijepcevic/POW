@@ -1,4 +1,4 @@
-/*
+/**
  * Particle.hpp
  *
  * a class that represents one particle of PSO
@@ -30,7 +30,7 @@ private:
     // BOOST SERIALIZATION
     friend class boost::serialization::access;
 
-    /*
+    /**
      * method that for serializing and deserializing objects of this class
      * @param ar - archive stream
      * @param version - don't know, not used
@@ -59,7 +59,7 @@ public:
 
 // methods
 
-    /*
+    /**
      * basic constructor. This is meant to be used only for the purpose of
      * skeleton-content pattern of Boost.MPI. Master process creates the
      * skeleton of the particle using different constructor, and sends it to
@@ -69,41 +69,54 @@ public:
      */
     Particle();
 
-    /*
+    /**
      * constructor. This constructor is to be used by Master node when the
      * first particle is created.
      * @param noDimensions - number of dimensions
      */
     Particle(const int _index, const int noDimensions);
 
-    /*
+    /**
      * copy constructor
      */
     Particle(const Particle& _particle);
 
-    /*
+    /**
      * destructor
      */
     virtual ~Particle();
 
-    /*
+    /**
      * assignment operator
      */
     //Particle& operator=(const Particle& _particle);
     Particle& operator=(Particle _particle);
 
-    /*
+    /**
      * getter for particle index
      */
     int getIndex();
 
-    /*
+    /**
      * seeds a particle to the new random position
-     * @param space - a reference to space
+     * @param space - a space where particle is moving
      */
     void seed(const PsoSpace& space);
 
-    /*
+    /**
+     * kicks particle's velocity to a new random value
+     * this is usually done when particle's velocity is too small
+     * @param space - a space where particle is moving
+     */
+    void kick(const PsoSpace& space);
+
+    /**
+     * reseeds the particle to new random position
+     * @param space - a space where particle is moving
+     */
+    void reseed(const PsoSpace& space);
+
+    /**
      * overloaded << operator for printing the object
      */
     friend std::ostream& operator<<(std::ostream& out, const Particle& part);

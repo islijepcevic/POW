@@ -86,15 +86,16 @@ private:
      */
     void updateParticle(Particle& particle);
 
+    /**
+     * updates the velocity of a particle; by worker
+     * @param particle - a particle to update
+     */
+    void updateVelocity(Particle& particle);
+
 public:
 
     /**
-     * minimal constructor - used for slave nodes
-     */
-    PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm);
-
-    /**
-     * constructor - used for master node
+     * constructor
      * @param _comm - mpi comm world from python
      * @param _params - parameters to the algorithm
      * @param _space - space for the particles

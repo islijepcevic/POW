@@ -89,10 +89,6 @@ if rank == 0:
     params.check_standard_variables() 
     params.check_variables() 
 
-    # init params that are used in c++
-    psoParams = PsoParameters()
-    params.addAllToPsoParams(psoParams)
-
     #load requested data structures
     print '>> importing data...'
     data=mode.Data(params)
@@ -141,29 +137,28 @@ else:
 #propagate parameters, data, space and fitness function to slaves
 comm.Barrier()
 params=comm.bcast(params,root=0)
-space=comm.bcast(space,root=0)      # removed by Ivan
-fitness=comm.bcast(fitness,root=0)  # removed by Ivan
-fitnessProxy = FitnessProxy(fitness)
+space=comm.bcast(space,root=0)      
+fitness=comm.bcast(fitness,root=0)  
 data=comm.bcast(data,root=0)
 comm.Barrier()
 
+# create c++ classes, added by Ivan
+psoParams = PsoParameters()
+params.addAllToPsoParams(psoParams)
+pSpace = space.createPsoSpace()
+fitnessProxy = FitnessProxy(fitness)
 #prepare optimizer
+search=PSO(psoParams,pSpace,fitnessProxy, comm)
+
 if rank == 0:
-
-    pSpace = space.createPsoSpace()
-
-    search=PSO(psoParams,pSpace,fitnessProxy, comm)
-
-    # register different types of printers
+    # register different types of printers, by Ivan
     stdPrinter = StdPrinter()
     search.registerPrinterObserver(stdPrinter)
 
     logPrinter = LogPrinter(params)
     search.registerPrinterObserver(logPrinter)
 
-else:
-    pSpace = space.createPsoSpace()
-    search=PSO(pSpace, fitnessProxy, comm)
+comm.Barrier()
 
 #init optimization timer
 if rank==0:

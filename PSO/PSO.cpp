@@ -26,25 +26,6 @@
 
 namespace PSO {
 
-PSO::PSO(PsoSpace* _space, AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
-    params(),
-    space(_space),
-    fitness(_fitness),
-    mpiWorld(_comm, boost::mpi::comm_attach),
-    swarm(), 
-    neighbourhood(),
-    totalSteps(),
-    inertiaMax(),
-    inertiaMin(),
-    inertia() {
-
-    if (mpiWorld.rank() != 0) {
-//        printf("slave waiting for space\n");
-//        broadcast(mpiWorld, space, 0);
-//        printf("slave has space\n");
-    }
-}
-
 PSO::PSO(PsoParameters& _params, PsoSpace* _space,
             AbstractFitnessProxy& _fitness, MPI_Comm _comm) :
     params(_params),
@@ -52,7 +33,7 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     fitness(_fitness),
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(),
-    neighbourhood(NULL),
+    neighbourhood(),
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),

@@ -62,33 +62,33 @@ void PsoSpace::checkBoundaries(Particle& particle) const {
     }
 }
 
-std::vector<double> PsoSpace::calculateDistanceVector(const Particle& particle1,
-                                        const Particle& particle2) const {
+std::vector<double> PsoSpace::calculateDistanceVector(
+        const std::vector<double>& pos1,
+        const std::vector<double>& pos2) const {
 
     // for every dimension, get the distance between two particles
     std::vector<double> dist;
     dist.reserve( getNoDimensions() );
 
     for (int i = 0; i < noDimensions; i++) {
-        double p1 = particle1.currentPosition[i];
-        double p2 = particle2.currentPosition[i];
-        dist.push_back( dimensions[i]->calculateDistance(p1, p2) );
+        dist.push_back( dimensions[i]->calculateDistance(pos1[i], pos2[i]) );
     }
 
     return dist;
 }
 
 std::vector<double> PsoSpace::calculateShortestDistanceVector(
-                const Particle& particle1, const Particle& particle2) const {
+        const std::vector<double>& pos1,
+        const std::vector<double>& pos2) const {
 
     // for every dimension, get the shortest distance between two particles
     std::vector<double> dist;
     dist.reserve( getNoDimensions() );
 
     for (int i = 0; i < noDimensions; i++) {
-        double p1 = particle1.currentPosition[i];
-        double p2 = particle2.currentPosition[i];
-        dist.push_back( dimensions[i]->calculateShortestDistance(p1, p2) );
+        dist.push_back(
+            dimensions[i]->calculateShortestDistance(pos1[i], pos2[i])
+        );
     }
 
     return dist;

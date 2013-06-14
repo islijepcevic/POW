@@ -18,7 +18,6 @@ they are not necessarily the copy of same object
 
 
 PSO (c++):
--> test master/worker
 -> updating particle in workers
 
 Particle:
@@ -35,10 +34,7 @@ MPI: after testing regular code, add MPI support
 -> implement skeleton/content
 
 TEST:
--> PsoParameters with Parameters integration (do they fill correctly)
--> test Dimension (more precisely, PeriodicDimension and ReflexiveDimension)
 -> serialization of Particle
--> test how master/worker works
 
 IF THERE IS TIME:
 -> repellers
@@ -56,6 +52,7 @@ PSO:
 (3.5.)+> skeleton created
 (3.5.)+> make params.inertia part of PSO (or swarm) (instead of params)
 (13.6.)+> master/worker created
+(14.6.)+> test master/worker
 
 Particle
 (29.4.)+> implemented basic version

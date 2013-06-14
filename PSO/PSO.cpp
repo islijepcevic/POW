@@ -154,6 +154,7 @@ void PSO::manager() {
                 mpiWorld.isend(i, ITER_BCAST_TAG, dummmyParticle);
             }
             mpiWorld.barrier();
+            printf("sending nhood\n");
             broadcast(mpiWorld, neighbourhood, 0);
             broadcast(mpiWorld, inertia, 0);
 
@@ -231,6 +232,8 @@ void PSO::worker() {
     while (true) {
 
         status = mpiWorld.recv(0, boost::mpi::any_tag, particle);
+
+        printf("worker %d, got tag %d\n", mpiWorld.rank(), status.tag());
 
         if (status.tag() == ITER_BCAST_TAG) {
             mpiWorld.barrier();

@@ -783,10 +783,10 @@ class StdPrinter(AbstractPrinter):
         print "\nREPETITION STARTED\n"
 
     def printIterationStart(self, pso):
-        pass
+        print "\titeration start"
 
     def printIterationEnd(self, pso):
-        pass
+        print "\titeration end"
 
 
 class LogPrinter(AbstractPrinter):

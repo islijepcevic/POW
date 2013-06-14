@@ -5,9 +5,9 @@
 #######################
 
 
-steps 10
+steps 3
 
-particles 10
+particles 5
 
 repeat 2
 
@@ -75,7 +75,8 @@ boundaryMax 5.12 5.12
 ####################
 
 
-restart_freq 10
+# frequency of writing a restart file
+restart_freq 2
 
 output log_simple.txt
 

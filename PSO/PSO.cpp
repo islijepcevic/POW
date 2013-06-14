@@ -224,7 +224,7 @@ void PSO::manager() {
  */
 void PSO::worker() {
 
-    Particle particle();
+    Particle particle;
 
     boost::mpi::status status;
 

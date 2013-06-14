@@ -11,7 +11,9 @@
 // temporary include
 #include <cstdio>
 #include <iostream>
+#include <cmath>
 #include "NeighbourhoodFactory.hpp"
+#include "randomUtils.hpp"
 
 // index for dummy particle
 #define DUMMY_INDEX      -1
@@ -79,6 +81,8 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
 void PSO::launch() {
 
     mpiWorld.barrier();
+
+    initRandomSeed();
 
     if (mpiWorld.rank() == 0) {
         manager();
@@ -230,7 +234,46 @@ void PSO::worker() {
 }
 
 void PSO::updateParticle(Particle& particle) {
-    // TODO
+    updateVelocity(particle);
+}
+
+void PSO::updateVelocity(Particle& particle) {
+    
+    // factor of current velocity, multiplied by inertia
+    std::vector<double> selfFactor = particle.currentVelocity;
+    for (unsigned int i = 0; i < selfFactor.size(); i++) {
+        selfFactor[i] *= inertia;
+    }
+
+    // factor of "local" best
+    std::vector<double> personalFactor = space->calculateShortestDistanceVector(
+        particle.bestPosition, particle.currentPosition
+    );
+    for (unsigned int i = 0; i < personalFactor.size(); i++) {
+        personalFactor[i] *= params.getDoubleParam("cn") * randDouble(0.0, 1.0);
+    }
+
+    // factor of "global"/neighbourhood best
+    const Particle& bestNeighbour = neighbourhood->findBestNeighbour(
+        particle.getIndex()
+    );
+    std::vector<double> nhoodFactor = space->calculateShortestDistanceVector(
+        bestNeighbour.bestPosition, particle.currentPosition
+    );
+    for (unsigned int i = 0; i < nhoodFactor.size(); i++) {
+        nhoodFactor[i] *= params.getDoubleParam("cp") * randDouble(0.0, 1.0);
+    }
+
+    // sum all factors to get new velocity
+    for (unsigned int i = 0; i < particle.currentVelocity.size(); i++) {
+        double newVel = selfFactor[i] * personalFactor[i] * nhoodFactor[i];
+        if (fabs(newVel) > space->getSize(i)) {
+            // copysign takes magnitude of first argument, and sign of second
+            newVel = copysign(space->getSize(i), newVel);
+        }
+
+        particle.currentVelocity[i] = newVel;
+    }
 }
 
 } // namespace PSO

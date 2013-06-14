@@ -32,9 +32,6 @@ Swarm::Swarm(int noParticles, PsoSpace& _space) :
     for (int i = 0; i < noParticles; i++) {
         particles.push_back( Particle(i, noDim) );
     }
-
-    // initialize random seed
-    initRandomSeed();
 }
 
 Swarm::Swarm(const Swarm& _swarm) :

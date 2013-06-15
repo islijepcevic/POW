@@ -24,7 +24,7 @@ GeographicNeighbourhood::GeographicNeighbourhood(
             bestNeighbours(),
             nhoodSize(_nhoodSize) {
 
-    bestNeighbours.reserve(nParticles);
+    bestNeighbours.resize(nParticles);
     if (nhoodSize + 1 > nParticles) {
         nhoodSize = nParticles - 1;
     }

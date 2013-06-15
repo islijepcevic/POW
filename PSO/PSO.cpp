@@ -234,7 +234,33 @@ void PSO::worker() {
 }
 
 void PSO::updateParticle(Particle& particle) {
+
+    // velocity
     updateVelocity(particle);
+    double velocityVal = particle.getVelocityValue();
+
+    // position, with KaR
+    if (velocityVal > params.getDoubleParam("kar")) {
+        particle.move();
+        space->checkBoundaries(particle);
+
+    } else { // KaR - when velocity is small
+        particle.kick(*space); // kick anyway
+
+        if (particle.currentValue > params.getDoubleParam("accept")) {
+            particle.move();
+            space->checkBoundaries(particle);
+        } else {
+            particle.reseed(*space); // reseed if current fitness good
+        }
+    }
+    
+    // fitness
+    fitness.evaluation(particle);
+
+    if (particle.currentValue < particle.bestValue) {
+        particle.bestValue = particle.currentValue;
+    }
 }
 
 void PSO::updateVelocity(Particle& particle) {

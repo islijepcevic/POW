@@ -12,6 +12,7 @@
 #include "constants.hpp"
 #include "randomUtils.hpp"
 #include <algorithm>
+#include <cmath>
 
 namespace PSO {
 
@@ -46,6 +47,20 @@ Particle& Particle::operator=(Particle _particle) {
 
 int Particle::getIndex() {
     return index;
+}
+
+double Particle::getVelocityValue() {
+    double sum = 0.0;
+    for (unsigned int i = 0; i < currentVelocity.size(); i++) {
+        sum += currentVelocity[i] * currentVelocity[i];
+    }
+    return sqrt(sum);
+}
+
+void Particle::move() {
+    for (unsigned int i = 0; i < currentPosition.size(); i++) {
+        currentPosition[i] += currentVelocity[i];
+    }
 }
 
 void Particle::seed(const PsoSpace& space) {

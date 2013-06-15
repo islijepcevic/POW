@@ -98,6 +98,17 @@ public:
     int getIndex();
 
     /**
+     * calculates the value of velocity vector
+     * @return - velocity value
+     */
+    double getVelocityValue();
+
+    /**
+     * moves particle to the next position based on current velocity
+     */
+    void move();
+
+    /**
      * seeds a particle to the new random position
      * @param space - a space where particle is moving
      */

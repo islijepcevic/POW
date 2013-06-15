@@ -539,12 +539,13 @@ class FitnessProxy(AbstractFitnessProxy):
     def evaluation(self, particle):
         '''
         method that is called from PSO in c++ for evaluating the particle
-        @param particle - object of Particle class that contains all the
-                        necessary information
-        @return - value at the position of the particle, float
+        @param particle - object of PSO::Particle class that contains all the
+                        necessary information, and is updated
         '''
         tmpArray = np.array(swigCppVectorToPyList(particle.currentPosition))
-        return self.fitness.evaluate(particle.getIndex(), tmpArray)
+        val = self.fitness.evaluate(particle.getIndex(), tmpArray)
+
+        particle.currentValue = val
 
 
 

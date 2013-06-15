@@ -1,6 +1,3 @@
-next:
-continue in PSO part
-
 ADD TO DOCUMENTATION:
 -> POW must create PsoParameters, then call params.<method>(psoParams) before
 passing it to PSO
@@ -18,15 +15,8 @@ they are not necessarily the copy of same object
 
 
 PSO (c++):
--> updating particle in workers
-
-Particle:
-
-Neighbourhood and derived classes:
-
-Space / Dimension:
-
-SWIG module.i:
+-> repellers / repulsion field
+-> restart/reload
 
 MPI: after testing regular code, add MPI support
 -> implement skeleton/content

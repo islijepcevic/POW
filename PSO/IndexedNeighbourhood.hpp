@@ -14,7 +14,6 @@
 #include <vector>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/serialization.hpp>
 
 namespace PSO {
 

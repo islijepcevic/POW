@@ -5,11 +5,11 @@
 #######################
 
 
-steps 3
+steps 450
 
-particles 5
+particles 150
 
-repeat 2
+repeat 3
 
 repulsion off
 
@@ -76,6 +76,7 @@ boundaryMax 5.12 5.12
 
 
 # frequency of writing a restart file
+# not used right now
 restart_freq 2
 
 output log_simple.txt

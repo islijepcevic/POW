@@ -63,6 +63,9 @@ private:
     // this is easier to mantain
     double inertia;
 
+    // globally best solution found
+    Particle bestParticle;
+
     // list of printer observers
     std::list<AbstractPrinter*> printers;
 
@@ -74,6 +77,13 @@ private:
      * method that runs on master process and manages all the work
      */
     void manager();
+
+    /**
+     * checks if new particle is better then global best, and if it is, then
+     * updates best
+     * @param newParticle - newly obtained particle
+     */
+    void checkBest(const Particle& newParticle);
 
     /**
      * method that runs on all other processes (slaves)
@@ -108,6 +118,17 @@ public:
      * destructor
      */
     virtual ~PSO();
+
+    /**
+     * const getter for swarm
+     */
+    const Swarm& getSwarm() const;
+
+    /**
+     * getter for best found particle / solution
+     * @return best particle
+     */
+    const Particle& getBestParticle() const;
 
     /**
      * method that registers a printer observer

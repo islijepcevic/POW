@@ -780,14 +780,18 @@ class StdPrinter(AbstractPrinter):
     def __init__(self):
         AbstractPrinter.__init__(self)
 
-    def printRepetitionStart(self, pso):
-        print "\nREPETITION STARTED\n"
+    def close(self):
+        pass
 
-    def printIterationStart(self, pso):
-        print "\titeration start"
+    def printRepetitionStart(self, pso, repeatNo):
+        print "\n> REPETITION %s\n" % (repeatNo + 1)
 
-    def printIterationEnd(self, pso):
-        print "\titeration end"
+    def printIterationStart(self, pso, repeatNo, step):
+        pass
+
+    def printIterationEnd(self, pso, repeatNo, step):
+        bestVal = pso.getBestParticle().currentValue
+        print "step %s, best = %s" % (step + 1, bestVal)
 
 
 class LogPrinter(AbstractPrinter):
@@ -800,12 +804,21 @@ class LogPrinter(AbstractPrinter):
 
         self.logFile = open(params.output_file, 'w')
 
-    def printRepetitionStart(self, pso):
+    def close(self):
+        self.logFile.close()
+
+    def printRepetitionStart(self, pso, repeatNo):
         pass
 
-    def printIterationStart(self, pso):
+    def printIterationStart(self, pso, repeatNo, step):
         pass
 
-    def printIterationEnd(self, pso):
-        self.logFile.write("iteration ended, print lot of data\n")
-
+    def printIterationEnd(self, pso, repeatNo, step):
+        swarm = pso.getSwarm()
+        for n in xrange(0, swarm.getNoParticles(), 1):
+            particle = swarm.getParticle(n)
+            self.logFile.write("%s %s " % (repeatNo, particle.getIndex()))
+            posVector = particle.currentPosition
+            for i in xrange(posVector.size()):
+                self.logFile.write("%s " % posVector[i])
+            self.logFile.write("%s\n" % swarm.getParticle(n).currentValue)

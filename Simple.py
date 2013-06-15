@@ -17,20 +17,10 @@ class Fitness(BF):
         BF.__init__(self)
 
     def evaluate(self,num,pos):
-        #print "SIMPLE EVALUATING", pos
-        #pos2 = map(lambda x: x*x, pos)
-        #ret = reduce(lambda x, y: x+y, pos2)
-        #return ret
-
-        #print pos
-        #dimensions=len(pos)
-        #return np.sum(np.sin(np.radians(pos)))/dimensions+1.0
-
         if type(pos) != np.ndarray:
             pos = np.array(pos)
-        dimensions = len(pos)
-        copy = np.sin(np.radians(pos))
-        return np.sum(copy) / dimensions + 1.0
+
+        return 10*len(pos) + np.sum(pos**2 - 10*np.cos(2*np.pi*pos))
 
 class Space(S):
     def __init__(self, params, data):

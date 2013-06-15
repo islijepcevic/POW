@@ -8,9 +8,6 @@
  */
 #include "PSO.hpp"
 
-// temporary include
-#include <cstdio>
-#include <iostream>
 #include <cmath>
 #include "NeighbourhoodFactory.hpp"
 #include "randomUtils.hpp"
@@ -40,7 +37,8 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
     inertiaMin(params.getDoubleParam("inertia_min")),
-    inertia(inertiaMax) {
+    inertia(inertiaMax),
+    bestParticle(DUMMY_INDEX, space->getNoDimensions()) {
 
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
@@ -66,6 +64,18 @@ PSO::~PSO() {
     if (neighbourhood != NULL) {
         delete neighbourhood;
     }
+}
+
+/*********************************************************************
+ * GETTERS / SETTERS / REGISTER FOR OBSERVERS
+ *******************************************************************/
+
+const Swarm& PSO::getSwarm() const {
+    return swarm;
+}
+
+const Particle& PSO::getBestParticle() const {
+    return bestParticle;
 }
 
 void PSO::registerPrinterObserver(AbstractPrinter* printer) {
@@ -111,20 +121,21 @@ void PSO::manager() {
         for (std::list<AbstractPrinter*>::const_iterator printIterator
                 = printers.begin(); printIterator != printers.end();
                 printIterator++) {
-            (*printIterator)->printRepetitionStart(*this);
+            (*printIterator)->printRepetitionStart(*this, repeatNo);
         }
 
         // seed all the particles in the swarm
         swarm.seedParticles();
+        bestParticle.seed(*space);
 
-        // main loop for one PSO launch
+        // main loop for a single PSO launch
         for (int step = 0; step < totalSteps; step++) {
 
             // print using observers
             for (std::list<AbstractPrinter*>::const_iterator printIterator
                     = printers.begin(); printIterator != printers.end();
                     printIterator++) {
-                (*printIterator)->printIterationStart(*this);
+                (*printIterator)->printIterationStart(*this, repeatNo, step);
             }
 
             // rescale inertia factor
@@ -163,6 +174,8 @@ void PSO::manager() {
                 );
                 swarm.setParticle(workingParticle);
 
+                checkBest(workingParticle);
+
                 mpiWorld.send(
                     status.source(), SEND_TAG, swarm.getParticle(nParticlesSent)
                 );
@@ -178,6 +191,8 @@ void PSO::manager() {
                 );
                 swarm.setParticle(workingParticle);
 
+                checkBest(workingParticle);
+
                 nParticlesReceived++;
                 if (nParticlesReceived >= totalParticles) {
                     break;
@@ -188,7 +203,7 @@ void PSO::manager() {
             for (std::list<AbstractPrinter*>::const_iterator printIterator
                     = printers.begin(); printIterator != printers.end();
                     printIterator++) {
-                (*printIterator)->printIterationEnd(*this);
+                (*printIterator)->printIterationEnd(*this, repeatNo, step);
             }
         } // end iteration
     } // end repeat
@@ -198,6 +213,23 @@ void PSO::manager() {
         mpiWorld.isend(i, DIE_TAG, dummmyParticle);
     }
 
+    // call close on all printers
+    for (std::list<AbstractPrinter*>::const_iterator printIterator
+            = printers.begin(); printIterator != printers.end();
+            printIterator++) {
+        (*printIterator)->close();
+    }
+}
+
+void PSO::checkBest(const Particle& newParticle) {
+    if (newParticle.currentValue < bestParticle.currentValue) {
+        bestParticle = newParticle;
+
+        // just a little bit of precaution
+        if (bestParticle.currentValue != bestParticle.bestValue) {
+            throw "best particle exception";
+        }
+    }
 }
 
 /*********************************************************************

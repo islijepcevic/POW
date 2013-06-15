@@ -13,6 +13,11 @@ not with fitness); it would be nicer because right now python Space is
 bcasted, and in every node a c++ PsoSpace is created from factory method, so
 they are not necessarily the copy of same object
 
+ASK GIORGIO/MATTEO:
+-> is output OK?
+-> ask for input files for rastrigin 100dimension
+-> ask if convergence OK as expected?
+-> test with some biological example (with expected result)
 
 PSO (c++):
 -> repellers / repulsion field
@@ -22,13 +27,11 @@ MPI: after testing regular code, add MPI support
 -> implement skeleton/content
 
 TEST:
--> serialization of Particle
--> geographic nhood
--> kick, reseed
 
 IF THERE IS TIME:
 -> repellers
 -> save/load to enable restart from file
+-> skeleton/content
 
 ##############################################################################
 # DONE:                                                                      #
@@ -37,6 +40,7 @@ IF THERE IS TIME:
 General:
 (22/23.5.)+> FIRST COMPILE AND RUN! although PSO is basically empty, it
 finally integrates together
+(15/16.6.)+> IT SEEMS TO WORK NICELY, (PSO KaR w/o repellers)
 
 PSO:
 (3.5.)+> skeleton created

@@ -29,8 +29,12 @@ std::pair<double, double> ReflexiveDimension::checkBoundaries(double position,
     // apply the boundary conditions
     
     // dimension is now 2*size periodic; so first get the position to the
-    // interval [0, 2*size]
+    // interval [-2*size, 2*size]
     position = fmod(position, 2.0 * size);
+    // because of c++ weird modulo, move this to [0, 2*size] as wanted
+    if (position < 0) {
+        position += (2.0 * size);
+    }
 
     if (position > size) {
         // this is equivalent to: size - (position - size)

@@ -5,9 +5,9 @@
 #######################
 
 
-steps 450
+steps 200
 
-particles 150
+particles 100
 
 repeat 3
 
@@ -23,7 +23,7 @@ kar_threshold 0.01
 #######################
 
 
-neighborSize 2
+neighborSize 10
 
 neighborType indexed
 
@@ -54,6 +54,8 @@ cn 1.4
 boundaryMin -5.12 -5.12
 
 boundaryMax 5.12 5.12
+
+boundaryType 0 1
 
 
 ##################

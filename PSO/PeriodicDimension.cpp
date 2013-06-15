@@ -28,6 +28,10 @@ std::pair<double, double> PeriodicDimension::checkBoundaries(double position,
     
     // apply the boundary conditions
     position = fmod(position, size);
+    // because of c++ weird modulo, move this to [0, 2*size] as wanted
+    if (position < 0) {
+        position += size;
+    }
 
     // revert the boundaries to the original position
     position += lowerBound;

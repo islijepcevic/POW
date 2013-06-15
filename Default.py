@@ -320,6 +320,10 @@ class Parser: # this is imported in the file
                     %(len(self.boundary_type),len(self.low_input))
             sys.exit(1)
 
+        # by Ivan
+        if self.boundary_type[0] != "NA":
+            self.paramsForPso["boundary_type"][1] = "array int"
+
         if self.high_input!="NA" and (self.low_input>self.high_input).any():
             print 'ERROR: a lower boundary condition is greated than a higher' \
                 + ' one'

@@ -540,7 +540,7 @@ class particle :
             self.bias[self.test] = self.bias_tmp
 
             self.row_vel_new_tmp = self.row_vel_new + self.bias
-            self.row_pos_new_tmp=self.row_pos_new + self.bias
+            self.row_pos_new_tmp = self.row_pos_new + self.bias
 
             [self.row_pos_new,self.row_vel_new] = \
                 self.space.check_boundaries(

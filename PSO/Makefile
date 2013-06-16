@@ -61,6 +61,15 @@ NeighbourhoodFactory.o: NeighbourhoodFactory.cpp NeighbourhoodFactory.hpp \
     GeographicNeighbourhood.hpp IndexedNeighbourhood.hpp
 	$(CC) $(CFLAGS) NeighbourhoodFactory.cpp -o NeighbourhoodFactory.o
 
+EmptyRepulsionField.o: EmptyRepulsionField.cpp EmptyRepulsionField.hpp
+	$(CC) $(CFLAGS) EmptyRepulsionField.cpp -o EmptyRepulsionField.o \
+	    $(BOOSTSERIAL)
+
+PotentialRepulsionField.o: PotentialRepulsionField.cpp \
+    PotentialRepulsionField.hpp
+	$(CC) $(CFLAGS) PotentialRepulsionField.cpp -o \
+	    PotentialRepulsionField.o $(BOOSTSERIAL)
+
 PSO.o: PSO.cpp PSO.hpp NeighbourhoodFactory.hpp
 	$(CC) $(CFLAGS) PSO.cpp -o PSO.o $(BOOSTMPI)
 
@@ -70,12 +79,14 @@ PSO_wrap.o: PSO_wrap.cxx
 _PSO.so:  PSO.o PsoSpace.o PsoParameters.o Particle.o \
     randomUtils.o Dimension.o PeriodicDimension.o ReflexiveDimension.o \
     SpaceFactory.o Swarm.o GeographicNeighbourhood.o IndexedNeighbourhood.o \
-    NeighbourhoodFactory.o PSO_wrap.o
+    NeighbourhoodFactory.o EmptyRepulsionField.o PotentialRepulsionField.o \
+    PSO_wrap.o
 	$(CC) $(LDFLAGS) $(BOOSTMPI) -o _PSO.so PSO_wrap.o PsoSpace.o \
 	    Particle.o PsoParameters.o PSO.o randomUtils.o Dimension.o \
 	    SpaceFactory.o PeriodicDimension.o ReflexiveDimension.o Swarm.o \
 	    GeographicNeighbourhood.o IndexedNeighbourhood.o \
-	    NeighbourhoodFactory.o
+	    NeighbourhoodFactory.o EmptyRepulsionField.o \
+	    PotentialRepulsionField.o
 
 clean:
 	\rm -f *.o  *~ PSO_wrap.*
@@ -109,3 +120,9 @@ ReflexiveDimension.hpp: Dimension.hpp
 SpaceFactory.hpp: PsoSpace.hpp
 
 Swarm.hpp: Particle.hpp PsoSpace.hpp 
+
+RepulsionField.hpp: Particle.hpp PsoSpace.hpp
+
+EmptyRepulsionField.hpp: RepulsionField.hpp
+
+PotentialRepulsionField.hpp: RepulsionField.hpp

@@ -10,7 +10,11 @@
 
 #include <cmath>
 #include "NeighbourhoodFactory.hpp"
+#include "PotentialRepulsionField.hpp"
+#include "EmptyRepulsionField.hpp"
 #include "randomUtils.hpp"
+
+#include <cstdio>
 
 // index for dummy particle
 #define DUMMY_INDEX      -1
@@ -33,12 +37,15 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     mpiWorld(_comm, boost::mpi::comm_attach),
     swarm(),
     neighbourhood(),
+    repulsionField(),
     totalSteps(params.getIntParam("max_steps")),
     totalRepetitions(params.getIntParam("repeat")),
     inertiaMax(params.getDoubleParam("inertia_max")),
     inertiaMin(params.getDoubleParam("inertia_min")),
     inertia(inertiaMax),
     bestParticle(DUMMY_INDEX, space->getNoDimensions()) {
+
+        printf("entered\n");
 
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
@@ -47,13 +54,25 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 //        broadcast(mpiWorld, space, 0);
 //        printf("master sent space\n");
 
+        printf("swarm\n");
         swarm = Swarm(params.getIntParam("n_particles"), *space);
 
+        printf("nhood\n");
         neighbourhood = createNeighbourhood(
              params.getStringParam("neigh_type"),
              swarm,
              params.getIntParam("neigh_size")
         );
+
+        printf("allocating repulsion field\n");
+        if (params.getStringParam("repel").compare("True")) {
+                repulsionField = new PotentialRepulsionField(
+                    params.getDoubleParam("repel_factor")
+                );
+        } else {
+            repulsionField = new EmptyRepulsionField();
+        }
+        printf("allocated repulsion field\n");
 
         // mpi send skeletons
     }
@@ -64,6 +83,8 @@ PSO::~PSO() {
     if (neighbourhood != NULL) {
         delete neighbourhood;
     }
+
+    delete repulsionField;
 }
 
 /*********************************************************************
@@ -84,9 +105,6 @@ void PSO::registerPrinterObserver(AbstractPrinter* printer) {
 
 /*
  * main launch
- *
- * RANK IS ONLY PARAMETER HERE FOR TESTING PURPOSES - REMOVE IT WHEN REAL
- * MPI TAKES THE PLACE
  */
 void PSO::launch() {
 
@@ -152,6 +170,7 @@ void PSO::manager() {
             mpiWorld.barrier();
             broadcast(mpiWorld, neighbourhood, 0);
             broadcast(mpiWorld, inertia, 0);
+            broadcast(mpiWorld, repulsionField, 0);
 
             // MAIN PART OF ALGORITHM - UPDATE ALL PARTICLES IN SWARM
             int nParticlesSent = 0;
@@ -172,6 +191,7 @@ void PSO::manager() {
                 status = mpiWorld.recv(
                     boost::mpi::any_source, WORK_DONE_TAG, workingParticle
                 );
+                checkRepel(workingParticle);
                 swarm.setParticle(workingParticle);
 
                 checkBest(workingParticle);
@@ -189,6 +209,7 @@ void PSO::manager() {
                 mpiWorld.recv(
                     boost::mpi::any_source, WORK_DONE_TAG, workingParticle
                 );
+                checkRepel(workingParticle);
                 swarm.setParticle(workingParticle);
 
                 checkBest(workingParticle);
@@ -232,6 +253,13 @@ void PSO::checkBest(const Particle& newParticle) {
     }
 }
 
+void PSO::checkRepel(Particle& particle) {
+    if (particle.getRepelFlag()) {
+        repulsionField->addRepeller(particle.oldPosition);
+        particle.clearRepelFlag();
+    }
+}
+
 /*********************************************************************
  * WORKERS' METHODS IMPLEMENTATION
  *******************************************************************/
@@ -253,6 +281,7 @@ void PSO::worker() {
             mpiWorld.barrier();
             broadcast(mpiWorld, neighbourhood, 0);
             broadcast(mpiWorld, inertia, 0);
+            broadcast(mpiWorld, repulsionField, 0);
             continue;
 
         } else if (status.tag() == DIE_TAG) {
@@ -266,6 +295,8 @@ void PSO::worker() {
 }
 
 void PSO::updateParticle(Particle& particle) {
+
+    particle.oldPosition = particle.currentPosition;
 
     // velocity
     updateVelocity(particle);
@@ -286,6 +317,8 @@ void PSO::updateParticle(Particle& particle) {
             particle.reseed(*space); // reseed if current fitness good
         }
     }
+
+    repulsionField->apply(particle, *space);
     
     // fitness
     fitness.evaluation(particle);

@@ -21,6 +21,7 @@ Particle::Particle() {
 
 Particle::Particle(const int _index, const int noDimensions) :
         index(_index),
+        oldPosition(noDimensions),
         currentPosition(noDimensions),
         currentVelocity(noDimensions),
         currentValue(VERY_LARGE_VALUE),
@@ -30,6 +31,7 @@ Particle::Particle(const int _index, const int noDimensions) :
 
 Particle::Particle(const Particle& _particle) :
     index(_particle.index),
+    oldPosition(_particle.oldPosition),
     currentPosition(_particle.currentPosition),
     currentVelocity(_particle.currentVelocity),
     currentValue(_particle.currentValue),
@@ -47,6 +49,14 @@ Particle& Particle::operator=(Particle _particle) {
 
 int Particle::getIndex() {
     return index;
+}
+
+bool Particle::getRepelFlag() const {
+    return repelFlag;
+}
+
+void Particle::clearRepelFlag() {
+    repelFlag = false;
 }
 
 double Particle::getVelocityValue() {
@@ -68,9 +78,12 @@ void Particle::seed(const PsoSpace& space) {
     reseed(space);
 
     bestValue = VERY_LARGE_VALUE;
+    repelFlag = false;
 }
 
 void Particle::kick(const PsoSpace& space) {
+
+    repelFlag = true;
 
     for (unsigned int d = 0; d < currentPosition.size(); d++) {
         currentVelocity[d] = randDouble( -space.getSize(d), space.getSize(d) );
@@ -122,6 +135,7 @@ void swap(Particle& p1, Particle& p2) {
     using std::swap; // maybe switch to boost::swap
 
     swap(p1.index, p2.index);
+    swap(p1.oldPosition, p2.oldPosition);
     swap(p1.currentPosition, p2.currentPosition);
     swap(p1.currentVelocity, p2.currentVelocity);
     swap(p1.currentValue, p2.currentValue);

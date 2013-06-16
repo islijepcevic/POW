@@ -27,6 +27,9 @@ private:
     // index of the particle
     int index;
 
+    // flag that means this particle is now repeller
+    bool repelFlag;
+
     // BOOST SERIALIZATION
     friend class boost::serialization::access;
 
@@ -49,6 +52,7 @@ private:
 public:
 
     // variables associated to current solution
+    std::vector<double> oldPosition;
     std::vector<double> currentPosition;
     std::vector<double> currentVelocity;
     double currentValue;
@@ -96,6 +100,16 @@ public:
      * getter for particle index
      */
     int getIndex();
+
+    /**
+     * gets the status of repel flag
+     */
+    bool getRepelFlag() const;
+
+    /**
+     * clears repel flag back to false
+     */
+    void clearRepelFlag();
 
     /**
      * calculates the value of velocity vector

@@ -70,7 +70,8 @@ PotentialRepulsionField.o: PotentialRepulsionField.cpp \
 	$(CC) $(CFLAGS) PotentialRepulsionField.cpp -o \
 	    PotentialRepulsionField.o $(BOOSTSERIAL)
 
-PSO.o: PSO.cpp PSO.hpp NeighbourhoodFactory.hpp
+PSO.o: PSO.cpp PSO.hpp NeighbourhoodFactory.hpp EmptyRepulsionField.hpp \
+    PotentialRepulsionField.hpp
 	$(CC) $(CFLAGS) PSO.cpp -o PSO.o $(BOOSTMPI)
 
 PSO_wrap.o: PSO_wrap.cxx 
@@ -111,7 +112,7 @@ Particle.hpp: PsoSpaceForward.hpp
 PeriodicDimension.hpp: Dimension.hpp
 
 PSO.hpp: PsoParameters.hpp PsoSpace.hpp AbstractFitnessProxy.hpp \
-    AbstractPrinter.hpp Swarm.hpp Neighbourhood.hpp
+    AbstractPrinter.hpp Swarm.hpp Neighbourhood.hpp RepulsionField.hpp
 
 PsoSpace.hpp: Particle.hpp Dimension.hpp
 

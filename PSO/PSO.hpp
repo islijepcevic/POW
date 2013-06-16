@@ -15,6 +15,7 @@
 #include "AbstractPrinter.hpp"
 #include "Swarm.hpp"
 #include "Neighbourhood.hpp"
+#include "RepulsionField.hpp"
 
 #include <mpi.h>
 #include <list>
@@ -46,6 +47,9 @@ private:
 
     // neighbourhood
     Neighbourhood* neighbourhood;
+
+    // repulsion field
+    RepulsionField* repulsionField;
 
     // number of iterations or steps in one run of the PSO
     int totalSteps;
@@ -84,6 +88,12 @@ private:
      * @param newParticle - newly obtained particle
      */
     void checkBest(const Particle& newParticle);
+
+    /**
+     * if particle is flagged as repeller, saves its old position to repellers
+     * @param particle - possibly a repeller particle
+     */
+    void checkRepel(Particle& particle);
 
     /**
      * method that runs on all other processes (slaves)

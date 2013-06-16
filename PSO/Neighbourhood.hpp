@@ -1,4 +1,4 @@
-/*
+/**
  * Neighbourhood.hpp
  *
  * an abstract class for representing particle neighbourhoood types
@@ -27,7 +27,7 @@ private:
     // BOOST SERIALIZATION
     friend class boost::serialization::access;
 
-    /*
+    /**
      * method that for serializing and deserializing objects of this class
      * @param ar - archive stream
      * @param version - don't know, not used
@@ -44,13 +44,13 @@ public:
     virtual ~Neighbourhood() {
     }
 
-    /*
+    /**
      * scans all the necessary positions in the swarm, such that finding the
      * best neighbour can be fast
      */
     virtual void scanNeighbours(const Swarm& swarm) = 0;
 
-    /*
+    /**
      * finding the best evaluated neighbour for the given particle
      * @param particleIndex - index of a given particle in the swarm
      * @return - index of the best evaluated particle in the neighbourhood

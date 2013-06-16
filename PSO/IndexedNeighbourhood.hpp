@@ -44,7 +44,7 @@ private:
     // boost serialization
     friend class boost::serialization::access;
 
-    /*
+    /**
      * method that for serializing and deserializing objects of this class
      * @param ar - archive stream
      * @param version - don't know, not used

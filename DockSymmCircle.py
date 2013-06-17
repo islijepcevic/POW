@@ -18,6 +18,7 @@
 from Default import Parser as R
 from Default import Space as S
 from Default import Postprocess as PP
+from Default import BaseFitness as BF
 
 import numpy as np
 import os, sys
@@ -38,6 +39,7 @@ import wx
 
 class Parser(R):
     def __init__(self):
+        R.__init__(self)
 
         #fitness function flags
         self.add('constraint','constraint','str',"NA")
@@ -225,11 +227,11 @@ class Parser(R):
 
 class Data:
 
-    index=[]
-    index_receptor=[]
 
     def __init__(self,params):
 
+        self.index=[]
+        self.index_receptor=[]
         self.eigenspace_size=""
 
         if params.style=="flexible":
@@ -355,6 +357,7 @@ class Data:
 class Space(S):
     # n dim. space: 3 monomer rotations, 1 monomer radial translation, 1 multimer z translation, 3 receptor rotations, n monomer eigenvectors
     def __init__(self,params,data):
+        S.__init__(self)
 
         #add receptor dimensions if needed
         rec_dim=0
@@ -473,9 +476,10 @@ class Space(S):
                 self.boundary_type[i]=params.boundary_type[i]
 
 
-class Fitness:
+class Fitness(BF):
 
     def __init__(self,data,params):
+        BF.__init__(self)
 
         self.params=params
         self.style=params.style

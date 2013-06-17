@@ -27,8 +27,8 @@ from copy import deepcopy
 import subprocess
 import re
 
-from MDAnalysis import *
-import MDAnalysis.analysis.align
+#from MDAnalysis import *
+#import MDAnalysis.analysis.align
 
 
 # read in a topology and a trajectory and re,turn a matrix of atomic coordinates (also write a pdb of first frame)

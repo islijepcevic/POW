@@ -41,6 +41,7 @@ private:
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version) {
         ar & index;
+        ar & repelFlag;
         //ar & const_cast<int&>(INDEX);
         ar & currentPosition;
         ar & currentVelocity;

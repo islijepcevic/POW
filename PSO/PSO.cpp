@@ -45,8 +45,6 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
     inertia(inertiaMax),
     bestParticle(DUMMY_INDEX, space->getNoDimensions()) {
 
-        printf("entered\n");
-
     // this constructor is called from rank 0 anyway
     if (mpiWorld.rank() == 0) {
 

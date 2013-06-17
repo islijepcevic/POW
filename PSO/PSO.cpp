@@ -327,28 +327,40 @@ void PSO::updateParticle(Particle& particle) {
     }
 }
 
+void printVector(const std::vector<double>& v) {
+    for (unsigned int i = 0; i < v.size(); i++) {
+        printf("%lf ", v[i]);
+    }
+    printf("\n");
+}
+
 void PSO::updateVelocity(Particle& particle) {
+
+//    printf("POSITION:\t"); printVector(particle.currentPosition);
 
     // factor of current velocity, multiplied by inertia
     std::vector<double> selfFactor = particle.currentVelocity;
     for (unsigned int i = 0; i < selfFactor.size(); i++) {
         selfFactor[i] *= inertia;
     }
+//    printf("VEL(inert):\t"); printVector(selfFactor);
 
     // factor of "local" best
     std::vector<double> personalFactor = space->calculateShortestDistanceVector(
-        particle.bestPosition, particle.currentPosition
+        particle.currentPosition, particle.bestPosition
     );
     for (unsigned int i = 0; i < personalFactor.size(); i++) {
         personalFactor[i] *= params.getDoubleParam("cn") * randDouble(0.0, 1.0);
     }
+//    printf("BEST:\t"); printVector(particle.bestPosition);
+//    printf("LOCAL:\t"); printVector(personalFactor);
 
     // factor of "global"/neighbourhood best
     const Particle& bestNeighbour = neighbourhood->findBestNeighbour(
         particle.getIndex()
     );
     std::vector<double> nhoodFactor = space->calculateShortestDistanceVector(
-        bestNeighbour.bestPosition, particle.currentPosition
+        particle.currentPosition, bestNeighbour.bestPosition
     );
     for (unsigned int i = 0; i < nhoodFactor.size(); i++) {
         nhoodFactor[i] *= params.getDoubleParam("cp") * randDouble(0.0, 1.0);

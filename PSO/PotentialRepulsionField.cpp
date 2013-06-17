@@ -34,7 +34,7 @@ void PotentialRepulsionField::apply(Particle& particle, const PsoSpace& space)
 
     for (unsigned int r = 0; r < repellers.size(); r++) {
         std::vector<double> distance = space.calculateShortestDistanceVector(
-            particle.currentPosition, repellers[r]
+            repellers[r], particle.currentPosition
         );
         for (int d = 0; d < space.getNoDimensions(); d++) {
             double repScale = space.getSize(d) * repulsionFactor;

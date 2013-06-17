@@ -107,7 +107,9 @@ public:
     void checkBoundaries(Particle& particle) const;
 
     /**
-     * returns distance between two positions in this space
+     * returns distance vector between two positions in this space.
+     * Distance is calculated from first position to second position, equivalent
+     * to pos2 - pos1
      * @param pos1 - first position
      * @param pos2 - second position
      * @return - distance vector
@@ -118,7 +120,9 @@ public:
     /**
      * returns shortest distance between two positions in this space
      * in dimensions of some type, distance can be measured in several ways,
-     * and this method guarantees to return the shortest possible distance
+     * and this method guarantees to return the shortest possible distance.
+     * Distance is calculated from first position to second position, equivalent
+     * to pos2 - pos1 (while taking dimension type into account)
      * @param pos1 - first position
      * @param pos2 - second position
      * @return - shortest distance vector

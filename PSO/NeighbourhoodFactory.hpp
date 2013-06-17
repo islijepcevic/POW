@@ -1,4 +1,4 @@
-/*
+/**
  * NeighbourhoodFactory.hpp
  *
  * file with functions that create and provide Neighbourhood classes
@@ -13,7 +13,7 @@
 
 namespace PSO {
 
-/*
+/**
  * parameterized factory function for Neighbourhood family of classes.
  * this is to be changed if new neighbourhood type should be created
  * @param neighbourhoodType - type of the Neighbourhood to be created.

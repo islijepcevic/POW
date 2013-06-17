@@ -1,4 +1,4 @@
-/*
+/**
  * AbstractFitness.hpp
  *
  * Abstract fitness function for the use in c++ part of PSO
@@ -16,19 +16,19 @@ namespace PSO {
 class AbstractFitness {
 public:
 
-    /*
+    /**
      * constructor
      * empty implementation provided
      */
     AbstractFitness() {}
 
-    /*
+    /**
      * destructor
      * empty imelpmentation provided
      */
     virtual ~AbstractFitness() {}
 
-    /*
+    /**
      * a method to use in c++ for calling the evaluation
      * it is intended that derived class in Python implements this method by
      * calling another evaluate method that will be implemented by the end user

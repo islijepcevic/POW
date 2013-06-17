@@ -52,17 +52,14 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
 //        broadcast(mpiWorld, space, 0);
 //        printf("master sent space\n");
 
-        printf("swarm\n");
         swarm = Swarm(params.getIntParam("n_particles"), *space);
 
-        printf("nhood\n");
         neighbourhood = createNeighbourhood(
              params.getStringParam("neigh_type"),
              swarm,
              params.getIntParam("neigh_size")
         );
 
-        printf("allocating repulsion field\n");
         if (params.getStringParam("repel").compare("True")) {
                 repulsionField = new PotentialRepulsionField(
                     params.getDoubleParam("repel_factor")
@@ -70,7 +67,6 @@ PSO::PSO(PsoParameters& _params, PsoSpace* _space,
         } else {
             repulsionField = new EmptyRepulsionField();
         }
-        printf("allocated repulsion field\n");
 
         // mpi send skeletons
     }

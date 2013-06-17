@@ -11,7 +11,7 @@ particles 80
 
 repeat 1
 
-repulsion off
+repulsion on
 
 kar_threshold 0.01
 

@@ -1,4 +1,4 @@
-/*
+/**
  * SpaceFactory.cpp
  *
  * file with functcions that create and provide PsoSpace class
@@ -13,7 +13,7 @@
 
 namespace PSO {
 
-/*
+/**
  * parameterized factory function for making PsoSpace class
  * 
  * @param lowBoundaries - vector of (already checked) values for low boundary

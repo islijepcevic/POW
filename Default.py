@@ -795,17 +795,8 @@ class StdPrinter(AbstractPrinter):
 
     def printIterationEnd(self, pso, repeatNo, step):
         bestVal = pso.getBestParticle().currentValue
-        print "step %s, best = %s" % (step + 1, bestVal),
+        print "step %s, best = %s" % (step + 1, bestVal)
 
-        best = 1000
-        index = -1
-        for i in xrange(pso.getSwarm().getNoParticles()):
-            p = pso.getSwarm().getParticle(i)
-            if p.currentValue < best:
-                best = p.currentValue
-                index = i
-        p = pso.getSwarm().getParticle(index)
-        print "\tbest of swarm =", best, p.currentPosition[0], p.currentPosition[1]
 
 
 class LogPrinter(AbstractPrinter):

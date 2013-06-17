@@ -1,4 +1,4 @@
-/*
+/**
  * randomUtils.hpp
  *
  * this file contains functions that provide random numbers
@@ -7,7 +7,7 @@
  * e-mail: ivan.slijepcevic@epfl.ch
  */
 
-/*
+/**
  * this function generates the random number in the given bounds
  * function expects that srand has already been called
  * @param lo - lower bound
@@ -16,7 +16,7 @@
  */
 double randDouble(double lo, double hi);
 
-/*
+/**
  * method that initializes random seed
  */
 void initRandomSeed();

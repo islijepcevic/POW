@@ -159,7 +159,6 @@ if rank == 0:
     search.registerPrinterObserver(logPrinter)
 
 comm.Barrier()
-print "about to launch"
 
 #init optimization timer
 if rank==0:

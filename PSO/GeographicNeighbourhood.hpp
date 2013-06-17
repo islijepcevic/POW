@@ -1,4 +1,4 @@
-/*
+/**
  * GeographicNeighbourhood.hpp
  *
  * a class representing geometric local neighbourhood
@@ -17,19 +17,19 @@
 
 namespace PSO {
 
-/**
+/***
  * GeographicNeighbourhood is a type of neighbourhood where particles are
  * influenced by nearest ones in the search place at a given moment.
  */
 class GeographicNeighbourhood : public Neighbourhood {
 private:
 
-    /**
+    /***
      * for every particle, store the best particle in the neighbourhood
      */
     std::vector<Particle> bestNeighbours;
 
-    /**
+    /***
      * this number represents the total size of neighbourhood
      * this means that the nearest nhoodSize particles will be considered (not
      * counting the particle itself)
@@ -39,7 +39,7 @@ private:
     // BOOST SERIALIZATION
     friend class boost::serialization::access;
 
-    /*
+    /**
      * method that for serializing and deserializing objects of this class
      * @param ar - archive stream
      * @param version - don't know, not used

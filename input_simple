@@ -7,9 +7,9 @@
 
 steps 200
 
-particles 100
+particles 50
 
-repeat 3
+repeat 1
 
 repulsion off
 
@@ -23,9 +23,9 @@ kar_threshold 0.01
 #######################
 
 
-neighborSize 10
+neighborSize 1
 
-neighborType geographic
+neighborType indexed
 
 
 #######################
@@ -35,9 +35,9 @@ neighborType geographic
 #######################
 
 
-inertiaMax 0.9
+inertiaMax 0.4
 
-inertiaMin 0.4
+inertiaMin 0.1
 
 cp 1.2
 

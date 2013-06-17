@@ -10,8 +10,6 @@
  */
 #include "Dimension.hpp"
 
-#include <cmath>
-
 namespace PSO {
 
 Dimension::Dimension(const double _lower, const double _higher) :
@@ -39,7 +37,7 @@ double Dimension::getSize() {
 }
 
 double Dimension::calculateDistance(double pos1, double pos2) const {
-    return fabs(pos1 - pos2);
+    return pos2 - pos1;
 }
 
 } // namespace PSO

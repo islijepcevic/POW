@@ -9,6 +9,7 @@ RES=$?
 cd ..
 
 if [ $RES = 0 ]; then
-    echo "RUN"
+    echo
+    echo 'RUN: mpiexec -n 3 python2 POW.py Simple.py input_simple'
     mpiexec -n 3 python2 POW.py Simple.py input_simple
 fi

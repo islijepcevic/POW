@@ -1,4 +1,4 @@
-/*
+/**
  * PeriodicDimension.hpp
  *
  * Subclass of Dimension with periodic boundary condition
@@ -27,7 +27,7 @@ private:
 //    // BOOST SERIALIZATION
 //    friend class boost::serialization::access;
 //
-//    /*
+//    /**
 //     * method that for serializing and deserializing objects of this class
 //     * @param ar - archive stream
 //     * @param version - don't know, not used
@@ -42,12 +42,12 @@ private:
 
 public:
 
-    /*
+    /**
      * constructor
      */
     PeriodicDimension(const double _lower, const double _higher);
 
-    /*
+    /**
      * destructor
      */
     virtual ~PeriodicDimension();

@@ -1,4 +1,4 @@
-/*
+/**
  * Dimension.hpp
  *
  * Class that represents one dimension, with its lower and higher boundaries
@@ -25,7 +25,7 @@ private:
 //    // BOOST SERIALIZATION
 //    friend class boost::serialization::access;
 //
-//    /*
+//    /**
 //     * method that for serializing and deserializing objects of this class
 //     * @param ar - archive stream
 //     * @param version - don't know, not used
@@ -50,35 +50,35 @@ protected:
 
 public:
 
-    /*
+    /**
      * constructor
      */
     Dimension(const double _lower, const double _higher);
 
-    /*
+    /**
      * destructor
      */
     virtual ~Dimension();
 
-    /*
+    /**
      * getter for lower bound
      * @return - lower bound
      */
     double getLowerBound();
 
-    /*
+    /**
      * getter for higher bound
      * @return - higher bound
      */
     double getHigherBound();
 
-    /*
+    /**
      * getter for dimension size
      * @return - size of this dimension
      */
     double getSize();
 
-    /*
+    /**
      * method that checks boundaries for a specific boundary conditions
      * @param position - position of the particle in given dimension
      * @param velocity - velocity of the particle in the given dimension
@@ -87,18 +87,22 @@ public:
     virtual std::pair<double, double>
         checkBoundaries(double position, double velocity) const = 0;
 
-    /*
+    /**
      * calculates distance between two points in this dimension
      * assumes that both positions are within the dimension size
+     * it calculates distance from first to second position, thus the result
+     * might be negative
      * @param pos1 - first position
      * @param pos2 - second position
      * @return - distance
      */
     virtual double calculateDistance(double pos1, double pos2) const;
 
-    /*
+    /**
      * calculates shortest distance between two points in this dimension
      * assumes that both positions are within the dimension size
+     * it calculates distance from first to second position, thus the result
+     * might be negative
      * @param pos1 - first position
      * @param pos2 - second position
      * @return - shortest distance

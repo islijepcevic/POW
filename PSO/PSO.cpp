@@ -323,11 +323,12 @@ void PSO::updateParticle(Particle& particle) {
 
     if (particle.currentValue < particle.bestValue) {
         particle.bestValue = particle.currentValue;
+        particle.bestPosition = particle.currentPosition;
     }
 }
 
 void PSO::updateVelocity(Particle& particle) {
-    
+
     // factor of current velocity, multiplied by inertia
     std::vector<double> selfFactor = particle.currentVelocity;
     for (unsigned int i = 0; i < selfFactor.size(); i++) {

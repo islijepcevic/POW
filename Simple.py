@@ -20,7 +20,8 @@ class Fitness(BF):
         if type(pos) != np.ndarray:
             pos = np.array(pos)
 
-        return 10*len(pos) + np.sum(pos**2 - 10*np.cos(2*np.pi*pos))
+        #return 10*len(pos) + np.sum(pos**2 - 10*np.cos(2*np.pi*pos))
+        return 10*len(pos)+np.sum(pos**2-10*np.cos(2*np.pi*pos))
 
 class Space(S):
     def __init__(self, params, data):
